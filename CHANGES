@@ -1,0 +1,10 @@
+= DTR Changelog
+
+== release 0.0.3
+* more stable and maintainable
+* added monitor command for monitoring the server status
+* provided development build grid example
+
+== release 0.0.2
+* changed to rinda service model
+

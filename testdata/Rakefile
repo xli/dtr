@@ -1,0 +1,11 @@
+$LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + '/../lib')
+require 'dtr/raketasks'
+require 'rake/testtask'
+
+desc "Default Task"
+task :default => :dtr
+
+DTR::MPTask.new :dtr do |t|
+  t.test_files = FileList['*test_case.rb']
+  t.processes = 2
+end

@@ -1,0 +1,302 @@
+= DTR -- Distributed Test Runner
+
+Supporting DTR version: 0.0.x
+
+This package contains DTR, a distributed test runner program for decreasing 
+time of running ruby tests, only supporting Test::Unit ruby testing framework 
+right now.
+
+DTR has the following features:
+
+* Run tests in mutli processes or on distributed machines.
+
+* Hot plug distributed runner agents.
+
+* Runtime injection, all tests run in same environment.
+
+DTR works in three parts: DTR Server, Runner Agent and DTR Master.
+
+* DTR Server is a Rinda Server which allows DRb services and clients to automatically find each other without knowing where they live.
+
+* Runner Agent is a DRb service hosting on distributed machines to run tests. For using 'fork' to create runner process, Runner Agent can't run on Windows directly.
+
+* DTR Master is the process finding runner service to run tests and collect test results. It works by loading 'dtr/test_unit_injection.rb' with all test files.
+
+DTR doesn't synchronize codebase, so you need to consider using synchronize tools 
+(e.g. rsync(http://samba.anu.edu.au/rsync/)) or distributed version control system
+(e.g. mercurial(http://www.selenic.com/mercurial/wiki/)) to synchronize project 
+files between machines. The distributed version control system Mercurial is cool for
+synchronizing codebase between machines, see the example "Setup a development build 
+grid".
+
+== Download
+
+The latest version of DTR can be found at
+
+* http://rubyforge.org/projects/dtr/
+
+== Installation
+
+=== Normal Installation
+
+You can install DTR with the following command.
+
+  % ruby install.rb
+
+from its distribution directory.
+
+=== GEM Installation
+
+Download and install DTR with the following.
+
+   gem install --remote dtr
+
+=== Running the DTR Test Suite
+
+If you wish to run the unit and functional tests that come with DTR:
+
+* CD into the top project directory of dtr.
+* Type the following:
+
+   rake # You need a version of rake installed
+
+== DTR References
+
+* DTR Documentation Home: http://dtr.rubyforge.org
+* DTR Project Page: http://rubyforge.org/projects/dtr
+* DTR API Documents: http://dtr.rubyforge.org
+
+== Simple Example
+
+Once installed, you can run DTR server anywhere:
+
+  % dtr -s
+  
+If you are running Runner Agent on remote machine, please specify the DTR server machine ip:
+
+  % dtr -s --server_address dtr_server_ip
+
+After server started, you can run DTR runner agent at your project directory as follows:
+
+  % dtr --server_address dtr_server_ip -r runner_name
+
+Type "dtr --help" for an up-to-date option summary.
+Invoking <tt>dtr</tt> without any options causes dtr to show help too.
+
+Most of time your project test suite need setup environment before run tests, you
+can set setup command by option '--setup', for example:
+
+  % dtr --server_address dtr_server_ip -r runner1 --setup "rake db:test:prepare"
+  
+At last, you need to add 'dtr/test_unit_injection.rb' into test_files of your test 
+task in your Rakefile, and for load it, you also need add dtr lib path:
+  
+  require 'dtr'
+
+  DTR.broadcast_list = ['dtr server ip']
+  
+  Rake::TestTask.new(:dtr_tests) do |t|
+    t.libs << DTR.lib_path
+    t.test_files = FileList['dtr/test_unit_injection.rb', 'test/*test.rb']
+    t.warning = false
+    t.verbose = false
+  end
+
+In the case above we changed dtr broadcast list for listening remote dtr server.
+And you also can use *DTR.port = 1234* to change the port listening. These two
+options would be cached in the directory running the test or any other dtr processes
+(e.g. dtr runner agent or dtr server).
+
+== Run tests in multi-processes on one machine
+
+For running Runner in multi-processes, you need install gem 'daemons'.
+The following is the test task example in the rake file:
+
+  require 'dtr/raketasks'
+
+  DTR::MPTask.new :test do |t|
+    t.test_files = FileList['test/*test.rb']
+    t.processes = 2 #default is 2
+  end
+
+== Setup a development build grid 
+
+This example is a build grid shared within developers to run unit tests 
+before commit code. We'll use Mercurial to synchronize code between Runner 
+Agent machines and developer machine.
+
+=== Background
+
+Suppose I am a developer working on a rails project pet_store checked out 
+at '~/pet_store'. I have a MacBook called M1 and another 2 Mac-minis called 
+M2 and M3. My plan is distributing tests running on M1 to M2 and M3 before 
+commit code. M3 also will be DTR Server. All machines are accessable in 
+local network and IPs are M1_IP, M2_IP and M3_IP. Mercurial and DTR are 
+installed on all machines. And for running dtr runner agent in daemons mode, 
+you need install gem daemons. The test environment will be running on Mysql. 
+All machines are installed Mysql accessed by the following database.yml 
+configuration:
+
+    development:
+      database: pet_store_development
+      adapter: mysql
+      username: root
+      password:
+      host: localhost
+    test:
+      database: pet_store_test
+      adapter: mysql
+      username: root
+      password:
+      host: localhost
+
+=== DTR Server
+
+* Start DTR Server on M3: dtr -s -a M3_IP. 
+
+=== Setup Mercurial repository on M1
+
+* Init Mercurial repository in '~/pet_store' directory: hg init
+* Edit .hgignore file to ignore files don't need while running tests. In this example, we will ignore files: db/schema.rb, .dtr_env_pstore, dtr_runners.pid and dtr_server*; and directories: public, tmp and log.
+* Commit .hgignore and then commit code into Mercurial repository.
+* Start 'hg serve' in '~/pet_store', the default port would be 8000. We'll use the default port in this example.
+* We'll clone the repository to M2 and M3 later.
+
+=== Build Script
+
+* Add an environment variable on all machines: export DEV_BUILD_SERVER=M3_IP
+* Add an environment variable on development machine M1: export DTR_MASTER_ENV=http: //M1_IP:8000/pet_store. The environment variable DTR_MASTER_ENV would be copied to all DTR Runner Agent for sharing information between DTR Master machine and DTR Runner Agents.
+* Create a rake file at '~/pet_store' directory called: dtr_tasks.rake
+    
+    DEV_BUILD_SERVER = ENV['DEV_BUILD_SERVER']
+    DEV_REPOSITORY_URL = ENV['DTR_MASTER_ENV']
+    
+    task :dtr => ['hg:check', 'dtr:uf']
+    
+    namespace :hg do
+      task :reinit do
+        Dir.glob("*").each do |f|
+          #remove all files except files start with 'dtr_' including dtr runner pid file and current file dtr_tasks.rake
+          next if f =~ /^dtr_/  
+          FileUtils.rm_rf(f)
+        end
+        FileUtils.rm_rf(".hg")
+        FileUtils.rm_rf(".hgignore")
+        puts %x[hg init]
+        puts %x[hg pull -u -y #{DEV_REPOSITORY_URL}]
+        puts %x[mkdir tmp]
+        puts %x[mkdir log]
+      end
+      task :check do
+        http = Net::HTTP.new("localhost", "8000")
+        begin
+          http.get("/")
+        rescue Exception
+          raise "Mercurial server is not running!"
+        end
+        
+        raise "Please commit changes into Mercurial repository" if %x[hg st] =~ /.+/
+      end
+    end
+    
+    namespace :dtr do
+      task :runner_agent do
+        puts %x[dtr -R;dtr -r runner -a '#{DEV_BUILD_SERVER}' -i 'rake --rakefile dtr_tasks.rake hg:reinit;rake db:migrate db:test:prepare' -D]
+      end
+
+      require 'dtr'
+
+      DTR.broadcast_list = [DEV_BUILD_SERVER]
+      
+      DTR::MPTask.new(:uf) do |t|
+        t.libs << "test"
+        t.test_files = FileList['test/unit/**/*test.rb', 'test/functional/**/*test.rb']
+        t.processes = ENV['P'] || 1
+        t.runner_options = "-a '#{DEV_BUILD_SERVER}' -i 'rake db:migrate db:test:prepare'"
+        t.start_server = false
+        t.verbose = false
+      end
+    end
+
+* The script above can re-init Mercurial repository. Runner Agent will run the 'hg:reinit' task before start Runner(see the 'runner_agent' task in the script above), so that Runner Agent can support any developer's codebase to run tests.
+* Commit dtr_tasks.rake into Mercurial repository.
+
+=== Runner Agent
+
+* Clone repository from M1 to M2 in home directory: hg clone http: //M1_IP:8000/pet_store
+* Start runner agent in the directory ~/pet_store on M2: rake --rakefile dtr_tasks.rake dtr:runner_agent
+* Start runner agent on M3 same with above.
+
+=== Run DTR Master on M1
+
+* Commit all changes into Mercurial
+* rake --rakefile dtr_tasks.rake dtr
+* After you started the DTR Master, you can type the following to monitor the DTR Server status: dtr -a $DEV_BUILD_SERVER -m
+* For output into console, open the debug option: dtr -a $DEV_BUILD_SERVER -d -m
+
+== Credits
+
+[<b>Josh Price</b>] For fixing tests packer in release 0.0.1.
+
+[<b>Wang Pengchao</b>] For sharing lots of ideas.
+
+[<b>Barrow H Kwan</b>] For patch of specifying DTR server port.
+
+[<b>Mingle team</b>(http://studios.thoughtworks.com/mingle-project-intelligence)] For making all these happen.
+
+== License
+
+DTR is available under an Apache License Version 2.
+
+== Support
+
+The DTR homepage is http://dtr.rubyforge.org.  You can find the DTR
+RubyForge page at http://rubyforge.org/projects/dtr or Google Code 
+project at http://code.google.com/p/dtrunner.
+
+Feel free to submit commits or feature requests.  If you send a patch,
+remember to update the corresponding unit tests.  If fact, I prefer
+new feature to be submitted in the form of new unit tests.
+
+For other information, feel free to ask on the ruby-talk mailing list 
+or contact mailto:swing1979@gmail.com.
+
+== Usage
+
+DTR client is invoked from the command line using:
+
+   % dtr [<em>options</em> ...]
+
+=== Options are:
+
+  -p, --port PORT                  Port number DTR will listen to. Default is 3344.
+  -r runner1_name,runner2_name     Start DTR test runner agent with unique runner names.
+  -a, --server_address ADDRESS     Specify dtr server address, domain name or ip address, e.g. 192.168.0.1. Default is 'localhost'.
+  -i, --setup COMMAND              Set command for initializing test runner test environment, e.g. 'rake db:test:prepare'. Default is do nothing.
+  -m, --monitor                    Monitor the status of the dtr rinda server, e.g. dtr -a 10.11.1.2 -m
+  -c, --clean_server               Clean server environment, shutdown all runners registered.
+  -b, --be_silent                  Only show error messages
+  -s, --server                     Start DTR service server. There must be a DTR server running.
+  -D, --daemon                     Start server/runners in daemon mode. Gem 'daemons' must be installed
+  -S, --stop_server                Stop server run in daemon mode.
+  -R, --stop_runners               Stop runners run in daemon mode.
+  -d, --debug                      output debug log
+  -v, --version                    Show version
+  -h, --help                       Show this help doc
+
+Type "dtr --help" for an up-to-date option summary.
+
+= Other stuff
+
+Author::  Li Xiao <swing1979@gmail.com>
+Requires:: Ruby 1.8.5 or later
+License::  Copyright 2007-2008 by Li Xiao.
+           Released under an Apache License 2.  See the LICENSE file
+           included in the distribution.
+
+== Warranty
+
+This software is provided "as is" and without any express or
+implied warranties, including, without limitation, the implied
+warranties of merchantibility and fitness for a particular
+purpose.
