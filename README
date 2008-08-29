@@ -33,7 +33,7 @@ grid".
 
 The latest version of DTR can be found at
 
-* http://rubyforge.org/projects/dtr/
+* http://github.com/xli/dtr/tree/master
 
 == Installation
 
@@ -59,12 +59,6 @@ If you wish to run the unit and functional tests that come with DTR:
 * Type the following:
 
    rake # You need a version of rake installed
-
-== DTR References
-
-* DTR Documentation Home: http://dtr.rubyforge.org
-* DTR Project Page: http://rubyforge.org/projects/dtr
-* DTR API Documents: http://dtr.rubyforge.org
 
 == Simple Example
 
@@ -250,16 +244,11 @@ DTR is available under an Apache License Version 2.
 
 == Support
 
-The DTR homepage is http://dtr.rubyforge.org.  You can find the DTR
-RubyForge page at http://rubyforge.org/projects/dtr or Google Code 
-project at http://code.google.com/p/dtrunner.
-
 Feel free to submit commits or feature requests.  If you send a patch,
 remember to update the corresponding unit tests.  If fact, I prefer
 new feature to be submitted in the form of new unit tests.
 
-For other information, feel free to ask on the ruby-talk mailing list 
-or contact mailto:swing1979@gmail.com.
+For other information, feel free to contact mailto:swing1979@gmail.com.
 
 == Usage
 
