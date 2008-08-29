@@ -180,7 +180,7 @@ else
 
     s.author = "Li Xiao"
     s.email = "swing1979@gmail.com"
-    s.homepage = "http://dtr.rubyforge.org"
+    s.homepage = "http://github.com/xli/dtr/tree/master"
     s.rubyforge_project = "dtr"
 #     if ENV['CERT_DIR']
 #       s.signing_key = File.join(ENV['CERT_DIR'], 'gem-private_key.pem')
