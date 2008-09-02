@@ -248,7 +248,7 @@ Feel free to submit commits or feature requests.  If you send a patch,
 remember to update the corresponding unit tests.  If fact, I prefer
 new feature to be submitted in the form of new unit tests.
 
-For other information, feel free to contact mailto:swing1979@gmail.com.
+For other information, feel free to contact mailto:iam@li-xiao.com.
 
 == Usage
 
@@ -277,7 +277,7 @@ Type "dtr --help" for an up-to-date option summary.
 
 = Other stuff
 
-Author::  Li Xiao <swing1979@gmail.com>
+Author::  Li Xiao <iam@li-xiao.com>
 Requires:: Ruby 1.8.5 or later
 License::  Copyright 2007-2008 by Li Xiao.
            Released under an Apache License 2.  See the LICENSE file

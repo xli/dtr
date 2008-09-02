@@ -1,6 +1,6 @@
 # Rakefile for DTR        -*- ruby -*-
 
-# Copyright 2007 by Li Xiao (swing1979@gmail.com)
+# Copyright 2007 by Li Xiao (iam@li-xiao.com)
 # All rights reserved.
 
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + '/lib')

@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   #### Author and project details.
 
   spec.author = "Li Xiao"
-  spec.email = "swing1979@gmail.com"
+  spec.email = "iam@li-xiao.com"
   spec.homepage = "http://github.com/xli/dtr/tree/master"
   spec.rubyforge_project = "dtr"
 end
