@@ -1,8 +1,3 @@
-require 'rubygems'
-require 'rake'
-
-#### Basic information.
-
 Gem::Specification.new do |spec|
   spec.name = 'dtr'
   spec.version = "0.0.4"
@@ -15,7 +10,7 @@ Gem::Specification.new do |spec|
 
   #### Which files are to be included in this gem?  Everything!  (Except SVN directories.)
 
-  spec.files = FileList['lib/**/*.rb', 'lib/**/*.rake', 'bin/*', '[a-zA-Z]*'].to_a
+  spec.files = ["lib/dtr/base.rb", "lib/dtr/raketasks.rb", "lib/dtr/runner.rb", "lib/dtr/service_provider.rb", "lib/dtr/test_unit.rb", "lib/dtr/test_unit_injection.rb", "lib/dtr.rb", "bin/dtr", "bin", "CHANGES", "doc", "dtr.gemspec", "install.rb", "lib", "LICENSE.TXT", "Rakefile", "README", "TODO"]
 
   #### Load-time details: library and application (you will need one or both).
 
