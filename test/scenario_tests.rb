@@ -20,6 +20,7 @@ class ScenarioTests < Test::Unit::TestCase
       require 'an_error_test_case'
       require 'a_file_system_test_case'
       require 'scenario_test_case'
+      require 'setup_agent_env_test_case'
     end
     DTR.inject
   end
@@ -158,6 +159,21 @@ class ScenarioTests < Test::Unit::TestCase
     @result.failures.each do |e|
       assert e.message.include?("from #{Socket.gethostname}")
     end
+  end
+  
+  def test_setup_agent_env_from_master_process
+    $argv_dup = ['setup_agent_env_test_case.rb']
+    suite = Test::Unit::TestSuite.new('setup_agent_env_from_master_process')
+    suite << SetupAgentEnvTestCase.suite
+    ENV['DTR_AGENT_ENV_SETUP_CMD'] = 'touch /tmp/test_setup_agent_env_from_master_process'
+    @result = runit(suite)
+    assert @result.passed?
+    assert_equal 1, @result.run_count
+    assert_equal 0, @result.failure_count
+    assert_equal 0, @result.error_count
+  ensure
+    File.delete('/tmp/test_setup_agent_env_from_master_process') rescue nil
+    ENV['DTR_AGENT_ENV_SETUP_CMD'] = nil
   end
 
   def runit(suite)

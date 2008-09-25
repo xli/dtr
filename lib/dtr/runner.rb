@@ -47,7 +47,7 @@ module DTR
     
     def initialize(runner_names, agent_env_setup_cmd)
       @runner_names = runner_names.is_a?(Array) ? runner_names : [runner_names.to_s]
-      @agent_env_setup_cmd = agent_env_setup_cmd || ""
+      @agent_env_setup_cmd = agent_env_setup_cmd
       @runner_pids = []
       @herald = nil
       @working_env_key = :working_env

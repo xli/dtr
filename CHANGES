@@ -1,6 +1,6 @@
 = DTR Changelog
 
-== release 0.0.5
+== release 0.0.4
 * added timeout for running test more stable
   the default timeout is 60 sec, can be changed by environment variable 'RUN_TEST_TIMEOUT'
 * output master process log into different log file with runners

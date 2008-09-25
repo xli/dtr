@@ -3,6 +3,8 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
-  39. class doc(ri)?
+  DTR_AGENT_ENV_SETUP_CMD environment variable for setup agent env from master process
+  class doc(ri)?
+  
   
 (moved DONE list to CHANGES file)
