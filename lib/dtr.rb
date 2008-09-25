@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-DTRVERSION="0.0.4"
+DTRVERSION="0.0.5"
 DTROPTIONS = {} unless defined?(DTROPTIONS)
 
 require 'fileutils'

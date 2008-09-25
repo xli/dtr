@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name = 'dtr'
-  spec.version = "0.0.4"
+  spec.version = "0.0.5"
   spec.summary = "DTR is a distributed test runner to run tests on distributed computers for decreasing build time."
 
   #### Dependencies and requirements.
