@@ -158,7 +158,7 @@ module DTR
     
     def initialize
       files = (defined?($argv_dup) ? $argv_dup : []).dup
-      @env = {:libs => $LOAD_PATH.dup, :files => files, :created_at => Time.now.to_s, :dtr_master_env => ENV['DTR_MASTER_ENV'], :identifier => "#{Time.now.to_s}:#{rand}:#{object_id}"}
+      @env = {:libs => $LOAD_PATH.dup, :files => files, :created_at => Time.now.to_s, :dtr_master_env => ENV['DTR_MASTER_ENV'], :agent_env_setup_cmd => ENV['DTR_AGENT_ENV_SETUP_CMD'], :identifier => "#{Time.now.to_s}:#{rand}:#{object_id}"}
     end
     
     def [](key)

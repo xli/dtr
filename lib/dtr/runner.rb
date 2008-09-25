@@ -39,15 +39,15 @@ module DTR
 
   class RunnerAgent
     
-    def self.start(runner_names=["Distributed Test Runner"], setup_cmd=nil)
+    def self.start(runner_names=["Distributed Test Runner"], agent_env_setup_cmd=nil)
       DTR.with_monitor do 
-        new(runner_names, setup_cmd).launch
+        new(runner_names, agent_env_setup_cmd).launch
       end
     end
     
-    def initialize(runner_names, setup_cmd)
+    def initialize(runner_names, agent_env_setup_cmd)
       @runner_names = runner_names.is_a?(Array) ? runner_names : [runner_names.to_s]
-      @setup_cmd = setup_cmd || ""
+      @agent_env_setup_cmd = agent_env_setup_cmd || ""
       @runner_pids = []
       @herald = nil
       @working_env_key = :working_env
@@ -85,7 +85,7 @@ module DTR
           kill_all_runners
           ENV['DTR_MASTER_ENV'] = working_env[:dtr_master_env]
 
-          if Cmd.execute(@setup_cmd)
+          if Cmd.execute(@agent_env_setup_cmd || working_env[:agent_env_setup_cmd])
             @runner_names.each do |name| 
               @runner_pids << drb_fork { Runner.start name, working_env }
             end
