@@ -256,7 +256,6 @@ module DTR
             
             DTR.service_provider.setup_working_env WorkingEnv.refresh
             
-            puts 'Refreshed dtr working environment, looking for runner service...' unless ENV['DTR_ENV'] == 'test'
             DTR.info {"Master process started at #{Time.now}"}
             result = ThreadSafeTestResult.new(result)
             __run__(result) do |channel, value|

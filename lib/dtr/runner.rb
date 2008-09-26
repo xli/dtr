@@ -77,7 +77,7 @@ module DTR
       working_env = {}
       @env_store[@working_env_key] = nil
       loop do
-        if @env_store[@working_env_key] && working_env[:identifier] != @env_store[@working_env_key][:identifier]
+        if @env_store[@working_env_key] && working_env != @env_store[@working_env_key]
           working_env = @env_store[@working_env_key]
 
           DTR.info "=> Got new working environment created at #{working_env[:created_at]}"
@@ -182,7 +182,7 @@ module DTR
           if working_env[:files].blank?
             DTR.error "No test files need to load?(working env: #{working_env.inspect})"
           else
-            @env_store[@key] = working_env if @env_store[@key].nil? || @env_store[@key][:identifier] != working_env[:identifier]
+            @env_store[@key] = working_env if @env_store[@key].nil? || @env_store[@key] != working_env
             @provider.wait_until_teardown
           end
 

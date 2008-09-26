@@ -122,8 +122,30 @@ module DTR
     end
     
     def setup_working_env(env)
-      clear_workspace
       lookup_ring.write [:working_env, env]
+      envs = all_working_envs
+      if envs.first != env
+        unless ENV['DTR_ENV'] == 'test'
+          puts "There are other DTR tasks in queue. Your DTR task request has been queued."
+          puts "You can use 'dtr -c' to clean all DTR tasks, then your task would be picked up directly."
+        end
+      end
+      
+      printing_stars = false
+      while(all_working_envs.first != env)
+        print '+'
+        printing_stars = true
+        sleep(5)
+      end
+      
+      if all_working_envs.empty?
+        lookup_ring.write [:working_env, env]
+      end
+      
+      unless ENV['DTR_ENV'] == 'test'
+        puts '' if printing_stars
+        puts 'Showtime, looking for runner service...'
+      end
     end
     
     def teardown_working_env
@@ -138,8 +160,12 @@ module DTR
       DRb.stop_service
     end
     
+    def all_working_envs
+      lookup_ring.read_all([:working_env, nil]).collect{|tuple| tuple.last}
+    end
+    
     def clear_workspace
-      lookup_ring.read_all([:working_env, nil]).size.times do
+      all_working_envs.size.times do
         lookup_ring.take [:working_env, nil] rescue nil
       end rescue nil
       runners.size.times do

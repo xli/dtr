@@ -28,6 +28,10 @@ class NilClass
   end
 end
 
+unless defined?(DTROPTIONS)
+  DTROPTIONS = {}
+end
+
 module DTR
   
   MESSAGE_KEY = :message
@@ -165,8 +169,16 @@ module DTR
       @env[key]
     end
     
+    def []=(key, value)
+      @env[key] = value
+    end
+    
     def to_s
       @env.inspect
+    end
+    
+    def ==(obj)
+      obj && obj[:identifier] == self[:identifier]
     end
   end
 end
