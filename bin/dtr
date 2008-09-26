@@ -11,7 +11,7 @@ end
 NOTES = <<-NOTES
 ----------------
 Notes: 
-  * The default value of server address is 'localhost'. If DTR Server start with 'localhost', it would not be found by remote machine. If you run the runner agent on remote machine, you should start the server and runner agent with same server address specified, e.g. dtr -s -a 10.18.1.1, dtr -r r1,r2 -a 10.18.1.1
+  * The default value of broadcast address is 'localhost'. If DTR Server start with 'localhost', it would not be found by remote machine. If you run the runner agent on remote machine, you should start the server and runner agent with same server address specified, e.g. dtr -s -a 10.18.255.255, dtr -r r1,r2 -a 10.18.255.255
   * Runners specified by -r option will be started in different processes by the runner agent.
   * You need install gem daemons to use -D option.
   * When specify -D option, dtr_runners.pid/dtr_server.pid will be created in the directory to store the daemon process pid. And the output of the process will be print into *.output file.
@@ -26,11 +26,11 @@ opts = OptionParser.new do |opts|
   opts.separator "Synopsis:"
   opts.separator "dtr -s"
   opts.separator "dtr -r runner1_name,runner2_name"
-  opts.separator "dtr -a dtr_server_ip -m"
+  opts.separator "dtr -a broadcast_ip -m"
   opts.separator ""
   opts.separator "Options:"
   
-  opts.on_tail("-m", "--monitor", "Monitor the status of the dtr rinda server, e.g. dtr -a 10.11.1.2 -m") do
+  opts.on_tail("-m", "--monitor", "Monitor the status of the dtr rinda server, e.g. dtr -a 10.11.255.255 -m") do
     DTROPTIONS[:monitor] = true
   end
   
@@ -54,7 +54,7 @@ opts = OptionParser.new do |opts|
     DTROPTIONS[:names] = names.collect{|name| name.untaint}
   end
   
-  opts.on("-a", "--server_address ADDRESS", "Specify dtr server address, domain name or ip address, e.g. 192.168.0.1. Default is 'localhost'.") do |address|
+  opts.on("-a", "--broadcast_address ADDRESS", "Specify broadcast address for looking up dtr rinda server, e.g. 192.168.255.255. Default is 'localhost'.") do |address|
     if (!address.nil?) && (!address.empty?)
       DTR.broadcast_list = [address]
     end
