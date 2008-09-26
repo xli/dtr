@@ -123,33 +123,35 @@ module DTR
     
     def setup_working_env(env)
       lookup_ring.write [:working_env, env]
-      envs = all_working_envs
-      if envs.first != env
-        unless ENV['DTR_ENV'] == 'test'
-          puts "There are other DTR tasks in queue. Your DTR task request has been queued."
-          puts "You can use 'dtr -c' to clean all DTR tasks, then your task would be picked up directly."
-        end
+      if pending?(env)
+        DTR.do_print "There are other DTR tasks in queue. Your DTR task request has been queued.\n"
+        DTR.do_print "You can use 'dtr -c' to clean all DTR tasks, then your task would be picked up directly.\n"
       end
       
       printing_stars = false
-      while(all_working_envs.first != env)
-        print '+'
+      while(pending?(env))
+        DTR.do_print '+'
         printing_stars = true
         sleep(5)
       end
-      
       if all_working_envs.empty?
         lookup_ring.write [:working_env, env]
       end
       
-      unless ENV['DTR_ENV'] == 'test'
-        puts '' if printing_stars
-        puts 'Showtime, looking for runner service...'
-      end
+      DTR.do_print "\n" if printing_stars
+      DTR.do_print "Showtime, looking for runner service..."
+    end
+    
+    def pending?(env)
+      envs = all_working_envs
+      envs.first && envs.first != env
     end
     
     def teardown_working_env
-      clear_workspace
+      lookup_ring.take [:working_env, nil] rescue nil
+      runners.size.times do
+        lookup_runner.shutdown rescue nil
+      end
     end
 
     def start_service
@@ -172,7 +174,7 @@ module DTR
         lookup_runner.shutdown rescue nil
       end
     end
-
+    
     private
     def server_port
       env_store = EnvStore.new
@@ -180,7 +182,7 @@ module DTR
     end
 
     def lookup_ring
-      Rinda::TupleSpaceProxy.new(Rinda::RingFinger.new(BROADCAST_LIST, server_port).lookup_ring_any)
+      @ring ||= Rinda::TupleSpaceProxy.new(Rinda::RingFinger.new(BROADCAST_LIST, server_port).lookup_ring_any)
     end
   end
 end

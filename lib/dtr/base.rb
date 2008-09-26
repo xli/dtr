@@ -52,6 +52,12 @@ module DTR
     DTROPTIONS[:logger].level = DTROPTIONS[:log_level] || Logger::INFO
     DTROPTIONS[:logger]
   end
+  
+  def do_print(str)
+    unless ENV['DTR_ENV'] == 'test'
+      print str
+    end
+  end
 
   def debug(message=nil, &block)
     output(:debug, message, &block)
@@ -91,7 +97,7 @@ module DTR
     raise e
   end
   
-  module_function :debug, :info, :error, :output, :with_monitor, :logger, :silent?
+  module_function :debug, :info, :error, :output, :with_monitor, :logger, :silent?, :do_print
   
   class CmdInterrupt < StandardError; end
 
