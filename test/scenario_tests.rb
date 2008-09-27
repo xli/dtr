@@ -238,7 +238,6 @@ class ScenarioTests < Test::Unit::TestCase
     suite << ATestCase.suite
 
     assert_fork_process_exits_ok do
-      DTR::ServiceProvider.new.clear_workspace
       DTR::ServiceProvider.new.setup_working_env DTR::WorkingEnv.refresh
     end
     dtr_task_process = Process.fork do
