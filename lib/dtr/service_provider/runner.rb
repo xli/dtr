@@ -22,7 +22,7 @@ module DTR
       end
 
       def lookup_runner
-        lookup_ring.take([:name, 'DTR::Runner'.to_sym, nil, nil])[2]
+        lookup(:take, [:name, 'DTR::Runner'.to_sym, nil, nil])[2]
       end
 
       def all_working_runners

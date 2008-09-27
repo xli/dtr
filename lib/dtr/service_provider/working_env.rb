@@ -77,7 +77,7 @@ module DTR
       end
 
       def lookup_working_env
-        lookup_ring.read([:working_env, nil])[1]
+        lookup(:read, [:working_env, nil])[1]
       end
       
       def provide_working_env(env)

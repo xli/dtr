@@ -21,6 +21,7 @@ class ScenarioTests < Test::Unit::TestCase
       require 'scenario_test_case'
       require 'setup_agent_env_test_case'
     end
+    # puts name
     DTR.inject
   end
 
@@ -229,15 +230,18 @@ class ScenarioTests < Test::Unit::TestCase
     assert_equal 0, $?.exitstatus
     Process.waitpid p4
     assert_equal 0, $?.exitstatus
+    #wait a while, otherwise, the test_multi_dtr_tasks_should_work_with_clean_workspace would be failed sometime
+    #for clean environment? don't know yet.
+    sleep(10)
   end
 
-  def test_a_multi_dtr_tasks_should_work_with_clean_workspace
+  def test_multi_dtr_tasks_should_work_with_clean_workspace
     $argv_dup = ['a_test_case.rb']
     suite = Test::Unit::TestSuite.new(name)
     suite << ATestCase.suite
 
     assert_fork_process_exits_ok do
-      DTR::ServiceProvider::Base.new.setup_working_env DTR::WorkingEnv.refresh
+      DTR::ServiceProvider::Base.new.provide_working_env DTR::WorkingEnv.refresh
     end
     dtr_task_process = Process.fork do
       result = runit(suite)

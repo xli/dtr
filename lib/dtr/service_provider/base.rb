@@ -77,6 +77,15 @@ module DTR
       end
 
       private
+      
+      def lookup(method, stuff, timeout=10)
+        timeout = 10
+        until obj = lookup_ring.send(method, stuff, timeout)
+          sleep(1)
+        end
+        obj
+      end
+      
       def server_port
         env_store = EnvStore.new
         env_store[:port].to_i > 0 ? env_store[:port].to_i : PORT
