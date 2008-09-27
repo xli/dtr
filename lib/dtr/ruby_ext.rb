@@ -12,20 +12,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'dtr/ruby_ext'
-require 'dtr/utils'
-require 'dtr/working_env.rb'
-require 'dtr/service_provider/base'
-require 'dtr/service_provider/runner'
-require 'dtr/service_provider/working_env'
-require 'dtr/service_provider/message'
-require 'dtr/service_provider/monitor'
+class Array
+  def blank?
+    empty?
+  end
+end
 
-module DTR
-  ServiceProvider::Base.class_eval do
-    include ServiceProvider::WorkingEnv
-    include ServiceProvider::Runner
-    include ServiceProvider::Message
-    include ServiceProvider::Monitor
+class NilClass
+  def blank?
+    true
+  end
+end
+
+class Null
+  class << self
+    def instance(overrides = {})
+      self.new.define_overrides(overrides)
+    end  
+  end
+
+  #override Object#id for removing the warning
+  def id
+    nil
+  end
+
+  def method_missing(sym, *args, &block)
+    nil
+  end
+
+  def define_overrides(overrides)
+    overrides.each_pair do |key, value|
+      (class << self; self; end;).send(:define_method, key, lambda { value })
+    end
+    self
   end
 end

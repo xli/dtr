@@ -21,7 +21,7 @@ module DTR
 
   def start_server
     require 'dtr/service_provider'
-    ServiceProvider.new.start
+    ServiceProvider::Base.new.start
   end
   
   def start_runners
@@ -50,13 +50,13 @@ module DTR
   
   def runners
     require 'dtr/service_provider'
-    ServiceProvider.new.runners
+    ServiceProvider::Base.new.all_working_runners
   end
   
   def monitor
     require 'dtr/service_provider'
     DTROPTIONS[:log_file] = 'dtr_monitor.log'
-    ServiceProvider.new.monitor
+    ServiceProvider::Base.new.monitor
   end
   
   def stop_runners_daemon_mode
@@ -104,7 +104,7 @@ module DTR
   
   def clean_server
     require 'dtr/service_provider'
-    ServiceProvider.new.clear_workspace
+    ServiceProvider::Base.new.clear_workspace
   end
   
   module_function :start_server, :start_runners, :launch_runners, :lib_path, :broadcast_list=, :runners, :with_daemon_gem, :start_runners_daemon_mode, :stop_runners_daemon_mode, :start_server_daemon_mode, :stop_server_daemon_mode, :monitor, :port=, :clean_server

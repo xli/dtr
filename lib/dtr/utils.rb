@@ -13,20 +13,7 @@
 # limitations under the License.
 
 require 'pstore'
-
 require 'logger'
-
-class Array
-  def blank?
-    empty?
-  end
-end
-
-class NilClass
-  def blank?
-    true
-  end
-end
 
 unless defined?(DTROPTIONS)
   DTROPTIONS = {}
@@ -34,7 +21,7 @@ end
 
 module DTR
   
-  MESSAGE_KEY = :message
+  MESSAGE_KEY = :message unless defined?(MESSAGE_KEY)
   
   def logger
     return DTROPTIONS[:logger] if DTROPTIONS[:logger]
@@ -114,7 +101,7 @@ module DTR
   
   class EnvStore
 
-    FILE_NAME = '.dtr_env_pstore'
+    FILE_NAME = '.dtr_env_pstore' unless defined?(FILE_NAME)
 
     def self.destroy
       File.delete(FILE_NAME) if File.exist?(FILE_NAME)
@@ -155,36 +142,4 @@ module DTR
     end
   end
 
-  class WorkingEnv
-  
-    @@current = nil
-    def self.refresh
-      @@current = self.new
-    end
-    
-    def self.current
-      @@current
-    end
-    
-    def initialize
-      files = (defined?($argv_dup) ? $argv_dup : []).dup
-      @env = {:libs => $LOAD_PATH.dup, :files => files, :created_at => Time.now.to_s, :dtr_master_env => ENV['DTR_MASTER_ENV'], :agent_env_setup_cmd => ENV['DTR_AGENT_ENV_SETUP_CMD'], :identifier => "#{Time.now.to_s}:#{rand}:#{object_id}"}
-    end
-    
-    def [](key)
-      @env[key]
-    end
-    
-    def []=(key, value)
-      @env[key] = value
-    end
-    
-    def to_s
-      @env.inspect
-    end
-    
-    def ==(obj)
-      obj && obj[:identifier] == self[:identifier]
-    end
-  end
 end

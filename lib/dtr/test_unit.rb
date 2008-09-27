@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'dtr/base'
 require 'dtr/service_provider'
 require 'test/unit/testcase'
 require 'test/unit/util/observable'
@@ -37,7 +36,7 @@ module DTR
   end
   
   def service_provider
-    $dtr_service_provider ||= DTR::ServiceProvider.new
+    $dtr_service_provider ||= DTR::ServiceProvider::Base.new
   end
 
   module_function :reject, :inject, :service_provider

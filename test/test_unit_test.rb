@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/test_helper'
+require File.dirname(__FILE__) + '/unit_test_helper'
 require 'dtr/test_unit.rb'
 
 class InjectTest < Test::Unit::TestCase

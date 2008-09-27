@@ -1,6 +1,7 @@
-require File.dirname(__FILE__) + '/test_helper'
-require 'dtr/base.rb'
-DTROPTIONS = {}
+require File.dirname(__FILE__) + '/unit_test_helper'
+
+load 'dtr/utils.rb'
+
 class LoggerTest < Test::Unit::TestCase
   def setup
     @env_store = DTR::EnvStore.new

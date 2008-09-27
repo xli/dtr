@@ -339,7 +339,7 @@ task :c10 do
 end
 
 task :runners do
-  runners = DTR.runners
+  runners = DTR.all_working_runners
   if runners.empty?
     puts "No runner available!"
   else

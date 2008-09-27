@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'dtr/base'
 require 'dtr/service_provider'
 require 'test/unit'
 require 'drb'
@@ -32,7 +31,7 @@ end
 module DTR
   
   def service_provider
-    ServiceProvider.new
+    ServiceProvider::Base.new
   end
   
   module_function :service_provider
@@ -177,7 +176,7 @@ module DTR
       loop do
         DTR.info "=> Herald starts off..."
         begin
-          working_env = @provider.working_env
+          working_env = @provider.lookup_working_env
           DTR.debug { "working env: #{working_env.inspect}" }
           if working_env[:files].blank?
             DTR.error "No test files need to load?(working env: #{working_env.inspect})"
@@ -219,7 +218,7 @@ module DTR
 
       @provider = DTR.service_provider
 
-      @provider.provide(self.new(@provider, name, env[:identifier]))
+      @provider.provide_runner(self.new(@provider, name, env[:identifier]))
       DTR.info "=> Runner #{name} provided"
       DRb.thread.join if DRb.thread
     end
@@ -250,12 +249,12 @@ module DTR
     ensure
       DTR.debug {"#{name}: done #{test}"}
       @run_finished << test.name
-      @provider.provide(self)
+      @provider.provide_runner(self)
     end
     
     def reboot
       DTR.info "#{self} is rebooting. Ran #{@started.size} tests, finished #{@run_finished.size}."
-      @provider.provide(self)
+      @provider.provide_runner(self)
     end
     
     def shutdown

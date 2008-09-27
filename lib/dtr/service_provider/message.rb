@@ -12,20 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'dtr/ruby_ext'
-require 'dtr/utils'
-require 'dtr/working_env.rb'
-require 'dtr/service_provider/base'
-require 'dtr/service_provider/runner'
-require 'dtr/service_provider/working_env'
-require 'dtr/service_provider/message'
-require 'dtr/service_provider/monitor'
-
 module DTR
-  ServiceProvider::Base.class_eval do
-    include ServiceProvider::WorkingEnv
-    include ServiceProvider::Runner
-    include ServiceProvider::Message
-    include ServiceProvider::Monitor
+  module ServiceProvider
+    module Message
+      def send_message(message)
+        lookup_ring.write [:agent_heartbeat, Socket.gethostname, message, Time.now], 2
+      end
+      
+      def new_message_monitor
+        lookup_ring.notify("write", [:agent_heartbeat, nil, nil, nil])
+      end
+    end
   end
 end

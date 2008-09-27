@@ -1,6 +1,5 @@
 require File.dirname(__FILE__) + '/test_helper'
 require 'test/unit/ui/console/testrunner'
-require 'dtr/service_provider'
 require 'dtr/test_unit'
 require 'dtr'
 require 'socket'
@@ -238,7 +237,7 @@ class ScenarioTests < Test::Unit::TestCase
     suite << ATestCase.suite
 
     assert_fork_process_exits_ok do
-      DTR::ServiceProvider.new.setup_working_env DTR::WorkingEnv.refresh
+      DTR::ServiceProvider::Base.new.setup_working_env DTR::WorkingEnv.refresh
     end
     dtr_task_process = Process.fork do
       result = runit(suite)
@@ -247,7 +246,7 @@ class ScenarioTests < Test::Unit::TestCase
     end
     sleep(2)
     assert_fork_process_exits_ok do
-      DTR::ServiceProvider.new.clear_workspace
+      DTR::ServiceProvider::Base.new.clear_workspace
     end
     Process.waitpid dtr_task_process
     assert_equal 0, $?.exitstatus
