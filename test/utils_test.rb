@@ -1,5 +1,4 @@
 require File.dirname(__FILE__) + '/unit_test_helper'
-require 'dtr/utils.rb'
 
 class UtilsTest < Test::Unit::TestCase
   def setup
