@@ -29,9 +29,9 @@ module DTR
   end
   
   def launch_runners(names, setup=nil)
-    require 'dtr/runner'
+    require 'dtr/agent'
     names = names || "DTR(#{Time.now})"
-    DTR::RunnerAgent.start(names, setup)
+    DTR::Agent.start(names, setup)
   end
   
   def lib_path

@@ -13,6 +13,7 @@
 # limitations under the License.
 
 require 'dtr/service_provider'
+require 'dtr/decorator'
 require 'test/unit/testcase'
 require 'test/unit/util/observable'
 require 'monitor'

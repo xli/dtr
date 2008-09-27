@@ -15,22 +15,8 @@
 require 'drb'
 require 'rinda/ring'
 require 'rinda/tuplespace'
-require 'socket'
 
 module DTR
-  def decorate_error_message(msg, source=nil)
-    source ? "#{source} from #{Socket.gethostname}: #{msg}" : "From #{Socket.gethostname}: #{msg}"
-  end
-  
-  module_function :decorate_error_message
-
-  class RunnerRuntimeException < StandardError
-    def initialize(e)
-      super(DTR.decorate_error_message(e.message, e.class.name))
-      set_backtrace(e.backtrace)
-    end
-  end
-
   module ServiceProvider
     class Base
       def self.broadcast_list=(list)
