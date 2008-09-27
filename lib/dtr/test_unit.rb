@@ -266,7 +266,7 @@ module DTR
               end
             end
             DRbTestRunner.counter.wait_until_complete
-            DTR.debug { "==> teardown" }
+            DTR.debug { "==> all done" }
             DTR.service_provider.teardown_working_env
           end
           DTR.info { "end of run suite(#{name}), test result status: #{result}, counter status: #{DRbTestRunner.counter}"}
