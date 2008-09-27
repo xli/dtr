@@ -24,6 +24,9 @@ module DTR
         
         def apply
           do_apply
+          at_exit {
+            @service_provider.teardown_working_env
+          }
           need_wait = false
           until our_turn?
             unless need_wait
@@ -37,6 +40,12 @@ module DTR
 
           DTR.do_print "\n" if need_wait
           DTR.do_print "Showtime, looking for runner service..."
+          self
+        end
+        
+        def working?
+          envs = @service_provider.all_working_envs
+          envs.first && envs.first == @working_env
         end
 
         private

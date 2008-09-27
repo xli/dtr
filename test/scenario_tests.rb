@@ -231,7 +231,7 @@ class ScenarioTests < Test::Unit::TestCase
     assert_equal 0, $?.exitstatus
   end
 
-  def test_multi_dtr_tasks_should_work_with_clean_workspace
+  def test_a_multi_dtr_tasks_should_work_with_clean_workspace
     $argv_dup = ['a_test_case.rb']
     suite = Test::Unit::TestSuite.new(name)
     suite << ATestCase.suite

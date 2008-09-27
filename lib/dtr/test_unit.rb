@@ -68,9 +68,16 @@ module DTR
       end
     end
     
-    def wait_until_complete
+    def wait_until_complete(&block)
       synchronize do
-        @complete_cond.wait_until {complete?}
+        @complete_cond.wait_until do
+          if working = block.call
+            complete?
+          else
+            DTR.do_print "\nOur working environment is took away by someone else!\n"
+            true
+          end
+        end
       end
     end
     
@@ -253,7 +260,7 @@ module DTR
               ActiveRecord::Base.clear_active_connections! rescue nil
             end
             
-            DTR.service_provider.setup_working_env WorkingEnv.refresh
+            env = DTR.service_provider.setup_working_env WorkingEnv.refresh
             
             DTR.info {"Master process started at #{Time.now}"}
             result = ThreadSafeTestResult.new(result)
@@ -264,9 +271,10 @@ module DTR
                 DRbTestRunner.counter.add_finish_count
               end
             end
-            DRbTestRunner.counter.wait_until_complete
+            DRbTestRunner.counter.wait_until_complete do
+              env.working?
+            end
             DTR.debug { "==> all done" }
-            DTR.service_provider.teardown_working_env
           end
           DTR.info { "end of run suite(#{name}), test result status: #{result}, counter status: #{DRbTestRunner.counter}"}
         end
