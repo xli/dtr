@@ -5,7 +5,6 @@ Gem::Specification.new do |spec|
 
   #### Dependencies and requirements.
 
-  spec.add_dependency('daemons', '> 1.0.7')
   #s.requirements << ""
   # p Dir.glob("lib/**/*.rb") + Dir.glob("test/**/*.rb") + Dir.glob("testdata/**/*")
   spec.files =  ["lib/dtr/base.rb", "lib/dtr/raketasks.rb", "lib/dtr/runner.rb", "lib/dtr/service_provider.rb", "lib/dtr/test_unit.rb", "lib/dtr/test_unit_injection.rb", "lib/dtr.rb", "bin/dtr", "bin", "CHANGES", "doc", "dtr.gemspec", "install.rb", "lib", "LICENSE.TXT", "Rakefile", "README", "TODO"]

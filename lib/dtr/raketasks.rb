@@ -18,7 +18,7 @@ require 'rake/testtask'
 
 module DTR
   class MPTask < Rake::TestTask
-    attr_accessor :processes, :runner_options
+    attr_accessor :processes
     
     def define
       @libs.unshift DTR.lib_path
@@ -40,7 +40,9 @@ module DTR
               " #{option_list}"
           end
         ensure
-          DTR.stop_agent_daemon_mode rescue nil
+          if defined?(@agent)
+            Process.kill 'TERM', @agent rescue nil
+          end
         end
       end
       self
@@ -55,7 +57,11 @@ module DTR
       return if self.processes.to_i <= 0
       runner_names = []
       self.processes.to_i.times {|i| runner_names << "runner#{i}"}
-      %x[dtr -r #{runner_names.join(',')} -D #{runner_options}]
+      
+      @agent = Process.fork do
+        DTROPTIONS[:names] = runner_names unless DTROPTIONS[:names]
+        DTR.start_agent
+      end
     end
   end
 end

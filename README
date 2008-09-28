@@ -3,20 +3,18 @@
 Supporting DTR version: 0.0.x
 
 This package contains DTR, a distributed test runner program for decreasing 
-time of running ruby tests, only supporting Test::Unit ruby testing framework 
-right now.
+time of running ruby tests, only supporting Test::Unit ruby testing framework
+currently.
 
 DTR has the following features:
 
 * Run tests in mutli processes or on distributed machines.
 
-* Hot plug distributed runner agents.
+* Hot plug distributed agents.
 
 * Runtime injection, all tests run in same environment.
 
-DTR works in three parts: DTR Server, Runner Agent and DTR Master.
-
-* DTR Server is a Rinda Server which allows DRb services and clients to automatically find each other without knowing where they live.
+DTR works in two parts: Runner Agent and DTR Master.
 
 * Runner Agent is a DRb service hosting on distributed machines to run tests. For using 'fork' to create runner process, Runner Agent can't run on Windows directly.
 
@@ -103,7 +101,7 @@ options would be cached in the directory running the test or any other dtr proce
 
 == Run tests in multi-processes on one machine
 
-For running Runner in multi-processes, you need install gem 'daemons'.
+For running Runner in multi-processes.
 The following is the test task example in the rake file:
 
   require 'dtr/raketasks'
@@ -112,107 +110,6 @@ The following is the test task example in the rake file:
     t.test_files = FileList['test/*test.rb']
     t.processes = 2 #default is 2
   end
-
-== Setup a development build grid 
-
-This example is a build grid shared within developers to run unit tests 
-before commit code. We'll use Mercurial to synchronize code between Runner 
-Agent machines and developer machine.
-
-=== Background
-
-Suppose I am a developer working on a rails project pet_store checked out 
-at '~/pet_store'. I have a MacBook called M1 and another 2 Mac-minis called 
-M2 and M3. My plan is distributing tests running on M1 to M2 and M3 before 
-commit code. M3 also will be DTR Server. All machines are accessable in 
-local network and IPs are M1_IP, M2_IP and M3_IP. Mercurial and DTR are 
-installed on all machines. And for running dtr runner agent in daemons mode, 
-you need install gem daemons. The test environment will be running on Mysql. 
-All machines are installed Mysql accessed by the following database.yml 
-configuration:
-
-    development:
-      database: pet_store_development
-      adapter: mysql
-      username: root
-      password:
-      host: localhost
-    test:
-      database: pet_store_test
-      adapter: mysql
-      username: root
-      password:
-      host: localhost
-
-=== DTR Server
-
-* Start DTR Server on M3: dtr -s -a M3_IP. 
-
-=== Setup Mercurial repository on M1
-
-* Init Mercurial repository in '~/pet_store' directory: hg init
-* Edit .hgignore file to ignore files don't need while running tests. In this example, we will ignore files: db/schema.rb, .dtr_env_pstore, dtr_agent.pid and dtr_server*; and directories: public, tmp and log.
-* Commit .hgignore and then commit code into Mercurial repository.
-* Start 'hg serve' in '~/pet_store', the default port would be 8000. We'll use the default port in this example.
-* We'll clone the repository to M2 and M3 later.
-
-=== Build Script
-
-* Add an environment variable on all machines: export DEV_BUILD_SERVER=M3_IP
-* Add an environment variable on development machine M1: export DTR_MASTER_ENV=http: //M1_IP:8000/pet_store. The environment variable DTR_MASTER_ENV would be copied to all DTR Runner Agent for sharing information between DTR Master machine and DTR Runner Agents.
-* Create a rake file at '~/pet_store' directory called: dtr_tasks.rake
-    
-    DEV_BUILD_SERVER = ENV['DEV_BUILD_SERVER']
-    DEV_REPOSITORY_URL = ENV['DTR_MASTER_ENV']
-    
-    task :dtr => ['hg:check', 'dtr:uf']
-    
-    namespace :hg do
-      task :reinit do
-        Dir.glob("*").each do |f|
-          #remove all files except files start with 'dtr_' including dtr runner pid file and current file dtr_tasks.rake
-          next if f =~ /^dtr_/  
-          FileUtils.rm_rf(f)
-        end
-        FileUtils.rm_rf(".hg")
-        FileUtils.rm_rf(".hgignore")
-        puts %x[hg init]
-        puts %x[hg pull -u -y #{DEV_REPOSITORY_URL}]
-        puts %x[mkdir tmp]
-        puts %x[mkdir log]
-      end
-      task :check do
-        http = Net::HTTP.new("localhost", "8000")
-        begin
-          http.get("/")
-        rescue Exception
-          raise "Mercurial server is not running!"
-        end
-        
-        raise "Please commit changes into Mercurial repository" if %x[hg st] =~ /.+/
-      end
-    end
-    
-    namespace :dtr do
-      task :runner_agent do
-        puts %x[dtr -R;dtr -r runner -a '#{DEV_BUILD_SERVER}' -i 'rake --rakefile dtr_tasks.rake hg:reinit;rake db:migrate db:test:prepare' -D]
-      end
-
-      require 'dtr'
-
-      DTR.broadcast_list = [DEV_BUILD_SERVER]
-      
-      DTR::MPTask.new(:uf) do |t|
-        t.libs << "test"
-        t.test_files = FileList['test/unit/**/*test.rb', 'test/functional/**/*test.rb']
-        t.processes = ENV['P'] || 1
-        t.runner_options = "-a '#{DEV_BUILD_SERVER}' -i 'rake db:migrate db:test:prepare'"
-        t.verbose = false
-      end
-    end
-
-* The script above can re-init Mercurial repository. Runner Agent will run the 'hg:reinit' task before start Runner(see the 'runner_agent' task in the script above), so that Runner Agent can support any developer's codebase to run tests.
-* Commit dtr_tasks.rake into Mercurial repository.
 
 === Runner Agent
 
@@ -263,8 +160,6 @@ DTR client is invoked from the command line using:
   -i, --setup COMMAND              Set command for initializing test runner test environment, e.g. 'rake db:test:prepare'. Default is do nothing.
   -m, --monitor                    Monitor the status of the dtr rinda server, e.g. dtr -a 10.11.1.2 -m
   -b, --be_silent                  Only show error messages
-  -D, --daemon                     Start server/agent in daemon mode. Gem 'daemons' must be installed
-  -R, --stop_agent                 Stop agent run in daemon mode.
   -d, --debug                      output debug log
   -v, --version                    Show version
   -h, --help                       Show this help doc

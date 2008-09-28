@@ -13,8 +13,6 @@ NOTES = <<-NOTES
 Notes: 
   * The default value of broadcast address is 'localhost'. If DTR Server start with 'localhost', it would not be found by remote machine. If you run the runner agent on remote machine, you should start the server and runner agent with same server address specified, e.g. dtr -s -a 10.18.255.255, dtr -r r1,r2 -a 10.18.255.255
   * Runners specified by -r option will be started in different processes by the runner agent.
-  * You need install gem daemons to use -D option.
-  * When specify -D option, dtr_agent.pid/dtr_server.pid will be created in the directory to store the daemon process pid. And the output of the process will be print into *.output file.
 
 DTR is a distributed test runner program for decreasing time of running ruby tests based on ruby 'test/unit' package.
 For additional information, see http://dtr.rubyforge.org/
@@ -55,15 +53,7 @@ opts = OptionParser.new do |opts|
   opts.on("-i", "--setup COMMAND", "Set command for initializing test runner test environment, e.g. 'rake db:test:prepare'. Default is do nothing.") do |command|
     DTROPTIONS[:setup] = command.untaint
   end
-  
-  opts.on_tail("-D", "--daemon", "Start server/agent in daemon mode. Gem 'daemons' must be installed") do
-    DTROPTIONS[:daemon] = true
-  end
-  
-  opts.on_tail("-R", "--stop_agent", "Stop agent run in daemon mode.") do
-    DTR.stop_agent_daemon_mode
-  end
-  
+
   opts.on_tail("-d", "--debug", "output debug log") do
     DTROPTIONS[:log_level] = Logger::DEBUG
   end
@@ -88,17 +78,9 @@ if no_argv
 end
 
 if DTROPTIONS[:names]
-  if DTROPTIONS[:daemon]
-    DTR.start_agent_daemon_mode
-  else
-    DTR.start_agent
-  end
+  DTR.start_agent
 end
 
 if DTROPTIONS[:monitor]
-  if DTROPTIONS[:daemon]
-    puts "Can't start monitor with daemon mode."
-  else
-    DTR.monitor
-  end
+  DTR.monitor
 end
