@@ -25,6 +25,9 @@ module DTR
       end
 
       def hypnotize
+        at_exit {
+          Process.kill 'TERM', @worker rescue nil if @worker
+        }
         loop do
           next unless @service.listen == "wakeup"
 

@@ -29,12 +29,10 @@ module DTR
     DTROPTIONS[:logger] = if DTROPTIONS[:log_level] == Logger::DEBUG
       Logger.new(STDOUT)
     else
-      log_file = if File.exist?('log')
-        File.join("log", DTROPTIONS[:log_file] || 'dtr.log')
-      else
-        DTROPTIONS[:log_file] || 'dtr.log'
-      end
-      Logger.new("./#{log_file}", 1, 5*1024*1024)
+      DTROPTIONS[:log_file] ||= 'dtr.log'
+      dir = File.exist?('log') ? 'log' : '/tmp'
+      log_file = File.join(dir,  DTROPTIONS[:log_file])
+      Logger.new(log_file, 1, 5*1024*1024)
     end
     DTROPTIONS[:logger].datetime_format = "%m-%d %H:%M:%S"
     DTROPTIONS[:logger].level = DTROPTIONS[:log_level] || Logger::INFO
