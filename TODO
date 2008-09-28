@@ -3,8 +3,12 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
-  hang-on test and give suggestion, when there is working env on dtr server.
-  class doc(ri)?
-  
+  clean kill sub process code
+  clean utils: separates into files
+  launch master with specific rinda server port for testing multi master
+     * auto change rinda server port ?
+  show agent log in master process log
+  clean DTROPTIONS
+  clean dtr/test_unit.rb
   
 (moved DONE list to CHANGES file)

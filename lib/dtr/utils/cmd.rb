@@ -13,27 +13,16 @@
 # limitations under the License.
 
 module DTR
-  class WorkingEnv
+  class CmdInterrupt < StandardError; end
 
-    def initialize
-      files = (defined?($argv_dup) ? $argv_dup : []).dup
-      @env = {:libs => $LOAD_PATH.dup, :files => files, :created_at => Time.now.to_s, :dtr_master_env => ENV['DTR_MASTER_ENV'], :agent_env_setup_cmd => ENV['DTR_AGENT_ENV_SETUP_CMD'], :identifier => "#{Time.now.to_s}:#{rand}:#{object_id}", :host => Socket.gethostname}
-    end
-    
-    def [](key)
-      @env[key]
-    end
-    
-    def []=(key, value)
-      @env[key] = value
-    end
-    
-    def to_s
-      @env.inspect
-    end
-    
-    def ==(obj)
-      obj && obj[:identifier] == self[:identifier]
+  class Cmd
+    def self.execute(cmd)
+      return true if cmd.nil? || cmd.empty?
+      DTR.info {"Executing: #{cmd.inspect}"}
+      output = %x[#{cmd} 2>&1]
+      DTR.info {"Execution is done, status: #{$?.exitstatus}"}
+      DTR.error {"#{cmd.inspect} output:\n#{output}"} if $?.exitstatus != 0
+      $?.exitstatus == 0
     end
   end
 end

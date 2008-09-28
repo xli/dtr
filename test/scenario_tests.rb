@@ -15,7 +15,7 @@ class ScenarioTests < Test::Unit::TestCase
   
   def setup
     # puts name
-    # start_agents
+    start_agents
     unless defined?(ATestCase)
       require 'a_test_case'
       require 'a_test_case2'
@@ -30,7 +30,7 @@ class ScenarioTests < Test::Unit::TestCase
 
   def teardown
     DTR.reject
-    # stop_agents
+    stop_agents
     $argv_dup = nil
     Process.waitall
   end

@@ -284,7 +284,7 @@ module DTR
     end
     DTR.service_provider.do_start
     yelling = DTR.service_provider.wakeup_agents
-    DTR.service_provider.provide_working_env WorkingEnv.refresh
+    DTR.service_provider.provide_working_env WorkingEnv.new
     DTR.info {"Master process started at #{Time.now}"}
     
     block.call

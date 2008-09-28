@@ -3,12 +3,12 @@ require 'dtr/working_env.rb'
 
 class WorkingEnvTest < Test::Unit::TestCase
   def test_identifier_of_working_env
-    assert_not_equal DTR::WorkingEnv.refresh[:identifier], DTR::WorkingEnv.refresh[:identifier]
+    assert_not_equal DTR::WorkingEnv.new[:identifier], DTR::WorkingEnv.new[:identifier]
   end
   
   def test_working_env_equal
-    env1 = DTR::WorkingEnv.refresh
-    env2 = DTR::WorkingEnv.refresh
+    env1 = DTR::WorkingEnv.new
+    env2 = DTR::WorkingEnv.new
     assert_not_equal env1, env2
     env2[:identifier] = env1[:identifier]
     assert env1 == env2
