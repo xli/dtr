@@ -22,8 +22,6 @@ end
 
 module DTR
   
-  MESSAGE_KEY = :message unless defined?(MESSAGE_KEY)
-  
   def logger
     return DTROPTIONS[:logger] if DTROPTIONS[:logger]
     DTROPTIONS[:logger] = if DTROPTIONS[:log_level] == Logger::DEBUG

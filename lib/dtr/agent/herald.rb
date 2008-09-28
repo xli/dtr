@@ -16,9 +16,8 @@ module DTR
 
   module Agent
     class Herald
-      def initialize(working_env_key, message_key=MESSAGE_KEY)
+      def initialize(working_env_key)
         @working_env_key = working_env_key
-        @message_key = message_key
         @env_store = EnvStore.new
         @service = Agent.service_provider
         start_off
