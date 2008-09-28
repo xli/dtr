@@ -11,5 +11,6 @@ Send suggestions for this list to iam@li-xiao.com
   use thread.join instead of counter to count test result size
   agent brain should wakeup when worker is dead
   tricky problem: when agent can't find test files, drb can't undump test object, the error would be: undefined method `run' for #<DRb::DRbUnknown:0x318800>
+  port configured in dtr_env_store changed by auto finding available port. (agent side)
   
 (moved DONE list to CHANGES file)
