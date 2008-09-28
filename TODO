@@ -3,11 +3,13 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
-  clean kill sub process code
   master process can't be killed
   show agent log in master process log
   clean DTROPTIONS
   clean dtr/test_unit.rb
   monitor
+  use thread.join instead of counter to count test result size
+  agent brain should wakeup when worker is dead
+  tricky problem: when agent can't find test files, drb can't undump test object, the error would be: undefined method `run' for #<DRb::DRbUnknown:0x318800>
   
 (moved DONE list to CHANGES file)

@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'test/unit'
 require 'test/unit/testcase'
 
 module DTR
@@ -32,6 +33,8 @@ module DTR
     end
   end
 end
+
+Test::Unit.run = true
 
 class Test::Unit::TestCase
   include DTR::Agent::TestCaseExt

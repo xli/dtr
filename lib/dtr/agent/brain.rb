@@ -32,7 +32,7 @@ module DTR
           end
         end
       rescue Exception => e
-        DTR.info {"Stopped by Exception => #{e.class.name}, message => #{e.message}"}
+        DTR.info {"Agent brain is stopped by Exception => #{e.class.name}, message => #{e.message}"}
       end
 
       def work(worker)
@@ -50,7 +50,7 @@ module DTR
             Worker.new(@runner_names, @agent_env_setup_cmd).launch
           rescue Interrupt, SystemExit, SignalException
           rescue Exception => e
-            DTR.info {"Stopped by Exception => #{e.class.name}, message => #{e.message}"}
+            DTR.info {"Worker is stopped by Exception => #{e.class.name}, message => #{e.message}"}
             DTR.debug {e.backtrace.join("\n")}
           end
         end

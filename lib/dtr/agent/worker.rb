@@ -89,7 +89,7 @@ module DTR
             yield
           rescue Interrupt, SystemExit, SignalException
           rescue Exception => e
-            DTR.info {"Stopped by Exception => #{e.class.name}, message => #{e.message}"}
+            DTR.info {"Worker drb fork is stopped by Exception => #{e.class.name}, message => #{e.message}"}
             DTR.debug {e.backtrace.join("\n")}
           end
         end

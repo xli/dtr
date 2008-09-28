@@ -46,7 +46,6 @@ module DTR
       attr_reader :name, :identifier
 
       def initialize(provider, name, identifier)
-        Test::Unit.run = true
         @name = name
         @provider = provider
         @identifier = identifier

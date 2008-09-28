@@ -17,7 +17,7 @@ require 'dtr'
 require 'rake/testtask'
 
 module DTR
-  class MPTask < Rake::TestTask
+  class Task < Rake::TestTask
     attr_accessor :processes
     
     def define

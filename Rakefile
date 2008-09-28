@@ -297,29 +297,15 @@ task :tag => [:prerelease] do |t, rel, reuse, reltest|
   end
 end
 
-desc "Install the jamis RDoc template"
-task :install_jamis_template do
-  require 'rbconfig'
-  dest_dir = File.join(Config::CONFIG['rubylibdir'], "rdoc/generators/template/html")
-  fail "Unabled to write to #{dest_dir}" unless File.writable?(dest_dir)
-  install "doc/jamis.rb", dest_dir, :verbose => true
-end
-
 task :c1 do
-  Dir.chdir('testdata') do
-    DTR.launch_agent(['c1'], nil)
-  end
+  DTR.launch_agent(['c1'], nil)
 end
 
 task :c3 do
-  Dir.chdir('testdata') do
-    DTR.launch_agent(['c1', 'c2', 'c3'], nil)
-  end
+  DTR.launch_agent(['c1', 'c2', 'c3'], nil)
 end
 task :c10 do
-  Dir.chdir('testdata') do
-    DTR.launch_agent(['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10'], nil)
-  end
+  DTR.launch_agent(['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10'], nil)
 end
 
 task :c2 do
@@ -331,15 +317,15 @@ task :c2 do
 end
 
 Rake::TestTask.new(:dtr) do |t|
-  t.libs << DTR.lib_path
-  t.test_files = FileList['dtr/inject_with_svn.rb', 'testdata/*.rb']
+  t.libs.unshift DTR.lib_path
+  t.test_files = FileList['dtr/test_unit_injection.rb', 'testdata/*.rb']
   t.warning = true
   t.verbose = false
 end
 
 require 'dtr/raketasks'
 
-DTR::MPTask.new :mt do |t|
+DTR::Task.new :mt do |t|
   t.test_files = FileList['testdata/*.rb']
   t.processes = 2
 end
