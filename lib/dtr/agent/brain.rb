@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'timeout'
 module DTR
   module Agent
 
@@ -35,21 +34,11 @@ module DTR
       rescue Exception => e
         DTR.info {"Stopped by Exception => #{e.class.name}, message => #{e.message}"}
       end
-      
-      def wakeup?
-        listen == "wakeup"
-      end
-      
+
       def work(worker)
-        loop do
-          #todo timeout should can be changed
-          msg = Timeout.timeout(12) do
-            listen
-          end
-          DTR.info {"Agent brain received: #{msg}"}
-          break if msg == 'sleep'
+        until sleep?
+          #keep worker working :D
         end
-      rescue Timeout::Error => e
       ensure
         DTR.info {"Killing worker"}
         Process.kill 'TERM', worker

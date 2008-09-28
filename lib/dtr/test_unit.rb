@@ -282,7 +282,7 @@ module DTR
     if defined?(ActiveRecord::Base)
       ActiveRecord::Base.clear_active_connections! rescue nil
     end
-    DTR.service_provider.do_start
+    DTR.service_provider.start_rinda
     yelling = DTR.service_provider.wakeup_agents
     DTR.service_provider.provide_working_env WorkingEnv.new
     DTR.info {"Master process started at #{Time.now}"}

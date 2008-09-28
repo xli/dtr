@@ -59,7 +59,7 @@ end
 
 Rake::TestTask.new(:test_functionals) do |t|
   t.test_files = FileList['test/scenario*.rb']
-  t.warning = true
+  t.warning = false
   t.verbose = false
 end
 

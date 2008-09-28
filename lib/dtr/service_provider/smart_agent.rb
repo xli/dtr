@@ -12,21 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'timeout'
+
 module DTR
   module ServiceProvider
 
     module SmartAgent
       AGENT_PORT = 7788
 
+      WAKEUP_MESSAGE = 'wakeup'
+      SLEEP_MESSAGE = 'sleep'
+      YELL_INTERVAL = 10
+      LISTEN_SLEEP_TIMEOUT = 15
+      
       def hypnotize_agents
-        yell_agents("sleep")
+        yell_agents(SLEEP_MESSAGE)
       end
 
       def wakeup_agents
         Thread.start do
           loop do
-            yell_agents("wakeup")
-            sleep(9)
+            yell_agents("#{WAKEUP_MESSAGE} #{@rinda_server_port}")
+            sleep(YELL_INTERVAL)
           end
         end
       end
@@ -47,12 +54,31 @@ module DTR
         end
       end
 
+      def wakeup?
+        msg, port = listen
+        if msg == WAKEUP_MESSAGE
+          ServiceProvider.port = port
+          true
+        end
+      end
+
+      def sleep?
+        msg_bag = Timeout.timeout(LISTEN_SLEEP_TIMEOUT) do
+          listen
+        end
+        DTR.info {"Received: #{msg_bag.inspect}"}
+        msg_bag.first == SLEEP_MESSAGE
+      rescue Timeout::Error => e
+        true
+      end
+      
+      private
       def listen
         unless defined?(@soc)
           @soc = UDPSocket.open
           @soc.bind('', AGENT_PORT)
         end
-        @soc.recv(1024)
+        @soc.recv(1024).split
       end
     end
   end

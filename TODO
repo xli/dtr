@@ -4,11 +4,10 @@ Send suggestions for this list to iam@li-xiao.com
 
 === To Do
   clean kill sub process code
-  clean utils: separates into files
-  launch master with specific rinda server port for testing multi master
-     * auto change rinda server port ?
+  master process can't be killed
   show agent log in master process log
   clean DTROPTIONS
   clean dtr/test_unit.rb
+  monitor
   
 (moved DONE list to CHANGES file)

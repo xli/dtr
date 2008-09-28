@@ -200,7 +200,7 @@ class ScenarioTests < Test::Unit::TestCase
     ENV['DTR_AGENT_ENV_SETUP_CMD'] = nil
   end
 
-  def xtest_multi_dtr_tasks_should_be_queued_and_processed_one_by_one
+  def test_multi_dtr_tasks_should_be_queued_and_processed_one_by_one
     $argv_dup = ['a_test_case.rb', 'a_test_case2.rb', 'a_file_system_test_case.rb']
     suite = Test::Unit::TestSuite.new('run_test_passed')
     suite << ATestCase.suite
@@ -235,9 +235,6 @@ class ScenarioTests < Test::Unit::TestCase
     assert_equal 0, $?.exitstatus
     Process.waitpid p4
     assert_equal 0, $?.exitstatus
-    #wait a while, otherwise, the test_multi_dtr_tasks_should_work_with_clean_workspace would be failed sometime
-    #for clean environment? don't know yet.
-    sleep(10)
   end
 
   def assert_fork_process_exits_ok(&block)

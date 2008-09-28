@@ -23,11 +23,22 @@ require 'dtr/service_provider/smart_agent'
 require 'dtr/service_provider/monitor'
 
 module DTR
-  ServiceProvider::Base.class_eval do
-    include ServiceProvider::WorkingEnv
-    include ServiceProvider::SmartAgent
-    include ServiceProvider::Runner
-    include ServiceProvider::Message
-    include ServiceProvider::Monitor
+  module ServiceProvider
+    def broadcast_list=(list)
+      EnvStore.new[:broadcast_list] = list
+    end
+
+    def port=(port)
+      EnvStore.new[:port] = port
+    end
+    module_function :port=, :broadcast_list=
+    
+    Base.class_eval do
+      include ServiceProvider::WorkingEnv
+      include ServiceProvider::SmartAgent
+      include ServiceProvider::Runner
+      include ServiceProvider::Message
+      include ServiceProvider::Monitor
+    end
   end
 end
