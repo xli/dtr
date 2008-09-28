@@ -14,6 +14,7 @@
 
 require 'pstore'
 require 'logger'
+require 'timeout'
 
 unless defined?(DTROPTIONS)
   DTROPTIONS = {}
@@ -61,7 +62,7 @@ module DTR
   def output(level, msg=nil, &block)
     logger.send(level) do
       message = block_given? ? block.call : msg.to_s
-      EnvStore.new << [MESSAGE_KEY, "[#{Process.pid}-#{level.to_s.upcase}] #{message}"] if DTROPTIONS[:run_with_monitor]
+      puts "log: #{message}"
       message
     end
   end
@@ -71,16 +72,9 @@ module DTR
   end
   
   def with_monitor
-    DTROPTIONS[:run_with_monitor] = true
-    EnvStore.new[MESSAGE_KEY] = []
     yield
   rescue Exception => e
     info {"stopping by Exception => #{e.class.name}, message => #{e.message}"}
-    wait_times = 0
-    until EnvStore.new[MESSAGE_KEY].empty? || wait_times > 14
-      wait_times += 1
-      sleep(1)
-    end
     raise e
   end
   

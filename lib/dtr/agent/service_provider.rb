@@ -15,7 +15,9 @@
 module DTR
   module Agent
     def service_provider
-      ServiceProvider::Base.new
+      service = ServiceProvider::Base.new
+      service.start_service
+      service
     end
     module_function :service_provider
   end

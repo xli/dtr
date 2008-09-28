@@ -15,19 +15,17 @@
 require 'dtr/service_provider'
 require 'dtr/decorator'
 
-require 'dtr/agent/base'
 require 'dtr/agent/service_provider'
+require 'dtr/agent/brain'
+require 'dtr/agent/worker'
 require 'dtr/agent/test_unit'
-require 'dtr/agent/heart'
 require 'dtr/agent/herald'
 require 'dtr/agent/runner'
 
 module DTR
   module Agent
     def start(runner_names=["Distributed Test Runner"], agent_env_setup_cmd=nil)
-      DTR.with_monitor do
-        Base.new(runner_names, agent_env_setup_cmd).launch
-      end
+      Brain.new(runner_names, agent_env_setup_cmd).hypnotize
     end
     
     module_function :start

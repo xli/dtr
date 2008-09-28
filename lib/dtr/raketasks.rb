@@ -18,7 +18,7 @@ require 'rake/testtask'
 
 module DTR
   class MPTask < Rake::TestTask
-    attr_accessor :processes, :runner_options, :start_server
+    attr_accessor :processes, :runner_options
     
     def define
       @libs.unshift DTR.lib_path
@@ -26,8 +26,7 @@ module DTR
 
       desc "Run tests" + (@name==:test ? "" : " for #{@name}")
       task @name do
-        DTR.start_server_daemon_mode if start_server?
-        start_runners
+        start_agent
         run_code = ''
         begin
           RakeFileUtils.verbose(@verbose) do
@@ -41,10 +40,7 @@ module DTR
               " #{option_list}"
           end
         ensure
-          DTR.stop_runners_daemon_mode rescue nil
-          if start_server?
-            DTR.stop_server_daemon_mode rescue nil
-          end
+          DTR.stop_agent_daemon_mode rescue nil
         end
       end
       self
@@ -54,12 +50,8 @@ module DTR
       @processes ? @processes.to_i : 2
     end
     
-    def start_server?
-      defined?(@start_server) ? @start_server : true
-    end
-    
     private
-    def start_runners
+    def start_agent
       return if self.processes.to_i <= 0
       runner_names = []
       self.processes.to_i.times {|i| runner_names << "runner#{i}"}

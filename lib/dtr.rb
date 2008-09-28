@@ -19,16 +19,11 @@ require 'fileutils'
 
 module DTR
 
-  def start_server
-    require 'dtr/service_provider'
-    ServiceProvider::Base.new.start
+  def start_agent
+    launch_agent(DTROPTIONS[:names], DTROPTIONS[:setup])
   end
   
-  def start_runners
-    launch_runners(DTROPTIONS[:names], DTROPTIONS[:setup])
-  end
-  
-  def launch_runners(names, setup=nil)
+  def launch_agent(names, setup=nil)
     require 'dtr/agent'
     names = names || "DTR(#{Time.now})"
     DTR::Agent.start(names, setup)
@@ -48,47 +43,27 @@ module DTR
     ServiceProvider.port = port 
   end
   
-  def runners
-    require 'dtr/service_provider'
-    ServiceProvider::Base.new.all_working_runners
-  end
-  
   def monitor
     require 'dtr/service_provider'
     DTROPTIONS[:log_file] = 'dtr_monitor.log'
     ServiceProvider::Base.new.monitor
   end
   
-  def stop_runners_daemon_mode
+  def stop_agent_daemon_mode
     with_daemon_gem do
-      Daemons.run_proc "dtr_runners", :ARGV => ['stop'] 
+      Daemons.run_proc "dtr_agent", :ARGV => ['stop'] 
     end
   end
   
-  def start_runners_daemon_mode
+  def start_agent_daemon_mode
     with_daemon_gem do
-      FileUtils.rm_rf('dtr_runners.output')
+      FileUtils.rm_rf('dtr_agent.output')
       pwd = Dir.pwd
-      Daemons.run_proc "dtr_runners", :ARGV => ['start'], :backtrace => true  do
+      Daemons.run_proc "dtr_agent", :ARGV => ['start'], :backtrace => true  do
         Dir.chdir(pwd) do
-          start_runners
+          start_agent
         end
       end
-    end
-  end
-  
-  def start_server_daemon_mode
-    with_daemon_gem do
-      Daemons.run_proc "dtr_server", :ARGV => ['start'] do
-        start_server
-      end
-    end
-    sleep(2)
-  end
-  
-  def stop_server_daemon_mode
-    with_daemon_gem do
-      Daemons.run_proc "dtr_server", :ARGV => ['stop']
     end
   end
   
@@ -102,10 +77,5 @@ module DTR
     yield
   end
   
-  def clean_server
-    require 'dtr/service_provider'
-    ServiceProvider::Base.new.clear_workspace
-  end
-  
-  module_function :start_server, :start_runners, :launch_runners, :lib_path, :broadcast_list=, :runners, :with_daemon_gem, :start_runners_daemon_mode, :stop_runners_daemon_mode, :start_server_daemon_mode, :stop_server_daemon_mode, :monitor, :port=, :clean_server
+  module_function :start_agent, :launch_agent, :lib_path, :broadcast_list=, :with_daemon_gem, :start_agent_daemon_mode, :stop_agent_daemon_mode, :monitor, :port=
 end

@@ -15,7 +15,7 @@
 module DTR
 
   module Agent
-    class Base
+    class Worker
       def initialize(runner_names, agent_env_setup_cmd)
         @runner_names = runner_names.is_a?(Array) ? runner_names : [runner_names.to_s]
         @agent_env_setup_cmd = agent_env_setup_cmd
@@ -23,56 +23,63 @@ module DTR
         @herald = nil
         @working_env_key = :working_env
         @env_store = EnvStore.new
-        @agent_pid = Process.pid
-        at_exit {
-          if Process.pid == @agent_pid
-            DTR.info "*** Runner agent is stopping ***"
-            kill_all_runners
-            if @herald
-              Process.kill 'KILL', @herald rescue nil
-              DTR.info "=> Herald is killed." 
-            end
-            if @heart
-              Process.kill 'KILL', @heart rescue nil
-              DTR.info "=> Heartbeat is stopped." 
-            end
-            DTR.info "*** Runner agent stopped ***"
-          end
-        }
       end
 
       def launch
-        DTR.info "=> Runner agent started at: #{Dir.pwd}, pid: #{Process.pid}"
-        @heart = drb_fork { Heart.new }
-        @herald = drb_fork { Herald.new @working_env_key }
-        working_env = {}
-        @env_store[@working_env_key] = nil
-        loop do
-          if @env_store[@working_env_key] && working_env != @env_store[@working_env_key]
-            working_env = @env_store[@working_env_key]
-
-            DTR.info "=> Got new working environment created at #{working_env[:created_at]}"
-
-            kill_all_runners
-            ENV['DTR_MASTER_ENV'] = working_env[:dtr_master_env]
-
-            if Cmd.execute(@agent_env_setup_cmd || working_env[:agent_env_setup_cmd])
-              @runner_names.each do |name| 
-                @runner_pids << drb_fork { Runner.start name, working_env }
-              end
-            else
-              DTR.info {'No runners started.'}
-            end
-          end
-          sleep(2)
+        DTR.info "=> Agent worker started at: #{Dir.pwd}, pid: #{Process.pid}"
+        setup
+        begin
+          run
+        ensure
+          teardown
+          DTR.info { "Agent worker is dieing" }
         end
       end
 
       private
+      def setup
+        Signal.trap("TERM") do
+          DTR.info {"Terminating #{Process.pid}..."}
+          teardown rescue nil
+          exit
+        end
+        @env_store[@working_env_key] = nil
+      end
+
+      def teardown
+        kill_all_runners
+        if @herald
+          Process.kill 'TERM', @herald rescue nil
+          @herald = nil
+          DTR.info {"=> Herald is killed." }
+        end
+      end
+
+      def run
+        @herald = drb_fork { Herald.new @working_env_key }
+        while @env_store[@working_env_key].nil?
+          sleep(1)
+        end
+
+        working_env = @env_store[@working_env_key]
+
+        DTR.info {"=> Got working environment created at #{working_env[:created_at]} by #{working_env[:host]}"}
+
+        ENV['DTR_MASTER_ENV'] = working_env[:dtr_master_env]
+
+        if Cmd.execute(@agent_env_setup_cmd || working_env[:agent_env_setup_cmd])
+          @runner_names.each do |name| 
+            @runner_pids << drb_fork { Runner.start name, working_env }
+          end
+          Process.waitall
+        else
+          DTR.info {'Run env setup command failed, no runner started.'}
+        end
+      end
 
       def kill_all_runners
         unless @runner_pids.blank?
-          @runner_pids.each{ |pid| Process.kill 'KILL', pid rescue nil }
+          @runner_pids.each{ |pid| Process.kill 'TERM', pid rescue nil }
           DTR.info "=> All runners(#{@runner_pids.join(", ")}) were killed." 
           @runner_pids = []
         end
@@ -82,7 +89,6 @@ module DTR
         Process.fork do
           at_exit {
             DRb.stop_service
-            exit!
           }
           begin
             yield

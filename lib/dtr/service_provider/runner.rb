@@ -25,19 +25,8 @@ module DTR
         lookup(:take, [:name, 'DTR::Runner'.to_sym, nil, nil])[2]
       end
 
-      def all_working_runners
-        lookup_ring.read_all([:name, 'DTR::Runner'.to_sym, nil, nil]).collect {|rt| rt[2]}
-      end
-      
       def new_runner_monitor
         lookup_ring.notify(nil, [:name, 'DTR::Runner'.to_sym, nil, nil])
-      end
-      
-      #todo don't use lookup_runner
-      def clear_all_working_runners
-        all_working_runners.size.times do
-          lookup_runner.shutdown rescue nil
-        end
       end
     end
   end

@@ -16,33 +16,23 @@ module DTR
 
   module Agent
     class Herald
-      def initialize(key)
-        @key = key
+      def initialize(working_env_key, message_key=MESSAGE_KEY)
+        @working_env_key = working_env_key
+        @message_key = message_key
         @env_store = EnvStore.new
-        @env_store[@key] = nil
-        @provider = Agent.service_provider
+        @service = Agent.service_provider
         start_off
       end
 
       def start_off
-        loop do
-          DTR.info "=> Herald starts off..."
-          begin
-            working_env = @provider.lookup_working_env
-            DTR.debug { "working env: #{working_env.inspect}" }
-            if working_env[:files].blank?
-              DTR.error "No test files need to load?(working env: #{working_env.inspect})"
-            else
-              @env_store[@key] = working_env if @env_store[@key].nil? || @env_store[@key] != working_env
-              @provider.wait_until_teardown
-            end
-
-            sleep(2)
-          rescue => e
-            DTR.info "Herald lost DTR Server(#{e.message}), going to sleep 5 sec..."
-            sleep(5)
-          end
+        DTR.info "=> Herald starts off..."
+        working_env = @service.lookup_working_env
+        DTR.debug { "working env: #{working_env}" }
+        if working_env[:files].blank?
+          DTR.error {"No test files need to load?(working env: #{working_env})"}
+          return
         end
+        @env_store[@working_env_key] = working_env
       end
     end
   end

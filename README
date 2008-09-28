@@ -151,7 +151,7 @@ configuration:
 === Setup Mercurial repository on M1
 
 * Init Mercurial repository in '~/pet_store' directory: hg init
-* Edit .hgignore file to ignore files don't need while running tests. In this example, we will ignore files: db/schema.rb, .dtr_env_pstore, dtr_runners.pid and dtr_server*; and directories: public, tmp and log.
+* Edit .hgignore file to ignore files don't need while running tests. In this example, we will ignore files: db/schema.rb, .dtr_env_pstore, dtr_agent.pid and dtr_server*; and directories: public, tmp and log.
 * Commit .hgignore and then commit code into Mercurial repository.
 * Start 'hg serve' in '~/pet_store', the default port would be 8000. We'll use the default port in this example.
 * We'll clone the repository to M2 and M3 later.
@@ -207,7 +207,6 @@ configuration:
         t.test_files = FileList['test/unit/**/*test.rb', 'test/functional/**/*test.rb']
         t.processes = ENV['P'] || 1
         t.runner_options = "-a '#{DEV_BUILD_SERVER}' -i 'rake db:migrate db:test:prepare'"
-        t.start_server = false
         t.verbose = false
       end
     end
@@ -263,12 +262,9 @@ DTR client is invoked from the command line using:
   -a, --server_address ADDRESS     Specify dtr server address, domain name or ip address, e.g. 192.168.0.1. Default is 'localhost'.
   -i, --setup COMMAND              Set command for initializing test runner test environment, e.g. 'rake db:test:prepare'. Default is do nothing.
   -m, --monitor                    Monitor the status of the dtr rinda server, e.g. dtr -a 10.11.1.2 -m
-  -c, --clean_server               Clean server environment, shutdown all runners registered.
   -b, --be_silent                  Only show error messages
-  -s, --server                     Start DTR service server. There must be a DTR server running.
-  -D, --daemon                     Start server/runners in daemon mode. Gem 'daemons' must be installed
-  -S, --stop_server                Stop server run in daemon mode.
-  -R, --stop_runners               Stop runners run in daemon mode.
+  -D, --daemon                     Start server/agent in daemon mode. Gem 'daemons' must be installed
+  -R, --stop_agent                 Stop agent run in daemon mode.
   -d, --debug                      output debug log
   -v, --version                    Show version
   -h, --help                       Show this help doc

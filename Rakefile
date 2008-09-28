@@ -48,7 +48,7 @@ end
 
 task :test_all => [:test_units, :tf]
 task :tu => :test_units
-task :tf => [:start_dtr_server, :start_dtr_runners, :test_functionals, :stop_dtr_runners, :stop_dtr_server]
+task :tf => [:start_dtr_agent, :test_functionals, :stop_dtr_agent]
 task :test => :test_units
 
 Rake::TestTask.new(:test_units) do |t|
@@ -63,20 +63,12 @@ Rake::TestTask.new(:test_functionals) do |t|
   t.verbose = false
 end
 
-task :start_dtr_server do
-  ruby "-I#{File.dirname(__FILE__) + "/lib"} #{File.dirname(__FILE__) + "/bin/dtr"} -s -D"
-end
-
-task :start_dtr_runners do
+task :start_dtr_agent do
   ruby "-I#{File.dirname(__FILE__) + "/lib"} #{File.dirname(__FILE__) + "/bin/dtr"} -r r1,r2,r3 -D"
 end
 
-task :stop_dtr_runners do
+task :stop_dtr_agent do
   ruby "-I#{File.dirname(__FILE__) + "/lib"} #{File.dirname(__FILE__) + "/bin/dtr"} -R"
-end
-
-task :stop_dtr_server do
-  ruby "-I#{File.dirname(__FILE__) + "/lib"} #{File.dirname(__FILE__) + "/bin/dtr"} -S"
 end
 
 begin
@@ -323,27 +315,18 @@ end
 
 task :c1 do
   Dir.chdir('testdata') do
-    DTR.launch_runners(['c1'], nil)
+    DTR.launch_agent(['c1'], nil)
   end
 end
 
 task :c3 do
   Dir.chdir('testdata') do
-    DTR.launch_runners(['c1', 'c2', 'c3'], nil)
+    DTR.launch_agent(['c1', 'c2', 'c3'], nil)
   end
 end
 task :c10 do
   Dir.chdir('testdata') do
-    DTR.launch_runners(['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10'], nil)
-  end
-end
-
-task :runners do
-  runners = DTR.all_working_runners
-  if runners.empty?
-    puts "No runner available!"
-  else
-    puts runners.collect{|r| r.name}.join(", ")
+    DTR.launch_agent(['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10'], nil)
   end
 end
 
@@ -351,12 +334,8 @@ task :c2 do
   DTROPTIONS[:names] = ['c1', 'c2']
   DTROPTIONS[:setup] = nil
   Dir.chdir('testdata') do
-    DTR.start_runners
+    DTR.start_agent
   end
-end
-
-task :server do
-  DTR.start_server
 end
 
 Rake::TestTask.new(:dtr) do |t|

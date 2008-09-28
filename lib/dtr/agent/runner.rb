@@ -55,6 +55,7 @@ module DTR
       end
 
       def run(test, result, &progress_block)
+        DTR.info {"+"}
         DTR.debug {"#{name}: running #{test}..."}
         @started << test.name
         test.run(result, &progress_block)

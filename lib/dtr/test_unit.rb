@@ -37,7 +37,10 @@ module DTR
   end
   
   def service_provider
-    $dtr_service_provider ||= DTR::ServiceProvider::Base.new
+    return $dtr_service_provider if defined?($dtr_service_provider)
+    $dtr_service_provider = DTR::ServiceProvider::Base.new
+    $dtr_service_provider.start_service
+    $dtr_service_provider
   end
 
   module_function :reject, :inject, :service_provider
@@ -72,12 +75,7 @@ module DTR
     def wait_until_complete(&block)
       synchronize do
         @complete_cond.wait_until do
-          if working = block.call
-            complete?
-          else
-            DTR.do_print "\nOur working environment is took away by someone else!\n"
-            true
-          end
+          complete?
         end
       end
     end
@@ -215,15 +213,7 @@ module DTR
     end
     
     def lookup_runner
-      runner = DTR.service_provider.lookup_runner
-      begin
-        DTR.debug {"#{runner.name}.env ==?: #{WorkingEnv.current[:identifier] == runner.identifier}"}
-        return runner if runner.identifier == WorkingEnv.current[:identifier]
-        runner.shutdown
-      rescue DRb::DRbConnError => e
-        DTR.debug {"DRb::DRbConnError(#{e.message})"}
-      end
-      nil
+      DTR.service_provider.lookup_runner
     end
   end
   
@@ -242,6 +232,7 @@ module DTR
     end  
   end
 
+  #todo: use aliase_method_chain instead of class_eval
   module TestSuiteInjection
     def self.included(base)
       base.class_eval do
@@ -257,25 +248,17 @@ module DTR
           if result.kind_of?(ThreadSafeTestResult)
             __run__(result, &progress_block)
           else
-            if defined?(ActiveRecord::Base)
-              ActiveRecord::Base.clear_active_connections! rescue nil
-            end
-            
-            env = DTR.service_provider.setup_working_env WorkingEnv.refresh
-            
-            DTR.info {"Master process started at #{Time.now}"}
-            result = ThreadSafeTestResult.new(result)
-            __run__(result) do |channel, value|
-              DTR.debug { "=> channel: #{channel}, value: #{value}" }
-              progress_block.call(channel, value)
-              if channel == DTR::DRbTestRunner::RUN_TEST_FINISHED
-                DRbTestRunner.counter.add_finish_count
+            DTR.with_dtr_task_injection do
+              result = ThreadSafeTestResult.new(result)
+              __run__(result) do |channel, value|
+                DTR.debug { "=> channel: #{channel}, value: #{value}" }
+                progress_block.call(channel, value)
+                if channel == DTR::DRbTestRunner::RUN_TEST_FINISHED
+                  DRbTestRunner.counter.add_finish_count
+                end
               end
+              DRbTestRunner.counter.wait_until_complete
             end
-            DRbTestRunner.counter.wait_until_complete do
-              env.working?
-            end
-            DTR.debug { "==> all done" }
           end
           DTR.info { "end of run suite(#{name}), test result status: #{result}, counter status: #{DRbTestRunner.counter}"}
         end
@@ -293,4 +276,24 @@ module DTR
       end
     end
   end
+  
+  #todo: move into a module
+  def with_dtr_task_injection(&block)
+    if defined?(ActiveRecord::Base)
+      ActiveRecord::Base.clear_active_connections! rescue nil
+    end
+    DTR.service_provider.do_start
+    yelling = DTR.service_provider.wakeup_agents
+    DTR.service_provider.provide_working_env WorkingEnv.refresh
+    DTR.info {"Master process started at #{Time.now}"}
+    
+    block.call
+  ensure
+    DTR.info {"stop yelling"}
+    Thread.kill yelling rescue nil
+    DTR.service_provider.hypnotize_agents rescue nil
+    DTR.service_provider.stop_service rescue nil
+    DTR.info { "==> all done" }
+  end
+  module_function :with_dtr_task_injection
 end
