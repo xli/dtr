@@ -16,7 +16,7 @@ module DTR
   module ServiceProvider
 
     module SmartAgent
-      AGENT_EAR = 7788
+      AGENT_PORT = 7788
 
       def hypnotize_agents
         yell_agents("sleep")
@@ -38,7 +38,7 @@ module DTR
           begin
             soc.setsockopt(Socket::SOL_SOCKET, Socket::SO_BROADCAST, true)
             DTR.debug {"broadcast sending #{msg} to #{it}"}
-            soc.send(msg, 0, it, AGENT_EAR)
+            soc.send(msg, 0, it, AGENT_PORT)
           rescue
             nil
           ensure
@@ -50,7 +50,7 @@ module DTR
       def listen
         unless defined?(@soc)
           @soc = UDPSocket.open
-          @soc.bind('', AGENT_EAR)
+          @soc.bind('', AGENT_PORT)
         end
         @soc.recv(1024)
       end

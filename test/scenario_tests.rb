@@ -1,4 +1,5 @@
 require File.dirname(__FILE__) + '/test_helper'
+require File.dirname(__FILE__) + '/agent_helper'
 require 'test/unit/ui/console/testrunner'
 require 'dtr/test_unit'
 require 'dtr'
@@ -8,9 +9,13 @@ class Test::Unit::TestResult
   attr_reader :failures, :errors
 end
 
-class ScenarioTests < Test::Unit::TestCase
+include DTR::AgentHelper
 
+class ScenarioTests < Test::Unit::TestCase
+  
   def setup
+    # puts name
+    # start_agents
     unless defined?(ATestCase)
       require 'a_test_case'
       require 'a_test_case2'
@@ -20,13 +25,14 @@ class ScenarioTests < Test::Unit::TestCase
       require 'scenario_test_case'
       require 'setup_agent_env_test_case'
     end
-    # puts name
     DTR.inject
   end
 
   def teardown
     DTR.reject
+    # stop_agents
     $argv_dup = nil
+    Process.waitall
   end
 
   def test_run_test_passed

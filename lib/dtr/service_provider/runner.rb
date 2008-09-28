@@ -19,6 +19,9 @@ module DTR
         renewer = Rinda::SimpleRenewer.new
         tuple = [:name, 'DTR::Runner'.to_sym, runner.freeze, "DTR remote runner #{Process.pid}-#{runner.name}"]
         lookup_ring.write(tuple, renewer)
+      rescue DRb::DRbConnError
+        #lost connection, master process maybe shutdown
+        exit
       end
 
       def lookup_runner

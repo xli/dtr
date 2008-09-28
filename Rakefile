@@ -48,7 +48,7 @@ end
 
 task :test_all => [:test_units, :tf]
 task :tu => :test_units
-task :tf => [:start_dtr_agent, :test_functionals, :stop_dtr_agent]
+task :tf => [:test_functionals]
 task :test => :test_units
 
 Rake::TestTask.new(:test_units) do |t|
@@ -61,14 +61,6 @@ Rake::TestTask.new(:test_functionals) do |t|
   t.test_files = FileList['test/scenario*.rb']
   t.warning = true
   t.verbose = false
-end
-
-task :start_dtr_agent do
-  ruby "-I#{File.dirname(__FILE__) + "/lib"} #{File.dirname(__FILE__) + "/bin/dtr"} -r r1,r2,r3 -D"
-end
-
-task :stop_dtr_agent do
-  ruby "-I#{File.dirname(__FILE__) + "/lib"} #{File.dirname(__FILE__) + "/bin/dtr"} -R"
 end
 
 begin

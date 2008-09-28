@@ -17,56 +17,52 @@ module DTR
   module Agent
 
     class Brain
-
+      include ServiceProvider::SmartAgent
+      
       def initialize(runner_names, agent_env_setup_cmd)
-        @service = DTR::ServiceProvider::Base.new
         @runner_names = runner_names
         @agent_env_setup_cmd = agent_env_setup_cmd
       end
 
       def hypnotize
-        at_exit {
-          Process.kill 'TERM', @worker rescue nil if @worker
-        }
         loop do
-          next unless @service.listen == "wakeup"
-
-          @worker = wakeup
-          DTR.info {"Agent brain waked up"}
-          begin
-            loop do
-              #todo timeout should can be changed
-              msg = Timeout.timeout(12) do
-                @service.listen
-              end
-              DTR.info {"Agent brain received: #{msg}"}
-              break if msg == 'sleep'
-            end
-          rescue Timeout::Error => e
-          ensure
-            DTR.info{"Killing worker"}
-            Process.kill 'TERM', @worker
+          if wakeup?
+            DTR.info {"Agent brain wakes up"}
+            work(wakeup_worker)
+            DTR.info {"Agent brain is going to sleep"}
           end
-          DTR.info {"Agent brain is going to sleep"}
         end
+      rescue Exception => e
+        DTR.info {"Stopped by Exception => #{e.class.name}, message => #{e.message}"}
       end
       
-      def wakeup
+      def wakeup?
+        listen == "wakeup"
+      end
+      
+      def work(worker)
+        loop do
+          #todo timeout should can be changed
+          msg = Timeout.timeout(12) do
+            listen
+          end
+          DTR.info {"Agent brain received: #{msg}"}
+          break if msg == 'sleep'
+        end
+      rescue Timeout::Error => e
+      ensure
+        DTR.info {"Killing worker"}
+        Process.kill 'TERM', worker
+      end
+      
+      def wakeup_worker
         Process.fork do
           begin
-            DTR.with_monitor do
-              Worker.new(@runner_names, @agent_env_setup_cmd).launch
-            end
-          rescue Interrupt => e
-            DTR.info "Interrupt"
-            raise e
-          rescue SystemExit => e
-            DTR.info "SystemExit"
-            raise e
+            Worker.new(@runner_names, @agent_env_setup_cmd).launch
+          rescue Interrupt, SystemExit, SignalException
           rescue Exception => e
-            DTR.error "Got an Exception #{e.message}:"
-            DTR.error e.backtrace.join("\n")
-            raise e
+            DTR.info {"Stopped by Exception => #{e.class.name}, message => #{e.message}"}
+            DTR.debug {e.backtrace.join("\n")}
           end
         end
       end

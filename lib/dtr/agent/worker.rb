@@ -38,11 +38,6 @@ module DTR
 
       private
       def setup
-        Signal.trap("TERM") do
-          DTR.info {"Terminating #{Process.pid}..."}
-          teardown rescue nil
-          exit
-        end
         @env_store[@working_env_key] = nil
       end
 
@@ -92,14 +87,10 @@ module DTR
           }
           begin
             yield
-          rescue Interrupt => e
-            raise e
-          rescue SystemExit => e
-            raise e
+          rescue Interrupt, SystemExit, SignalException
           rescue Exception => e
-            DTR.error "Got an Exception #{e.message}:"
-            DTR.error e.backtrace.join("\n")
-            raise e
+            DTR.info {"Stopped by Exception => #{e.class.name}, message => #{e.message}"}
+            DTR.debug {e.backtrace.join("\n")}
           end
         end
       end

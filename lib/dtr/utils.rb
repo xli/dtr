@@ -30,6 +30,7 @@ module DTR
       DTROPTIONS[:log_file] ||= 'dtr.log'
       dir = File.exist?('log') ? 'log' : '/tmp'
       log_file = File.join(dir,  DTROPTIONS[:log_file])
+      puts "logfile at #{logfile}"
       Logger.new(log_file, 1, 5*1024*1024)
     end
     DTROPTIONS[:logger].datetime_format = "%m-%d %H:%M:%S"
@@ -58,7 +59,7 @@ module DTR
   def output(level, msg=nil, &block)
     logger.send(level) do
       message = block_given? ? block.call : msg.to_s
-      puts "log: #{message}"
+      # puts "log: #{message}"
       message
     end
   end
@@ -67,14 +68,7 @@ module DTR
     logger.level == Logger::ERROR
   end
   
-  def with_monitor
-    yield
-  rescue Exception => e
-    info {"stopping by Exception => #{e.class.name}, message => #{e.message}"}
-    raise e
-  end
-  
-  module_function :debug, :info, :error, :output, :with_monitor, :logger, :silent?, :do_print
+  module_function :debug, :info, :error, :output, :logger, :silent?, :do_print
   
   class CmdInterrupt < StandardError; end
 
