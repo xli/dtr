@@ -33,6 +33,7 @@ class ScenarioTests < Test::Unit::TestCase
     stop_agents
     $argv_dup = nil
     Process.waitall
+    DTR::ServiceProvider.port = DTR::ServiceProvider::Base::PORT
   end
 
   def test_run_test_passed
@@ -130,6 +131,20 @@ class ScenarioTests < Test::Unit::TestCase
   def test_run_empty_test_suite_and_no_test_files_in_environment
     $argv_dup = []
     suite = Test::Unit::TestSuite.new('test_run_without_test_files')
+
+    assert_fork_process_exits_ok do
+      @result = runit(suite)
+
+      assert @result.passed?
+      assert_equal 0, @result.run_count
+      assert_equal 0, @result.failure_count
+      assert_equal 0, @result.error_count
+    end
+  end
+
+  def test_run_empty_test_suite_and_test_files_not_exist_in_environment
+    $argv_dup = ['test_file_not_exists.rb']
+    suite = Test::Unit::TestSuite.new('test_run_empty_test_suite_and_test_files_not_exist_in_environment')
 
     assert_fork_process_exits_ok do
       @result = runit(suite)
