@@ -12,11 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'dtr/adapter'
+
 module DTR
   module Agent
 
     class Brain
-      include ServiceProvider::SmartAgent
+      include Adapter::Follower
       
       def initialize(runner_names, agent_env_setup_cmd)
         @runner_names = runner_names

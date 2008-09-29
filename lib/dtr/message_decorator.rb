@@ -13,16 +13,16 @@
 # limitations under the License.
 
 module DTR
-  class RemoteError < StandardError
-    def initialize(e)
-      super(DTR::Decorator.decorate_error_message(e.message, e.class.name))
-      set_backtrace(e.backtrace)
-    end
-  end
-  module Decorator
+  module MessageDecorator
     def decorate_error_message(msg, source=nil)
       source ? "#{source} from #{Socket.gethostname}: #{msg}" : "From #{Socket.gethostname}: #{msg}"
     end
-    module_function :decorate_error_message
+  end
+  class RemoteError < StandardError
+    include MessageDecorator
+    def initialize(e)
+      super(decorate_error_message(e.message, e.class.name))
+      set_backtrace(e.backtrace)
+    end
   end
 end

@@ -13,7 +13,8 @@
 # limitations under the License.
 
 require 'dtr/service_provider'
-require 'dtr/decorator'
+require 'dtr/message_decorator'
+require 'dtr/master'
 require 'test/unit/testcase'
 require 'test/unit/util/observable'
 require 'monitor'
@@ -220,49 +221,46 @@ module DTR
   module TestCaseInjection
     
     def self.included(base)
-      base.class_eval do
-        alias_method :__run__, :run
+      base.alias_method_chain :run, :dtr_injection
+    end
 
-        def run(result, &progress_block)
-          DTR.debug {"start of run TestCase(#{name})"}
-          DRbTestRunner.new(self, result, &progress_block).run
-          DTR.debug {"end of run TestCase(#{name})"}
-        end
-      end
-    end  
+    def run_with_dtr_injection(result, &progress_block)
+      DTR.debug {"start of run TestCase(#{name})"}
+      DRbTestRunner.new(self, result, &progress_block).run
+      DTR.debug {"end of run TestCase(#{name})"}
+    end
   end
 
-  #todo: use aliase_method_chain instead of class_eval
   module TestSuiteInjection
+    
     def self.included(base)
+      base.send(:include, Master)
+      base.alias_method_chain :run, :dtr_injection
       base.class_eval do
         def dtr_injected?
           true
         end
+      end
+    end
 
-        alias_method :__run__, :run
-        
-        def run(result, &progress_block)
-          DTR.info { "start of run suite(#{name}), size: #{size};"}
-          
-          if result.kind_of?(ThreadSafeTestResult)
-            __run__(result, &progress_block)
-          else
-            DTR.with_dtr_task_injection do
-              result = ThreadSafeTestResult.new(result)
-              __run__(result) do |channel, value|
-                DTR.debug { "=> channel: #{channel}, value: #{value}" }
-                progress_block.call(channel, value)
-                if channel == DTR::DRbTestRunner::RUN_TEST_FINISHED
-                  DRbTestRunner.counter.add_finish_count
-                end
-              end
-              DRbTestRunner.counter.wait_until_complete
+    def run_with_dtr_injection(result, &progress_block)
+      DTR.info { "start of run suite(#{name}), size: #{size};"}
+      if result.kind_of?(ThreadSafeTestResult)
+        run_without_dtr_injection(result, &progress_block)
+      else
+        with_dtr_task_injection do
+          result = ThreadSafeTestResult.new(result)
+          run_without_dtr_injection(result) do |channel, value|
+            DTR.debug { "=> channel: #{channel}, value: #{value}" }
+            progress_block.call(channel, value)
+            if channel == DTR::DRbTestRunner::RUN_TEST_FINISHED
+              DRbTestRunner.counter.add_finish_count
             end
           end
-          DTR.info { "end of run suite(#{name}), test result status: #{result}, counter status: #{DRbTestRunner.counter}"}
+          DRbTestRunner.counter.wait_until_complete
         end
       end
+      DTR.info { "end of run suite(#{name}), test result status: #{result}, counter status: #{DRbTestRunner.counter}"}
     end
   end
   
@@ -271,29 +269,9 @@ module DTR
       base.class_eval do
         remove_method :dtr_injected? if base.method_defined?(:dtr_injected?)
         remove_method :run
-        alias_method :run, :__run__
-        remove_method :__run__
+        alias_method :run, :run_without_dtr_injection
+        remove_method :run_without_dtr_injection
       end
     end
   end
-  
-  #todo: move into a module
-  def with_dtr_task_injection(&block)
-    if defined?(ActiveRecord::Base)
-      ActiveRecord::Base.clear_active_connections! rescue nil
-    end
-    DTR.service_provider.start_rinda
-    yelling = DTR.service_provider.wakeup_agents
-    DTR.service_provider.provide_working_env WorkingEnv.new
-    DTR.info {"Master process started at #{Time.now}"}
-    
-    block.call
-  ensure
-    DTR.info {"stop yelling"}
-    Thread.kill yelling rescue nil
-    DTR.service_provider.hypnotize_agents rescue nil
-    DTR.service_provider.stop_service rescue nil
-    DTR.info { "==> all done" }
-  end
-  module_function :with_dtr_task_injection
 end

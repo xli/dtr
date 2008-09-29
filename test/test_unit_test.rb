@@ -9,8 +9,8 @@ class InjectTest < Test::Unit::TestCase
   
   def test_inject
     DTR.inject
-    assert Test::Unit::TestCase.method_defined?(:__run__)
-    assert Test::Unit::TestSuite.method_defined?(:__run__)
+    assert Test::Unit::TestCase.method_defined?(:run_without_dtr_injection)
+    assert Test::Unit::TestSuite.method_defined?(:run_without_dtr_injection)
     assert Test::Unit::TestSuite.method_defined?(:dtr_injected?)
   end
   
@@ -18,7 +18,7 @@ class InjectTest < Test::Unit::TestCase
     DTR.inject
     DTR.reject
     test_case = Test::Unit::TestCase.new('name')
-    assert_false test_case.respond_to?(:__run__)
+    assert_false test_case.respond_to?(:run_without_dtr_injection)
     assert test_case.respond_to?(:run)
   end
   

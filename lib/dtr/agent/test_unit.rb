@@ -14,10 +14,12 @@
 
 require 'test/unit'
 require 'test/unit/testcase'
+require 'dtr/message_decorator'
 
 module DTR
   module Agent
     module TestCaseExt
+      include MessageDecorator
       def self.included(base)
         base.alias_method_chain :add_failure, :decorating_source
         base.alias_method_chain :add_error, :decorating_source
@@ -28,7 +30,7 @@ module DTR
       end
 
       def add_failure_with_decorating_source(message, all_locations=caller())
-        add_failure_without_decorating_source(DTR::Decorator.decorate_error_message(message, 'Assertion failure'), all_locations)
+        add_failure_without_decorating_source(decorate_error_message(message, 'Assertion failure'), all_locations)
       end
     end
   end

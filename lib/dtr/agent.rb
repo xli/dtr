@@ -13,7 +13,7 @@
 # limitations under the License.
 
 require 'dtr/service_provider'
-require 'dtr/decorator'
+require 'dtr/message_decorator'
 
 require 'dtr/agent/service_provider'
 require 'dtr/agent/brain'

@@ -19,7 +19,6 @@ require 'dtr/service_provider/base'
 require 'dtr/service_provider/runner'
 require 'dtr/service_provider/working_env'
 require 'dtr/service_provider/message'
-require 'dtr/service_provider/smart_agent'
 require 'dtr/service_provider/monitor'
 
 module DTR
@@ -35,7 +34,6 @@ module DTR
     
     Base.class_eval do
       include ServiceProvider::WorkingEnv
-      include ServiceProvider::SmartAgent
       include ServiceProvider::Runner
       include ServiceProvider::Message
       include ServiceProvider::Monitor
