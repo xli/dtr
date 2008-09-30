@@ -18,21 +18,32 @@ module DTR
     class Herald
       include Service::WorkingEnv
       
-      def initialize(working_env_key)
+      def initialize(working_env_key, agent_env_setup_cmd)
         @working_env_key = working_env_key
+        @agent_env_setup_cmd = agent_env_setup_cmd
         @env_store = EnvStore.new
         start_off
       end
 
       def start_off
-        DTR.info "=> Herald starts off..."
         start_service
+        DTR.info "=> Herald starts off..."
         working_env = lookup_working_env
-        DTR.debug { "working env: #{working_env}" }
-        unless working_env[:files].blank?
+        DTR.info {"=> Got working environment created at #{working_env[:created_at]} by #{working_env[:host]}"}
+        if working_env[:files].blank?
+          DTR.error {"No test files need to load?(working env: #{working_env})"}
+          return
+        end
+        
+        setup_env(working_env)
+      end
+      
+      def setup_env(working_env)
+        ENV['DTR_MASTER_ENV'] = working_env[:dtr_master_env]
+        if Cmd.execute(@agent_env_setup_cmd || working_env[:agent_env_setup_cmd])
           @env_store[@working_env_key] = working_env
         else
-          DTR.error {"No test files need to load?(working env: #{working_env})"}
+          DTR.info {'Run env setup command failed, no runner started.'}
         end
       end
     end

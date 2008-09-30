@@ -52,13 +52,13 @@ task :tf => [:test_functionals]
 task :test => :test_units
 
 Rake::TestTask.new(:test_units) do |t|
-  t.test_files = FileList['test/*test.rb']
+  t.test_files = FileList['test/unit/*_test.rb']
   t.warning = true
   t.verbose = false
 end
 
 Rake::TestTask.new(:test_functionals) do |t|
-  t.test_files = FileList['test/scenario*.rb']
+  t.test_files = FileList['test/acceptance/*_test.rb']
   t.warning = false
   t.verbose = false
 end
@@ -162,11 +162,6 @@ task :lines do
   show_line("TOTAL", total_lines, total_code)
 end
 
-# Define an optional publish target in an external file.  If the
-# publish.rf file is not found, the publish targets won't be defined.
-
-load "publish.rf" if File.exist? "publish.rf"
-
 # Support Tasks ------------------------------------------------------
 
 RUBY_FILES = FileList['**/*.rb'].exclude('pkg')
@@ -203,98 +198,6 @@ end
 
 task :update_site do
   puts %x[scp -r html/* lixiao@rubyforge.org:/var/www/gforge-projects/dtr/]
-end
-
-task :noop
-
-desc "[rel, reuse, reltest] Make a new release"
-task :release => [
-  :prerelease,
-  :clobber,
-  :test_all,
-  :update_version,
-  :package,
-  :tag] do
-  
-  announce 
-  announce "**************************************************************"
-  announce "* Release #{$package_version} Complete."
-  announce "* Packages ready to upload."
-  announce "**************************************************************"
-  announce 
-end
-
-# Validate that everything is ready to go for a release.
-desc "[rel, reuse, reltest]"
-task :prerelease do |t, rel, reuse, reltest|
-  $package_version = rel
-  announce 
-  announce "**************************************************************"
-  announce "* Making RubyGem Release #{$package_version}"
-  announce "* (current version #{CURRENT_VERSION})"
-  announce "**************************************************************"
-  announce  
-
-  # Is a release number supplied?
-  unless rel
-    fail "Usage: rake release[X.Y.Z] [REUSE=tag_suffix]"
-  end
-
-  # Is the release different than the current release.
-  # (or is REUSE set?)
-  if $package_version == CURRENT_VERSION && ! reuse
-    fail "Current version is #{$package_version}, must specify REUSE=tag_suffix to reuse version"
-  end
-
-  # Are all source files checked in?
-  if reltest
-    announce "Release Task Testing, skipping checked-in file test"
-  else
-    announce "Checking for unchecked-in files..."
-    data = `svn st`
-    unless data =~ /^$/
-      abort "svn status is not clean ... do you have unchecked-in files?"
-    end
-    announce "No outstanding checkins found ... OK"
-  end
-end
-
-desc "[rel, reuse, reltest]"
-task :update_version => [:prerelease] do |t, rel, reuse, reltest|
-  if rel == CURRENT_VERSION
-    announce "No version change ... skipping version update"
-  else
-    announce "Updating DTR version to #{rel}"
-    open("lib/dtr.rb") do |dtrin|
-      open("lib/dtr.rb.new", "w") do |dtrout|
-        dtrin.each do |line|
-          if line =~ /^DTRVERSION\s*=\s*/
-            dtrout.puts "DTRVERSION = '#{rel}'"
-          else
-            dtrout.puts line
-          end
-        end
-      end
-    end
-    mv "lib/dtr.rb.new", "lib/dtr.rb"
-    if reltest
-      announce "Release Task Testing, skipping commiting of new version"
-    else
-      sh %{svn commit -m "Updated to version #{rel}" lib/dtr.rb} # "
-    end
-  end
-end
-
-desc "[rel, reuse, reltest] Tag all the CVS files with the latest release number (REL=x.y.z)"
-task :tag => [:prerelease] do |t, rel, reuse, reltest|
-  reltag = "REL_#{rel.gsub(/\./, '_')}"
-  reltag << reuse.gsub(/\./, '_') if reuse
-  announce "Tagging Repository with [#{reltag}]"
-  if reltest
-    announce "Release Task Testing, skipping CVS tagging"
-  else
-    sh %{svn copy svn+ssh://rubyforge.org/var/svn/dtr/trunk svn+ssh://rubyforge.org/var/svn/dtr/tags/#{reltag} -m 'Commiting release #{reltag}'}
-  end
 end
 
 task :c1 do

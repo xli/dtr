@@ -3,17 +3,18 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
-  ?? master process can't be killed
   show agent log in master process log
+     * should have agent hostname as label for log string
   clean DTROPTIONS
   clean dtr/test_unit.rb
   monitor
   use thread.join instead of counter to count test result size
-  agent brain should wakeup when worker is dead
+  ???? agent brain should wakeup when worker is dead
   tricky problem: when agent can't find test files, drb can't undump test object, the error would be: undefined method `run' for #<DRb::DRbUnknown:0x318800>
      * tell Master this error that agent can't know what's item sent from Master
   
-  add a working dir for working_env
+  specify a working dir for agent
+  integrate with git?
   
   
 (moved DONE list to CHANGES file)

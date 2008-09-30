@@ -1,13 +1,5 @@
-require File.dirname(__FILE__) + '/test_helper'
-require File.dirname(__FILE__) + '/agent_helper'
-require 'test/unit/ui/console/testrunner'
-require 'dtr/test_unit'
-require 'dtr'
+require File.dirname(__FILE__) + '/../test_helper'
 # DTROPTIONS[:log_level] = Logger::DEBUG
-
-class Test::Unit::TestResult
-  attr_reader :failures, :errors
-end
 
 include DTR::AgentHelper
 
@@ -181,7 +173,7 @@ class ScenarioTests < Test::Unit::TestCase
   end
 
   def test_run_test_specified_by_load_path
-    lib_path = File.expand_path(File.dirname(__FILE__) + '/../testdata/lib')
+    lib_path = File.expand_path(File.dirname(__FILE__) + '/../../testdata/lib')
     $LOAD_PATH.unshift lib_path
     require 'lib_test_case'
     $argv_dup = ['lib_test_case.rb']
@@ -239,23 +231,6 @@ class ScenarioTests < Test::Unit::TestCase
     ENV['DTR_AGENT_ENV_SETUP_CMD'] = nil
   end
 
-  # todo.......
-  def xtest_should_get_error_log_when_setup_agent_env_failed
-    $argv_dup = ['a_test_case.rb']
-    suite = Test::Unit::TestSuite.new('test_should_get_error_when_setup_agent_env_failed')
-    suite << ATestCase.suite
-    ENV['DTR_AGENT_ENV_SETUP_CMD'] = 'should raise error'
-    assert_fork_process_exits_ok do
-      @result = runit(suite)
-      assert !@result.passed?
-      assert_equal 1, @result.run_count
-      assert_equal 0, @result.failure_count
-      assert_equal 1, @result.error_count
-    end
-  ensure
-    ENV['DTR_AGENT_ENV_SETUP_CMD'] = nil
-  end
-
   def test_multi_dtr_tasks_should_be_queued_and_processed_one_by_one
     $argv_dup = ['a_test_case.rb', 'a_test_case2.rb', 'a_file_system_test_case.rb']
     suite = Test::Unit::TestSuite.new('run_test_passed')
@@ -291,18 +266,5 @@ class ScenarioTests < Test::Unit::TestCase
     assert_equal 0, $?.exitstatus
     Process.waitpid p4
     assert_equal 0, $?.exitstatus
-  end
-
-  def assert_fork_process_exits_ok(&block)
-    pid = Process.fork do
-      block.call
-      exit 0
-    end
-    Process.waitpid pid
-    assert_equal 0, $?.exitstatus
-  end
-  
-  def runit(suite)
-    Test::Unit::UI::Console::TestRunner.run(suite, Test::Unit::UI::SILENT)
   end
 end

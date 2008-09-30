@@ -12,21 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'dtr/shared'
-
-require 'dtr/agent/sync_logger'
-require 'dtr/agent/brain'
-require 'dtr/agent/worker'
-require 'dtr/agent/test_unit'
-require 'dtr/agent/herald'
-require 'dtr/agent/runner'
-
 module DTR
-  module Agent
-    def start(runner_names=["Distributed Test Runner"], agent_env_setup_cmd=nil)
-      Brain.new(runner_names, agent_env_setup_cmd).hypnotize
+  module SyncLogger
+    module Synchronizer
+      def self.included(base)
+        base.alias_method_chain :start_service, :sync_logger
+      end
+
+      def start_service_with_sync_logger
+        start_service_without_sync_logger
+        if logger_tuple = lookup_ring.read_all([:logger, nil]).first
+          sync_logger = logger_tuple[1]
+          DTROPTIONS[:logger] = sync_logger
+        end
+      end
     end
-    
-    module_function :start
   end
+
+  Service::Rinda.send(:include, SyncLogger::Synchronizer)
 end

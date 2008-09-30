@@ -15,5 +15,4 @@
 require 'dtr/shared/service/rinda'
 require 'dtr/shared/service/runner'
 require 'dtr/shared/service/working_env'
-require 'dtr/shared/service/message'
 require 'dtr/shared/service/monitor'

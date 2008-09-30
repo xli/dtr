@@ -51,25 +51,17 @@ module DTR
       end
 
       def run
-        @herald = drb_fork { Herald.new @working_env_key }
+        @herald = drb_fork { Herald.new @working_env_key, @agent_env_setup_cmd }
         while @env_store[@working_env_key].nil?
           sleep(1)
         end
-
         working_env = @env_store[@working_env_key]
-
-        DTR.info {"=> Got working environment created at #{working_env[:created_at]} by #{working_env[:host]}"}
-
         ENV['DTR_MASTER_ENV'] = working_env[:dtr_master_env]
 
-        if Cmd.execute(@agent_env_setup_cmd || working_env[:agent_env_setup_cmd])
-          @runner_names.each do |name|
-            @runner_pids << drb_fork { Runner.start name, working_env }
-          end
-          Process.waitall
-        else
-          DTR.info {'Run env setup command failed, no runner started.'}
+        @runner_names.each do |name|
+          @runner_pids << drb_fork { Runner.start name, working_env }
         end
+        Process.waitall
       end
 
       def kill_all_runners
@@ -87,7 +79,7 @@ module DTR
           rescue Interrupt, SystemExit, SignalException
           rescue Exception => e
             DTR.info {"Worker drb fork is stopped by Exception => #{e.class.name}, message => #{e.message}"}
-            DTR.info {e.backtrace.join("\n")}
+            DTR.debug {e.backtrace.join("\n")}
           end
         end
       end

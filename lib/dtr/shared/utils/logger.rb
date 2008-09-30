@@ -24,7 +24,6 @@ module DTR
       DTROPTIONS[:log_file] ||= 'dtr.log'
       dir = File.exist?('log') ? 'log' : '/tmp'
       log_file = File.join(dir,  DTROPTIONS[:log_file])
-      do_print "logfile at #{log_file}\n"
       Logger.new(log_file, 1, 5*1024*1024)
     end
     DTROPTIONS[:logger].datetime_format = "%m-%d %H:%M:%S"
@@ -58,10 +57,6 @@ module DTR
     end
   end
   
-  def silent?
-    logger.level == Logger::ERROR
-  end
-  
-  module_function :debug, :info, :error, :output, :logger, :silent?, :do_print
+  module_function :debug, :info, :error, :output, :logger, :do_print
   
 end
