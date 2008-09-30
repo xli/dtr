@@ -3,8 +3,8 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
-  show agent log in master process log
-     * should have agent hostname as label for log string
+  cache lookup_ring_any result
+  sync_logger_test failed in rake
   clean DTROPTIONS
   clean dtr/test_unit.rb
   monitor

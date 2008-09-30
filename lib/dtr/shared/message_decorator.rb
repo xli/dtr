@@ -14,14 +14,14 @@
 
 module DTR
   module MessageDecorator
-    def decorate_error_message(msg, source=nil)
+    def decorate_message(msg, source=nil)
       source ? "#{source} from #{Socket.gethostname}: #{msg}" : "From #{Socket.gethostname}: #{msg}"
     end
   end
   class RemoteError < StandardError
     include MessageDecorator
     def initialize(e)
-      super(decorate_error_message(e.message, e.class.name))
+      super(decorate_message(e.message, e.class.name))
       set_backtrace(e.backtrace)
     end
   end

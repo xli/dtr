@@ -19,38 +19,47 @@ module DTR
       include Service::Runner
 
       def self.start(name, env)
-        DTR.info "#{name}: Initialize working environment..."
-        env[:libs].select{ |lib| !$LOAD_PATH.include?(lib) && File.exists?(lib) }.each do |lib|
-          $LOAD_PATH << lib
-          DTR.debug {"#{name}: appended lib: #{lib}"}
-        end
-        DTR.info "#{name}: libs loaded"
-        DTR.debug {"#{name}: $LOAD_PATH: #{$LOAD_PATH.inspect}"}
-
-        env[:files].each do |f|
-          begin
-            load f unless f =~ /^-/
-            DTR.debug {"#{name}: loaded #{f}"}
-          rescue LoadError => e
-            DTR.error "#{name}: No such file to load -- #{f} (Environment: #{env.inspect})"
-          end
-        end
-        DTR.info "#{name}: test files loaded"
-
-        runner = self.new(name, env[:identifier])
+        self.new(name, env).start
         DTR.info "=> Runner #{name} provided"
         DRb.thread.join if DRb.thread
       end
 
       attr_reader :name, :identifier
 
-      def initialize(name, identifier)
+      def initialize(name, env)
         @name = name
-        @identifier = identifier
+        @identifier = env[:identifier]
+        @env = env
         @started = []
         @run_finished = []
+      end
+      
+      def start
+        #start service first, so that all logs can be sync with master process
         start_service
+        init_environment
         provide_runner(self)
+      end
+
+      def init_environment
+        DTR.info {"#{name}: Initialize working environment..."}
+        @env[:libs].select{ |lib| !$LOAD_PATH.include?(lib) && File.exists?(lib) }.each do |lib|
+          $LOAD_PATH << lib
+          DTR.debug {"#{name}: appended lib: #{lib}"}
+        end
+        DTR.info {"#{name}: libs loaded"}
+        DTR.debug {"#{name}: $LOAD_PATH: #{$LOAD_PATH.inspect}"}
+
+        @env[:files].each do |f|
+          begin
+            load f unless f =~ /^-/
+            DTR.debug {"#{name}: loaded #{f}"}
+          rescue LoadError => e
+            DTR.error "#{name}: No such file to load -- #{f}"
+            DTR.debug {"Environment: #{@env}"}
+          end
+        end
+        DTR.info "#{name}: test files loaded"
       end
 
       def run(test, result, &progress_block)

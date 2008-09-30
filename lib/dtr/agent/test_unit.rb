@@ -29,7 +29,7 @@ module DTR
       end
 
       def add_failure_with_decorating_source(message, all_locations=caller())
-        add_failure_without_decorating_source(decorate_error_message(message, 'Assertion failure'), all_locations)
+        add_failure_without_decorating_source(decorate_message(message, 'Assertion failure'), all_locations)
       end
     end
   end
