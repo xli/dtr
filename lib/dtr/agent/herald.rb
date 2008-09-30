@@ -17,7 +17,7 @@ module DTR
   module Agent
     class Herald
       include Service::WorkingEnv
-      
+
       def initialize(working_env_key, agent_env_setup_cmd)
         @working_env_key = working_env_key
         @agent_env_setup_cmd = agent_env_setup_cmd
@@ -34,10 +34,10 @@ module DTR
           DTR.error {"No test files need to load?(working env: #{working_env})"}
           return
         end
-        
+
         setup_env(working_env)
       end
-      
+
       def setup_env(working_env)
         ENV['DTR_MASTER_ENV'] = working_env[:dtr_master_env]
         if Cmd.execute(@agent_env_setup_cmd || working_env[:agent_env_setup_cmd])
