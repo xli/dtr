@@ -14,7 +14,6 @@
 
 require 'test/unit'
 require 'test/unit/testcase'
-require 'dtr/message_decorator'
 
 module DTR
   module Agent

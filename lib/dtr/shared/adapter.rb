@@ -20,20 +20,18 @@ module DTR
 
     WAKEUP_MESSAGE = 'wakeup'
     SLEEP_MESSAGE = 'sleep'
-    YELL_INTERVAL = 10
-    LISTEN_SLEEP_TIMEOUT = 15
 
     module Follower
       def wakeup?
         msg, port = listen
         if msg == Adapter::WAKEUP_MESSAGE
-          ServiceProvider.port = port
+          DTR.configuration.rinda_server_port = port
           true
         end
       end
 
       def sleep?
-        msg_bag = Timeout.timeout(Adapter::LISTEN_SLEEP_TIMEOUT) do
+        msg_bag = Timeout.timeout(DTR.configuration.follower_listen_sleep_timeout) do
           listen
         end
         DTR.info {"Received: #{msg_bag.inspect}"}
@@ -60,15 +58,15 @@ module DTR
       def wakeup_agents
         Thread.start do
           loop do
-            yell_agents("#{Adapter::WAKEUP_MESSAGE} #{DTR.service_provider.rinda_server_port}")
-            sleep(Adapter::YELL_INTERVAL)
+            yell_agents("#{Adapter::WAKEUP_MESSAGE} #{DTR.configuration.rinda_server_port}")
+            sleep(DTR.configuration.master_yell_interval)
           end
         end
       end
       private
       def yell_agents(msg)
-        DTR.info {"yell agents #{msg}: #{DTR.service_provider.broadcast_list.inspect}"}
-        DTR.service_provider.broadcast_list.each do |it|
+        DTR.info {"yell agents #{msg}: #{DTR.configuration.broadcast_list.inspect}\n"}
+        DTR.configuration.broadcast_list.each do |it|
           soc = UDPSocket.open
           begin
             soc.setsockopt(Socket::SOL_SOCKET, Socket::SO_BROADCAST, true)

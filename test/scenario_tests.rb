@@ -33,7 +33,6 @@ class ScenarioTests < Test::Unit::TestCase
     stop_agents
     $argv_dup = nil
     Process.waitall
-    DTR::ServiceProvider.port = DTR::ServiceProvider::Base::PORT
   end
 
   def test_run_test_passed
@@ -142,6 +141,31 @@ class ScenarioTests < Test::Unit::TestCase
     end
   end
 
+  def test_run_empty_test_suite_should_not_crash_agent
+    $argv_dup = []
+    suite = Test::Unit::TestSuite.new('test_run_empty_test_suite_should_not_crash_agent')
+
+    assert_fork_process_exits_ok do
+      @result = runit(suite)
+
+      assert @result.passed?
+      assert_equal 0, @result.run_count
+      assert_equal 0, @result.failure_count
+      assert_equal 0, @result.error_count
+    end
+
+    $argv_dup = ['a_test_case.rb']
+    suite << ATestCase.suite
+    assert_fork_process_exits_ok do
+      @result = runit(suite)
+
+      assert @result.passed?
+      assert_equal 1, @result.run_count
+      assert_equal 0, @result.failure_count
+      assert_equal 0, @result.error_count
+    end
+  end
+
   def test_run_empty_test_suite_and_test_files_not_exist_in_environment
     $argv_dup = ['test_file_not_exists.rb']
     suite = Test::Unit::TestSuite.new('test_run_empty_test_suite_and_test_files_not_exist_in_environment')
@@ -212,6 +236,23 @@ class ScenarioTests < Test::Unit::TestCase
     end
   ensure
     File.delete('/tmp/test_setup_agent_env_from_master_process') rescue nil
+    ENV['DTR_AGENT_ENV_SETUP_CMD'] = nil
+  end
+
+  # todo.......
+  def xtest_should_get_error_log_when_setup_agent_env_failed
+    $argv_dup = ['a_test_case.rb']
+    suite = Test::Unit::TestSuite.new('test_should_get_error_when_setup_agent_env_failed')
+    suite << ATestCase.suite
+    ENV['DTR_AGENT_ENV_SETUP_CMD'] = 'should raise error'
+    assert_fork_process_exits_ok do
+      @result = runit(suite)
+      assert !@result.passed?
+      assert_equal 1, @result.run_count
+      assert_equal 0, @result.failure_count
+      assert_equal 1, @result.error_count
+    end
+  ensure
     ENV['DTR_AGENT_ENV_SETUP_CMD'] = nil
   end
 

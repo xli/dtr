@@ -12,27 +12,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'dtr/adapter'
+require 'dtr/shared'
 
 module DTR
   module Master
     include Adapter::Master
+    include Service::WorkingEnv
 
     def with_dtr_task_injection(&block)
       if defined?(ActiveRecord::Base)
         ActiveRecord::Base.clear_active_connections! rescue nil
       end
-      DTR.service_provider.start_rinda
-      yelling = wakeup_agents
-      DTR.service_provider.provide_working_env WorkingEnv.new
+      
+      start_service
+      DTR.configuration.start_rinda
+      provide_working_env WorkingEnv.new
+      yelling_thread = wakeup_agents
+      
       DTR.info {"Master process started at #{Time.now}"}
 
       block.call
     ensure
       DTR.info {"stop yelling"}
-      Thread.kill yelling rescue nil
+      Thread.kill yelling_thread rescue nil
       hypnotize_agents rescue nil
-      DTR.service_provider.stop_service rescue nil
+      stop_service rescue nil
       DTR.info { "==> all done" }
     end
   end

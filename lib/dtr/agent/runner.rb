@@ -16,6 +16,7 @@ module DTR
   module Agent
     class Runner
       include DRbUndumped
+      include Service::Runner
 
       def self.start(name, env)
         DTR.info "#{name}: Initialize working environment..."
@@ -36,21 +37,20 @@ module DTR
         end
         DTR.info "#{name}: test files loaded"
 
-        @provider = Agent.service_provider
-
-        @provider.provide_runner(self.new(@provider, name, env[:identifier]))
+        runner = self.new(name, env[:identifier])
         DTR.info "=> Runner #{name} provided"
         DRb.thread.join if DRb.thread
       end
 
       attr_reader :name, :identifier
 
-      def initialize(provider, name, identifier)
+      def initialize(name, identifier)
         @name = name
-        @provider = provider
         @identifier = identifier
         @started = []
         @run_finished = []
+        start_service
+        provide_runner(self)
       end
 
       def run(test, result, &progress_block)
@@ -69,17 +69,17 @@ module DTR
       ensure
         DTR.debug {"#{name}: done #{test}"}
         @run_finished << test.name
-        @provider.provide_runner(self)
+        provide_runner(self)
       end
 
       def reboot
         DTR.info "#{self} is rebooting. Ran #{@started.size} tests, finished #{@run_finished.size}."
-        @provider.provide_runner(self)
+        provide_runner(self)
       end
 
       def shutdown
         DTR.info "#{self} is shutting down. Ran #{@started.size} tests, finished #{@run_finished.size}."
-        @provider.stop_service rescue exit!
+        stop_service rescue exit!
       end
 
       def to_s

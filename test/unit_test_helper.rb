@@ -1,4 +1,3 @@
 require File.dirname(__FILE__) + '/test_helper'
 
-require 'dtr/ruby_ext'
-require 'dtr/utils'
+require 'dtr/shared'

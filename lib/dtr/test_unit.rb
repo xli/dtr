@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'dtr/service_provider'
-require 'dtr/message_decorator'
 require 'dtr/master'
 require 'test/unit/testcase'
 require 'test/unit/util/observable'
@@ -37,14 +35,12 @@ module DTR
     Test::Unit::TestSuite.send(:include, TestSuiteInjection)
   end
   
-  def service_provider
-    return $dtr_service_provider if defined?($dtr_service_provider)
-    $dtr_service_provider = DTR::ServiceProvider::Base.new
-    $dtr_service_provider.start_service
-    $dtr_service_provider
+  def service
+    return $dtr_service if defined?($dtr_service)
+    $dtr_service = DTR::Service::Base.new
   end
 
-  module_function :reject, :inject, :service_provider
+  module_function :reject, :inject, :service
   
   class Counter
     
@@ -159,6 +155,7 @@ module DTR
   end
 
   class DRbTestRunner
+    include Service::Runner
     
     # because some test case will rewrite TestCase#run to ignore some tests, which
     # makes TestResult#run_count different with TestSuite#size, so we need to count
@@ -211,10 +208,6 @@ module DTR
           @progress_block.call(RUN_TEST_FINISHED, @test.name)
         end
       end
-    end
-    
-    def lookup_runner
-      DTR.service_provider.lookup_runner
     end
   end
   

@@ -12,16 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module DTR
-  module ServiceProvider
-    module Message
-      def send_message(message)
-        lookup_ring.write [:agent_heartbeat, Socket.gethostname, message, Time.now], 2
-      end
-      
-      def new_message_monitor
-        lookup_ring.notify("write", [:agent_heartbeat, nil, nil, nil])
-      end
-    end
-  end
-end
+require 'dtr/shared/utils/logger'
+require 'dtr/shared/utils/env_store'
+require 'dtr/shared/utils/cmd'

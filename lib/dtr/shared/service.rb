@@ -12,20 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module DTR
-  module ServiceProvider
-    module WorkingEnv
-      def new_working_env_monitor
-        lookup_ring.notify(nil, [:working_env, nil])
-      end
-
-      def lookup_working_env
-        lookup(:read, [:working_env, nil])[1]
-      end
-
-      def provide_working_env(env)
-        lookup_ring.write [:working_env, env]
-      end
-    end
-  end
-end
+require 'dtr/shared/service/rinda'
+require 'dtr/shared/service/runner'
+require 'dtr/shared/service/working_env'
+require 'dtr/shared/service/message'
+require 'dtr/shared/service/monitor'

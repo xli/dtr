@@ -13,12 +13,20 @@
 # limitations under the License.
 
 module DTR
-  module Agent
-    def service_provider
-      service = ServiceProvider::Base.new
-      service.start_service
-      service
+  module Service
+    module WorkingEnv
+      include Rinda
+      def new_working_env_monitor
+        lookup_ring.notify(nil, [:working_env, nil])
+      end
+
+      def lookup_working_env
+        lookup(:read, [:working_env, nil])[1]
+      end
+
+      def provide_working_env(env)
+        lookup_ring.write [:working_env, env]
+      end
     end
-    module_function :service_provider
   end
 end

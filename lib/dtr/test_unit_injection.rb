@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'dtr/service_provider'
 require 'dtr/test_unit'
 $argv_dup = ARGV.dup.delete_if{|f| f.include?('dtr/test_unit_injection')}
 

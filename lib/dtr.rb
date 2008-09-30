@@ -32,19 +32,21 @@ module DTR
   end
 
   def broadcast_list=(list)
-    require 'dtr/service_provider'
-    ServiceProvider.broadcast_list = list
+    require 'dtr/shared'
+    DTR.configuration.broadcast_list = list
+    DTR.configuration.save
   end
 
   def port=(port)
-    require 'dtr/service_provider'
-    ServiceProvider.port = port 
+    require 'dtr/shared'
+    DTR.configuration.rinda_server_port = port
+    DTR.configuration.save
   end
 
   def monitor
-    require 'dtr/service_provider'
+    require 'dtr/shared'
     DTROPTIONS[:log_file] = 'dtr_monitor.log'
-    ServiceProvider::Base.new.monitor
+    Service::Base.new.monitor
   end
 
   module_function :start_agent, :launch_agent, :lib_path, :broadcast_list=, :monitor, :port=

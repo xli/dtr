@@ -63,7 +63,7 @@ module DTR
         ENV['DTR_MASTER_ENV'] = working_env[:dtr_master_env]
 
         if Cmd.execute(@agent_env_setup_cmd || working_env[:agent_env_setup_cmd])
-          @runner_names.each do |name| 
+          @runner_names.each do |name|
             @runner_pids << drb_fork { Runner.start name, working_env }
           end
           Process.waitall
@@ -82,15 +82,12 @@ module DTR
 
       def drb_fork
         Process.fork do
-          at_exit {
-            DRb.stop_service
-          }
           begin
             yield
           rescue Interrupt, SystemExit, SignalException
           rescue Exception => e
             DTR.info {"Worker drb fork is stopped by Exception => #{e.class.name}, message => #{e.message}"}
-            DTR.debug {e.backtrace.join("\n")}
+            DTR.info {e.backtrace.join("\n")}
           end
         end
       end

@@ -12,12 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'rinda/ring'
+
 module DTR
-  module ServiceProvider
+  module Service
     module Runner
+      include Rinda
+
       def provide_runner(runner)
-        renewer = Rinda::SimpleRenewer.new
-        tuple = [:name, 'DTR::Runner'.to_sym, runner.freeze, "DTR remote runner #{Process.pid}-#{runner.name}"]
+        renewer = ::Rinda::SimpleRenewer.new
+        tuple = [:name, 'DTR::Runner'.to_sym, runner, "DTR remote runner #{Process.pid}-#{runner.name}"]
         lookup_ring.write(tuple, renewer)
       rescue DRb::DRbConnError
         #lost connection, master process maybe shutdown

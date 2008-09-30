@@ -13,7 +13,7 @@
 # limitations under the License.
 
 module DTR
-  module ServiceProvider
+  module Service
     module Monitor
       def monitor
         working_env_monitor = new_working_env_monitor

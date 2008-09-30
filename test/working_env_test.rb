@@ -1,5 +1,4 @@
 require File.dirname(__FILE__) + '/unit_test_helper'
-require 'dtr/working_env.rb'
 
 class WorkingEnvTest < Test::Unit::TestCase
   def test_identifier_of_working_env

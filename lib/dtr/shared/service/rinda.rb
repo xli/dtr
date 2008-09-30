@@ -12,28 +12,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module DTR
+require 'drb'
+require 'rinda/ring'
 
-  module Agent
-    class Herald
-      include Service::WorkingEnv
-      
-      def initialize(working_env_key)
-        @working_env_key = working_env_key
-        @env_store = EnvStore.new
-        start_off
+module DTR
+  module Service
+    module Rinda
+
+      def start_service
+        DTR.info "-- Start drb service..."
+        DRb.start_service
       end
 
-      def start_off
-        DTR.info "=> Herald starts off..."
-        start_service
-        working_env = lookup_working_env
-        DTR.debug { "working env: #{working_env}" }
-        unless working_env[:files].blank?
-          @env_store[@working_env_key] = working_env
-        else
-          DTR.error {"No test files need to load?(working env: #{working_env})"}
-        end
+      def stop_service
+        DRb.stop_service
+      end
+
+      def lookup(method, stuff, timeout=nil)
+        lookup_ring.send(method, stuff, timeout)
+      end
+
+      def lookup_ring
+        @ring ||= lookup_ring_any
+      end
+
+      def lookup_ring_any
+        ::Rinda::TupleSpaceProxy.new(DTR.configuration.lookup_ring_any)
       end
     end
   end

@@ -12,6 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'dtr/utils/logger'
-require 'dtr/utils/env_store'
-require 'dtr/utils/cmd'
+module DTR
+  module Service
+    module Message
+      include Rinda
+      
+      def send_message(message)
+        lookup_ring.write [:message, Socket.gethostname, message, Time.now], 2
+      end
+      
+      def new_message_monitor
+        lookup_ring.notify("write", [:message, nil, nil, nil])
+      end
+    end
+  end
+end
