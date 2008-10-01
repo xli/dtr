@@ -4,7 +4,6 @@ Send suggestions for this list to iam@li-xiao.com
 
 === To Do
   cache lookup_ring_any result
-  sync_logger_test failed in rake
   clean DTROPTIONS
   clean dtr/test_unit.rb
   monitor
