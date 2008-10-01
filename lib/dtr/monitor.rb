@@ -12,26 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'dtr/shared'
+require 'dtr/master'
 
 module DTR
-  module Master
+  class Monitor
     include Adapter::Master
-    include Service::WorkingEnv
-
-    def with_dtr_master(&block)
-      if defined?(ActiveRecord::Base)
-        ActiveRecord::Base.clear_active_connections! rescue nil
-      end
-
+    include Service::Agent
+    def start
       start_service
       DTR.configuration.start_rinda
-      provide_working_env WorkingEnv.new
+      monitor_thread = Thread.start do
+        new_agent_monitor.each { |t| puts t.last.last }
+      end
+      puts "Monitor process started at #{Time.now}"
+      
       yelling_thread = wakeup_agents
-
-      DTR.info {"Master process started at #{Time.now}"}
-
-      block.call
+      
+      monitor_thread.join
+    rescue Interrupt
     ensure
       #kill yelling_thread first, so that agents wouldn't be wakeup after were hypnotized
       Thread.kill yelling_thread rescue nil

@@ -51,7 +51,7 @@ module DTR
       end
 
       def run
-        @herald = drb_fork { Herald.new @working_env_key, @agent_env_setup_cmd }
+        @herald = drb_fork { Herald.new @working_env_key, @agent_env_setup_cmd, @runner_names }
         while @env_store[@working_env_key].nil?
           sleep(1)
         end

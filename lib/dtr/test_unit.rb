@@ -32,12 +32,7 @@ module DTR
     Test::Unit::TestSuite.send(:include, TestSuiteInjection)
   end
   
-  def service
-    return $dtr_service if defined?($dtr_service)
-    $dtr_service = DTR::Service::Base.new
-  end
-
-  module_function :reject, :inject, :service
+  module_function :reject, :inject
   
   class Counter
     

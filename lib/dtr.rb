@@ -44,9 +44,9 @@ module DTR
   end
 
   def monitor
-    require 'dtr/shared'
+    require 'dtr/monitor'
     DTR.logger('dtr_monitor.log')
-    Service::Base.new.monitor
+    Monitor.new.start
   end
 
   module_function :start_agent, :launch_agent, :lib_path, :broadcast_list=, :monitor, :port=

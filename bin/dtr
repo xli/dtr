@@ -29,6 +29,7 @@ opts = OptionParser.new do |opts|
   opts.separator "Options:"
   
   opts.on_tail("-m", "--monitor", "Monitor the status of the dtr agents.") do
+    DTR.monitor
   end
 
   opts.on("-p", "--port PORT",  "Port number of DTR rinda server. Default is 3344.") do |port|

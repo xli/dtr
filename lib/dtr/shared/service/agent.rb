@@ -14,14 +14,19 @@
 
 module DTR
   module Service
-    module WorkingEnv
+    module Agent
       include Rinda
-      def lookup_working_env
-        lookup(:read, [:working_env, nil])[1]
+      def new_agent_monitor
+        lookup_ring.notify(nil, [:agent, nil])
       end
 
-      def provide_working_env(env)
-        lookup_ring.write [:working_env, env]
+      def provide_agent_info(setup_env_cmd, runners)
+        agent = %{
+- agent(host at #{Socket.gethostname}):
+    default setup environment command: '#{setup_env_cmd}'
+    runners: #{runners.inspect}
+}
+        lookup_ring.write [:agent, agent]
       end
     end
   end

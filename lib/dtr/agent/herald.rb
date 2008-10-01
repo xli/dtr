@@ -17,10 +17,12 @@ module DTR
   module Agent
     class Herald
       include Service::WorkingEnv
+      include Service::Agent
 
-      def initialize(working_env_key, agent_env_setup_cmd)
+      def initialize(working_env_key, agent_env_setup_cmd, runners)
         @working_env_key = working_env_key
         @agent_env_setup_cmd = agent_env_setup_cmd
+        @runners = runners
         @env_store = EnvStore.new
         start_off
       end
@@ -28,6 +30,8 @@ module DTR
       def start_off
         start_service
         DTR.info "=> Herald starts off..."
+        provide_agent_info(@agent_env_setup_cmd, @runners)
+
         working_env = lookup_working_env
         DTR.info {"=> Got working environment created at #{working_env[:created_at]} by #{working_env[:host]}"}
         if working_env[:files].blank?
