@@ -1,5 +1,4 @@
 require File.dirname(__FILE__) + '/../test_helper'
-# DTROPTIONS[:log_level] = Logger::DEBUG
 
 include DTR::AgentHelper
 

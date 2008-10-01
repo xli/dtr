@@ -19,9 +19,6 @@ require 'monitor'
 require 'drb'
 require 'timeout'
 
-DTROPTIONS = {} unless defined?(DTROPTIONS)
-DTROPTIONS[:log_file] = 'dtr_master_process.log' unless DTROPTIONS[:log_file]
-
 module DTR
   def reject
     return unless Test::Unit::TestSuite.method_defined?(:dtr_injected?)
@@ -237,11 +234,11 @@ module DTR
     end
 
     def run_with_dtr_injection(result, &progress_block)
-      DTR.info { "start of run suite(#{name}), size: #{size};"}
       if result.kind_of?(ThreadSafeTestResult)
         run_without_dtr_injection(result, &progress_block)
       else
-        with_dtr_task_injection do
+        DTR.logger('dtr_master_process.log')
+        with_dtr_master do
           result = ThreadSafeTestResult.new(result)
           run_without_dtr_injection(result) do |channel, value|
             DTR.debug { "=> channel: #{channel}, value: #{value}" }
@@ -253,7 +250,7 @@ module DTR
           DRbTestRunner.counter.wait_until_complete
         end
       end
-      DTR.info { "end of run suite(#{name}), test result status: #{result}, counter status: #{DRbTestRunner.counter}"}
+      DTR.info { "suite(#{name}): result => #{result}, counter status => #{DRbTestRunner.counter}"}
     end
   end
   

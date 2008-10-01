@@ -19,7 +19,7 @@ module DTR
     include Adapter::Master
     include Service::WorkingEnv
 
-    def with_dtr_task_injection(&block)
+    def with_dtr_master(&block)
       if defined?(ActiveRecord::Base)
         ActiveRecord::Base.clear_active_connections! rescue nil
       end

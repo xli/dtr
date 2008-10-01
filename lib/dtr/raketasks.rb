@@ -59,7 +59,7 @@ module DTR
       self.processes.to_i.times {|i| runner_names << "runner#{i}"}
       
       @agent = Process.fork do
-        DTROPTIONS[:names] = runner_names unless DTROPTIONS[:names]
+        DTR_AGENT_OPTIONS[:runners] = runner_names unless DTR_AGENT_OPTIONS[:runners]
         DTR.start_agent
       end
     end

@@ -28,20 +28,15 @@ opts = OptionParser.new do |opts|
   opts.separator ""
   opts.separator "Options:"
   
-  opts.on_tail("-m", "--monitor", "Monitor the status of the dtr rinda server, e.g. dtr -a 10.11.255.255 -m") do
-    DTROPTIONS[:monitor] = true
-  end
-  
-  opts.on_tail("-b", "--be_silent", "Only show error messages") do
-    DTROPTIONS[:log_level] = Logger::ERROR
+  opts.on_tail("-m", "--monitor", "Monitor the status of the dtr agents.") do
   end
 
-  opts.on("-p", "--port PORT",  "Port number DTR will listen to. Default is 3344.") do |port|
-    	DTR.port = port
+  opts.on("-p", "--port PORT",  "Port number of DTR rinda server. Default is 3344.") do |port|
+    DTR.port = port
   end
   
   opts.on("-r runner1_name,runner2_name", Array, "Start DTR test runner agent with unique runner names.") do |names|
-    DTROPTIONS[:names] = names.collect{|name| name.untaint}
+    DTR_AGENT_OPTIONS[:runners] = names.collect{|name| name.untaint}
   end
   
   opts.on("-a", "--broadcast_address ADDRESS", "Specify broadcast address for looking up dtr rinda server, e.g. 192.168.255.255. Default is 'localhost'.") do |address|
@@ -51,13 +46,17 @@ opts = OptionParser.new do |opts|
   end
 
   opts.on("-i", "--setup COMMAND", "Set command for initializing test runner test environment, e.g. 'rake db:test:prepare'. Default is do nothing.") do |command|
-    DTROPTIONS[:setup] = command.untaint
+    DTR_AGENT_OPTIONS[:setup_env_cmd] = command.untaint
   end
 
   opts.on_tail("-d", "--debug", "output debug log") do
-    DTROPTIONS[:log_level] = Logger::DEBUG
+    DTR.logger.log_level = Logger::DEBUG
   end
-  
+
+  opts.on_tail("-b", "--be_silent", "Only show error messages") do
+    DTR.logger.log_level = Logger::ERROR
+  end
+
   opts.on_tail("-v", "--version", "Show version") do
     puts "dtr, version " + DTRVERSION
   end
@@ -77,10 +76,6 @@ if no_argv
   puts NOTES
 end
 
-if DTROPTIONS[:names]
+if DTR_AGENT_OPTIONS[:runners] && !DTR_AGENT_OPTIONS[:runners].empty?
   DTR.start_agent
-end
-
-if DTROPTIONS[:monitor]
-  DTR.monitor
 end

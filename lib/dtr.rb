@@ -13,12 +13,12 @@
 # limitations under the License.
 
 DTRVERSION="0.0.5"
-DTROPTIONS = {} unless defined?(DTROPTIONS)
+DTR_AGENT_OPTIONS = {:runners => [], :agent_env_setup_cmd => nil}
 
 module DTR
 
   def start_agent
-    launch_agent(DTROPTIONS[:names], DTROPTIONS[:setup])
+    launch_agent(DTR_AGENT_OPTIONS[:runners], DTR_AGENT_OPTIONS[:setup_env_cmd])
   end
 
   def launch_agent(names, setup=nil)
@@ -45,7 +45,7 @@ module DTR
 
   def monitor
     require 'dtr/shared'
-    DTROPTIONS[:log_file] = 'dtr_monitor.log'
+    DTR.logger('dtr_monitor.log')
     Service::Base.new.monitor
   end
 

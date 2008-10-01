@@ -23,7 +23,7 @@ module DTR
         start_service_without_sync_logger
         if logger_tuple = lookup_ring.read_all([:logger, nil]).first
           sync_logger = logger_tuple[1]
-          DTROPTIONS[:logger] = sync_logger
+          DTR.logger = sync_logger
         end
       end
     end

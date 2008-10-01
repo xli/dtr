@@ -212,8 +212,8 @@ task :c10 do
 end
 
 task :c2 do
-  DTROPTIONS[:names] = ['c1', 'c2']
-  DTROPTIONS[:setup] = nil
+  DTR_AGENT_OPTIONS[:runners] = ['c1', 'c2']
+  DTR_AGENT_OPTIONS[:setup_env_cmd] = nil
   Dir.chdir('testdata') do
     DTR.start_agent
   end

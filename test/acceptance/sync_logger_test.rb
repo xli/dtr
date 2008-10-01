@@ -6,7 +6,7 @@ class SyncLoggerTest < Test::Unit::TestCase
   
   def setup
     @logger = LoggerStub.new
-    DTROPTIONS[:logger] = @logger
+    DTR.logger = @logger
     start_agents
     unless defined?(ATestCase)
       require 'a_test_case'
@@ -19,7 +19,7 @@ class SyncLoggerTest < Test::Unit::TestCase
     stop_agents
     $argv_dup = nil
     Process.waitall
-    DTROPTIONS.delete(:logger)
+    DTR.logger = nil
     @logger.clear
   end
 

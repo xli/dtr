@@ -21,12 +21,6 @@ module DTR
           DTR.info("Current work environment: #{lookup_working_env.inspect}")
           working_env_monitor.each { |t| DTR.info t.inspect }
         end
-        if DTROPTIONS[:log_level] == Logger::DEBUG
-          runner_monitor = new_runner_monitor
-          Thread.start do
-            runner_monitor.each { |t| DTR.debug t.inspect }
-          end
-        end
         message_monitor = new_message_monitor
         Thread.start do
           colors = {}
