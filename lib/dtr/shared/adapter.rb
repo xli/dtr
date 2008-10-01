@@ -34,12 +34,15 @@ module DTR
 
       def sleep?
         return true unless defined?(@wakeup_for_host)
-
         msg, host = Timeout.timeout(DTR.configuration.follower_listen_sleep_timeout) do
-          listen
+          loop do
+            msg, host = listen
+            break if host == @wakeup_for_host
+          end
+          [msg, host]
         end
         DTR.info {"Received: #{msg} from #{host}"}
-        msg == Adapter::SLEEP_MESSAGE && host == @wakeup_for_host
+        msg == Adapter::SLEEP_MESSAGE
       rescue Timeout::Error => e
         true
       end
