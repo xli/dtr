@@ -23,19 +23,23 @@ module DTR
 
     module Follower
       def wakeup?
-        msg, port = listen
+        msg, host = listen
         if msg == Adapter::WAKEUP_MESSAGE
+          port = host.split(':').last.to_i
           DTR.configuration.rinda_server_port = port
+          @wakeup_for_host = host
           true
         end
       end
 
       def sleep?
-        msg_bag = Timeout.timeout(DTR.configuration.follower_listen_sleep_timeout) do
+        return true unless defined?(@wakeup_for_host)
+
+        msg, host = Timeout.timeout(DTR.configuration.follower_listen_sleep_timeout) do
           listen
         end
-        DTR.info {"Received: #{msg_bag.inspect}"}
-        msg_bag.first == Adapter::SLEEP_MESSAGE
+        DTR.info {"Received: #{msg} from #{host}"}
+        msg == Adapter::SLEEP_MESSAGE && host == @wakeup_for_host
       rescue Timeout::Error => e
         true
       end
@@ -52,31 +56,44 @@ module DTR
 
     module Master
       def hypnotize_agents
-        yell_agents(Adapter::SLEEP_MESSAGE)
+        yell_agents("#{Adapter::SLEEP_MESSAGE} #{host}")
       end
 
       def wakeup_agents
         Thread.start do
           loop do
-            yell_agents("#{Adapter::WAKEUP_MESSAGE} #{DTR.configuration.rinda_server_port}")
+            do_wakeup_agents
             sleep(DTR.configuration.master_yell_interval)
           end
         end
       end
+
+      def do_wakeup_agents
+        yell_agents("#{Adapter::WAKEUP_MESSAGE} #{host}")
+      end
+
       private
       def yell_agents(msg)
         DTR.info {"yell agents #{msg}: #{DTR.configuration.broadcast_list.inspect}\n"}
         DTR.configuration.broadcast_list.each do |it|
-          soc = UDPSocket.open
-          begin
-            soc.setsockopt(Socket::SOL_SOCKET, Socket::SO_BROADCAST, true)
-            DTR.debug {"broadcast sending #{msg} to #{it}"}
-            soc.send(msg, 0, it, Adapter::AGENT_PORT)
-          rescue
-            nil
-          ensure
-            soc.close
-          end
+          broadcast(it, msg)
+        end
+      end
+
+      def host
+        "#{Socket.gethostname}:#{DTR.configuration.rinda_server_port}"
+      end
+
+      def broadcast(it, msg)
+        soc = UDPSocket.open
+        begin
+          soc.setsockopt(Socket::SOL_SOCKET, Socket::SO_BROADCAST, true)
+          DTR.debug {"broadcast sending #{msg} to #{it}"}
+          soc.send(msg, 0, it, Adapter::AGENT_PORT)
+        rescue
+          nil
+        ensure
+          soc.close
         end
       end
     end

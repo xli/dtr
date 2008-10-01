@@ -25,7 +25,7 @@ module DTR
     end
 
     def create_default_logger(file=nil)
-      dir = File.exist?('log') ? 'log' : ''
+      dir = File.exist?('log') ? 'log' : '/tmp'
       log_file = File.join(dir,  file || "dtr.log")
       do_print "logfile at #{log_file}\n"
       logger = Logger.new(log_file, 1, 5*1024*1024)

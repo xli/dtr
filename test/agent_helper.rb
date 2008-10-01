@@ -18,6 +18,7 @@ module DTR
       if @agents
         Process.kill 'TERM', @agents rescue nil
       end
+      Process.waitall
     end
   end
 end

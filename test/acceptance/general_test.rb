@@ -5,17 +5,16 @@ include DTR::AgentHelper
 class ScenarioTests < Test::Unit::TestCase
   
   def setup
-    # puts name
+    # put these here for we don't want run them in current process
+    require 'a_test_case'
+    require 'a_test_case2'
+    require 'a_failed_test_case'
+    require 'an_error_test_case'
+    require 'a_file_system_test_case'
+    require 'scenario_test_case'
+    require 'setup_agent_env_test_case'
+
     start_agents
-    unless defined?(ATestCase)
-      require 'a_test_case'
-      require 'a_test_case2'
-      require 'a_failed_test_case'
-      require 'an_error_test_case'
-      require 'a_file_system_test_case'
-      require 'scenario_test_case'
-      require 'setup_agent_env_test_case'
-    end
     DTR.inject
   end
 
@@ -23,7 +22,6 @@ class ScenarioTests < Test::Unit::TestCase
     DTR.reject
     stop_agents
     $argv_dup = nil
-    Process.waitall
   end
 
   def test_run_test_passed

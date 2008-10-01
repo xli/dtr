@@ -5,12 +5,11 @@ include DTR::AgentHelper
 class SyncLoggerTest < Test::Unit::TestCase
   
   def setup
+    # put these here for we don't want run them in current process
+    require 'a_test_case'
     @logger = LoggerStub.new
     DTR.logger = @logger
     start_agents
-    unless defined?(ATestCase)
-      require 'a_test_case'
-    end
     DTR.inject
   end
 
@@ -18,7 +17,6 @@ class SyncLoggerTest < Test::Unit::TestCase
     DTR.reject
     stop_agents
     $argv_dup = nil
-    Process.waitall
     DTR.logger = nil
     @logger.clear
   end
