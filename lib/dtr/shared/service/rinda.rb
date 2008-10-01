@@ -33,11 +33,7 @@ module DTR
       end
 
       def lookup_ring
-        @ring ||= lookup_ring_any
-      end
-
-      def lookup_ring_any
-        ::Rinda::TupleSpaceProxy.new(DTR.configuration.lookup_ring_any)
+        DTR.configuration.lookup_ring_any
       end
     end
   end

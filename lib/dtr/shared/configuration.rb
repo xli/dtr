@@ -60,7 +60,7 @@ module DTR
 
     def lookup_ring_any
       DTR.info {"broadcast list: #{@broadcast_list.inspect} on port #{@rinda_server_port}"}
-      Rinda::RingFinger.new(@broadcast_list, @rinda_server_port).lookup_ring_any
+      @ring ||= ::Rinda::TupleSpaceProxy.new(Rinda::RingFinger.new(@broadcast_list, @rinda_server_port).lookup_ring_any)
     end
 
   end

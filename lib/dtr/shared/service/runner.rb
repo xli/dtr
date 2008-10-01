@@ -31,10 +31,6 @@ module DTR
       def lookup_runner
         lookup(:take, [:name, 'DTR::Runner'.to_sym, nil, nil])[2]
       end
-
-      def new_runner_monitor
-        lookup_ring.notify(nil, [:name, 'DTR::Runner'.to_sym, nil, nil])
-      end
     end
   end
 end
