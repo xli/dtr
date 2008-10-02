@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
+#todo remove test file created in different dir, when run this test in rake
 class FileServiceTest < Test::Unit::TestCase
   include DTR::FileService
   TEST_PORT = 8888

@@ -106,7 +106,7 @@ The following is the test task example in the rake file:
 
   require 'dtr/raketasks'
 
-  DTR::Task.new :test do |t|
+  DTR::TestTask.new :test do |t|
     t.test_files = FileList['test/*test.rb']
     t.processes = 2 #default is 2
   end

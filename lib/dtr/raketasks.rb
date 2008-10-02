@@ -14,10 +14,12 @@
 
 require "rubygems"
 require 'dtr'
+require 'rake'
 require 'rake/testtask'
+require 'rake/tasklib'
 
 module DTR
-  class Task < Rake::TestTask
+  class TestTask < Rake::TestTask
     attr_accessor :processes
     
     def define
@@ -62,6 +64,79 @@ module DTR
         DTR_AGENT_OPTIONS[:runners] = runner_names unless DTR_AGENT_OPTIONS[:runners]
         DTR.start_agent
       end
+    end
+  end
+
+  # The following task is copied & modified from 'rake/packagetask'
+  class PackageTask < Rake::TaskLib
+    # Directory used to store the package files (default is 'dtr-pkg').
+    attr_accessor :package_dir
+
+    # List of files to be included in the package.
+    attr_accessor :package_files
+
+    # Tar command for gzipped or bzip2ed archives.  The default is 'tar'.
+    attr_accessor :tar_command
+
+    # Create a Package Task with the given name and version. 
+    def initialize
+      @package_files = Rake::FileList.new
+      @package_dir = 'dtr_pkg'
+      @tar_command = 'tar'
+      yield self if block_given?
+      define
+    end
+
+    # Create the tasks defined by this task library.
+    def define
+      desc "Build packages for dtr task"
+      task :dtr_package
+
+      desc "Force a rebuild of the package files for dtr task"
+      task :dtr_repackage => [:dtr_clobber_package, :dtr_package]
+
+      desc "Remove package for dtr task" 
+      task :dtr_clobber_package do
+        rm_r package_dir rescue nil
+      end
+
+      file, flag = tar_bz2_file, 'j'
+      task :dtr_package => ["#{package_dir}/#{file}"]
+      file "#{package_dir}/#{file}" => [package_dir_path] + package_files do
+        chdir(package_dir) do
+          sh %{#{@tar_command} #{flag}cvf #{file} #{package_name}}
+        end
+      end
+
+      directory package_dir
+
+      file package_dir_path => @package_files do
+        mkdir_p package_dir rescue nil
+        @package_files.each do |fn|
+          f = File.join(package_dir_path, fn)
+          fdir = File.dirname(f)
+          mkdir_p(fdir) if !File.exist?(fdir)
+          if File.directory?(fn)
+            mkdir_p(f)
+          else
+            rm_f f
+            safe_ln(fn, f)
+          end
+        end
+      end
+      self
+    end
+
+    def package_name
+      'codebase-dump'
+    end
+
+    def package_dir_path
+      "#{package_dir}/#{package_name}"
+    end
+
+    def tar_bz2_file
+      "#{package_name}.tar.bz2"
     end
   end
 end

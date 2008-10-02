@@ -228,7 +228,7 @@ end
 
 require 'dtr/raketasks'
 
-DTR::Task.new :mt do |t|
+DTR::TestTask.new :mt do |t|
   t.test_files = FileList['testdata/*.rb']
   t.processes = 2
 end
