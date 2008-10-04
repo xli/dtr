@@ -20,7 +20,9 @@ module DTR
       return true if cmd.nil? || cmd.empty?
       DTR.info {"Executing: #{cmd.inspect}"}
       output = %x[#{cmd} 2>&1]
-      DTR.info {"Execution is done, status: #{$?.exitstatus}"}
+      # don't put the following message into a block which maybe passed to remote process
+      # and no $?  could be found
+      DTR.info "Execution is done, status: #{$?.exitstatus}"
       DTR.error {"#{cmd.inspect} output:\n#{output}"} if $?.exitstatus != 0
       $?.exitstatus == 0
     end

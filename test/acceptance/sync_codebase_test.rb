@@ -17,7 +17,8 @@ class SyncCodebaseTest < Test::Unit::TestCase
         DRb.thread.join
       end
     end
-
+    #sleep for waiting rinda server start
+    sleep(1)
     client = Process.fork do
       start_service
       Dir.mkdir("test_sync_codebase")
@@ -26,7 +27,8 @@ class SyncCodebaseTest < Test::Unit::TestCase
       end
     end
     Process.waitpid client
-    assert File.exists?("test_sync_codebase/#{package_copy_file}")
+    assert File.directory?("test_sync_codebase/#{package_name}")
+    assert !File.exists?("test_sync_codebase/#{package_copy_file}")
   ensure
     stop_service rescue nil
     Process.kill 'TERM', master rescue nil

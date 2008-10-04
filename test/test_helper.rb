@@ -6,7 +6,7 @@ $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + '/../lib')
 require 'rubygems'
 # require 'growling_test'
 require 'dtr'
-require 'dtr/shared'
+require 'dtr/test_unit'
 
 require File.dirname(__FILE__) + '/agent_helper'
 require File.dirname(__FILE__) + '/logger_stub'

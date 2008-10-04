@@ -1,5 +1,4 @@
 require File.dirname(__FILE__) + '/../test_helper'
-require 'dtr/test_unit'
 
 include DTR::AgentHelper
 
@@ -233,7 +232,7 @@ class GeneralTest < Test::Unit::TestCase
     ENV['DTR_AGENT_ENV_SETUP_CMD'] = nil
   end
 
-  def test_multi_dtr_tasks_should_be_queued_and_processed_one_by_one
+  def xtest_multi_dtr_tasks_should_be_queued_and_processed_one_by_one
     $argv_dup = ['a_test_case.rb', 'a_test_case2.rb', 'a_file_system_test_case.rb']
     suite = Test::Unit::TestSuite.new('run_test_passed')
     suite << ATestCase.suite

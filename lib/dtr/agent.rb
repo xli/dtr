@@ -13,6 +13,7 @@
 # limitations under the License.
 
 require 'dtr/shared'
+require 'dtr/working_env_ext'
 
 require 'dtr/agent/sync_logger'
 require 'dtr/agent/brain'
@@ -20,7 +21,6 @@ require 'dtr/agent/worker'
 require 'dtr/agent/test_unit'
 require 'dtr/agent/herald'
 require 'dtr/agent/runner'
-require 'dtr/agent/working_env_ext'
 
 module DTR
   module Agent

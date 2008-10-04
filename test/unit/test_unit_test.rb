@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class InjectTest < Test::Unit::TestCase
+class TestUnitTest < Test::Unit::TestCase
   
   def teardown
     DTR.reject

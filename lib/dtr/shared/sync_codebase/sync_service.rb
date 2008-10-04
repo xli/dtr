@@ -22,6 +22,13 @@ module DTR
         File.open(package_copy_file, 'w') do |f|
           codebase.write(f)
         end
+        unless File.exists?(package_copy_file)
+          raise "#{package_copy_file} does not exist, sync codebase maybe failed."
+        end
+        unless Cmd.execute("tar -xjf #{package_copy_file}")
+          raise "Extracting #{package_copy_file} by 'tar' failed."
+        end
+        FileUtils.rm_f(package_copy_file)
       end
     end
   end

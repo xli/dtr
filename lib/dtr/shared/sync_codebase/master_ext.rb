@@ -19,19 +19,18 @@ module DTR
 
       def self.included(base)
         base.alias_method_chain :with_dtr_master, :sync_codebase
-        WorkingEnv.send(:include, WorkingEnvExt)
       end
 
       def with_dtr_master_with_sync_codebase(&block)
         with_dtr_master_without_sync_codebase do
+          unless Cmd.execute('rake dtr_repackage --trace')
+            raise 'No dtr_package task defined in your rake tasks'
+          end
           begin
-            unless Cmd.execute('rake dtr_repackage')
-              raise 'No dtr_package task defined in your rake tasks'
-            end
             provide_file Codebase.new
             block.call
           ensure
-            Cmd.execute('rake dtr_clobber_package')
+            Cmd.execute('rake dtr_clobber_package --trace')
           end
         end
       end

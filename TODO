@@ -10,7 +10,6 @@ Send suggestions for this list to iam@li-xiao.com
      * tell Master this error that agent can't know what's item sent from Master
   
   ?specify a working dir for agent
-  integrate with git?
   master process is alive when using ctrl-c to cancel rake functional tests
   monitor dtr rinda server status
   monitor acceptance test

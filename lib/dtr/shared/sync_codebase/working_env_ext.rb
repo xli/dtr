@@ -24,11 +24,9 @@ module DTR
       def within_with_sync_codebase(&block)
         within_without_sync_codebase do
           working_dtr = File.join(Dir.pwd, package_name)
-          unless File.exists?(working_dtr) #first time, need sync codebase first
-            sync_codebase
-            raise "#{package_copy_file} does not exist" unless File.exists?(package_copy_file)
-            raise "extracting #{package_copy_file} failed" unless Cmd.execute("tar -xjf #{package_copy_file}")
-          end
+
+          #first time, need sync codebase first
+          sync_codebase unless File.exists?(working_dtr)
 
           DTR.info {"working dir: #{working_dtr}"}
           Dir.chdir(working_dtr) do

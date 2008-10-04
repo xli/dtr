@@ -24,7 +24,6 @@ module DTR
         Process.kill 'TERM', @agents rescue nil
       end
       Process.waitall
-      puts "stop_agents: #{Dir.pwd}"
       FileUtils.rm_rf(@agents_dir)
     end
   end
