@@ -28,12 +28,12 @@ class SyncCodebaseTest < Test::Unit::TestCase
     Process.waitpid client
     assert File.exists?("test_sync_codebase/#{package_copy_file}")
   ensure
-    Process.kill 'TERM', master
+    stop_service rescue nil
+    Process.kill 'TERM', master rescue nil
     FileUtils.rm_rf("test_sync_codebase")
     Dir.chdir(testdata_dir) do
-      FileUtils.rm_rf("dtr_pkg")
+      DTR::Cmd.execute('rake dtr_clobber_package')
     end
-    stop_service rescue nil
   end
 
 end

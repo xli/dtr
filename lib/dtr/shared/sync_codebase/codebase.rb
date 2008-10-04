@@ -18,10 +18,9 @@ module DTR
       include DRbUndumped
       include Package
 
-      CHUNK_SIZE = 16*1024
+      CHUNK_SIZE = 1024*1024
 
       def write(remote_io)
-        puts "codebase: #{Dir.pwd}"
         File.open(File.join(package_dir, package_file), "rb") do |f|
           while chunk = f.read(CHUNK_SIZE) and chunk.length > 0
             remote_io.write(chunk)
