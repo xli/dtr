@@ -15,11 +15,16 @@
 module DTR
   module SyncCodebase
     class Codebase
+      include DRbUndumped
       include Package
-      def write(io)
+
+      CHUNK_SIZE = 16*1024
+
+      def write(remote_io)
+        puts "codebase: #{Dir.pwd}"
         File.open(File.join(package_dir, package_file), "rb") do |f|
           while chunk = f.read(CHUNK_SIZE) and chunk.length > 0
-            f.write(chunk)
+            remote_io.write(chunk)
           end
         end
       end

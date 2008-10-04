@@ -68,6 +68,4 @@ module DTR
       end
     end
   end
-
-  Configuration.send(:include, SyncLogger::Provider)
 end

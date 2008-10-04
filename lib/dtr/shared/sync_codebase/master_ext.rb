@@ -25,8 +25,9 @@ module DTR
       def with_dtr_master_with_sync_codebase(&block)
         with_dtr_master_without_sync_codebase do
           begin
-            raise 'No dtr_package task defined in your rake tasks' unless Cmd.execute('rake dtr_repackage')
-
+            unless Cmd.execute('rake dtr_repackage')
+              raise 'No dtr_package task defined in your rake tasks'
+            end
             provide_file Codebase.new
             block.call
           ensure

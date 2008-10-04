@@ -1,4 +1,5 @@
 require File.dirname(__FILE__) + '/../test_helper'
+require 'dtr/test_unit'
 
 include DTR::AgentHelper
 

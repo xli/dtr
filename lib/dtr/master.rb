@@ -39,4 +39,6 @@ module DTR
     include Service::WorkingEnv
     include SyncCodebase::MasterExt
   end
+
+  Configuration.send(:include, SyncLogger::Provider)
 end

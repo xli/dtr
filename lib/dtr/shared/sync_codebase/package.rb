@@ -32,7 +32,7 @@ module DTR
       end
 
       def package_copy_file
-        "copy_#{tar_bz2_file}"
+        "copy_#{package_file}"
       end
     end
   end
