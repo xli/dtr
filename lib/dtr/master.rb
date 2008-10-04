@@ -16,21 +16,17 @@ require 'dtr/shared'
 
 module DTR
   module Master
-    include Adapter::Master
-    include Service::WorkingEnv
-
     def with_dtr_master(&block)
       if defined?(ActiveRecord::Base)
         ActiveRecord::Base.clear_active_connections! rescue nil
       end
 
+      DTR.info {"Master process started at #{Time.now}"}
+
       start_service
       DTR.configuration.start_rinda
       provide_working_env WorkingEnv.new
       yelling_thread = wakeup_agents
-
-      DTR.info {"Master process started at #{Time.now}"}
-
       block.call
     ensure
       #kill yelling_thread first, so that agents wouldn't be wakeup after were hypnotized
@@ -38,5 +34,9 @@ module DTR
       hypnotize_agents rescue nil
       stop_service rescue nil
     end
+
+    include Adapter::Master
+    include Service::WorkingEnv
+    include SyncCodebase::MasterExt
   end
 end

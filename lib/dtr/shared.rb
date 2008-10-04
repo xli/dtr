@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'fileutils'
 require 'dtr/shared/ruby_ext'
 require 'dtr/shared/utils'
 require 'dtr/shared/message_decorator'
@@ -20,4 +21,4 @@ require 'dtr/shared/configuration'
 require 'dtr/shared/service'
 require 'dtr/shared/sync_logger'
 require 'dtr/shared/adapter'
-require 'dtr/shared/file_service'
+require 'dtr/shared/sync_codebase'

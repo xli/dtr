@@ -14,6 +14,7 @@
 
 require "rubygems"
 require 'dtr'
+require 'dtr/shared/sync_codebase/package'
 require 'rake'
 require 'rake/testtask'
 require 'rake/tasklib'
@@ -69,9 +70,7 @@ module DTR
 
   # The following task is copied & modified from 'rake/packagetask'
   class PackageTask < Rake::TaskLib
-    # Directory used to store the package files (default is 'dtr-pkg').
-    attr_accessor :package_dir
-
+    include SyncCodebase::Package
     # List of files to be included in the package.
     attr_accessor :package_files
 
@@ -81,7 +80,6 @@ module DTR
     # Create a Package Task with the given name and version. 
     def initialize
       @package_files = Rake::FileList.new
-      @package_dir = 'dtr_pkg'
       @tar_command = 'tar'
       yield self if block_given?
       define
@@ -100,7 +98,7 @@ module DTR
         rm_r package_dir rescue nil
       end
 
-      file, flag = tar_bz2_file, 'j'
+      file, flag = package_file, 'j'
       task :dtr_package => ["#{package_dir}/#{file}"]
       file "#{package_dir}/#{file}" => [package_dir_path] + package_files do
         chdir(package_dir) do
@@ -125,18 +123,6 @@ module DTR
         end
       end
       self
-    end
-
-    def package_name
-      'codebase-dump'
-    end
-
-    def package_dir_path
-      "#{package_dir}/#{package_name}"
-    end
-
-    def tar_bz2_file
-      "#{package_name}.tar.bz2"
     end
   end
 end

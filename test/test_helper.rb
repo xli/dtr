@@ -2,10 +2,9 @@ require 'test/unit'
 require 'test/unit/ui/console/testrunner'
 
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + '/../lib')
-$LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + '/../testdata')
 
 require 'rubygems'
-require 'growling_test'
+# require 'growling_test'
 require 'dtr'
 require 'dtr/test_unit'
 require File.dirname(__FILE__) + '/agent_helper'

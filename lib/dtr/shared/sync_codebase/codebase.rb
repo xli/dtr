@@ -12,22 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'dtr/shared'
-
-require 'dtr/agent/sync_logger'
-require 'dtr/agent/brain'
-require 'dtr/agent/worker'
-require 'dtr/agent/test_unit'
-require 'dtr/agent/herald'
-require 'dtr/agent/runner'
-require 'dtr/agent/working_env_ext'
-
 module DTR
-  module Agent
-    def start(runner_names=["Distributed Test Runner"], agent_env_setup_cmd=nil)
-      Brain.new(runner_names, agent_env_setup_cmd).hypnotize
+  module SyncCodebase
+    class Codebase
+      include Package
+      def write(io)
+        File.open(File.join(package_dir, package_file), "rb") do |f|
+          while chunk = f.read(CHUNK_SIZE) and chunk.length > 0
+            f.write(chunk)
+          end
+        end
+      end
     end
-    
-    module_function :start
   end
 end

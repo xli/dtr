@@ -1,0 +1,8 @@
+$LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + '/../lib')
+require 'dtr/raketasks'
+
+DTR::PackageTask.new do |p|
+  p.package_files.include("lib/**/*")
+  p.package_files.include("*.rb")
+  p.package_files.exclude("*test_case.rb")
+end

@@ -59,7 +59,11 @@ module DTR
         ENV['DTR_MASTER_ENV'] = working_env[:dtr_master_env]
 
         @runner_names.each do |name|
-          @runner_pids << drb_fork { Runner.start name, working_env }
+          @runner_pids << drb_fork {
+            working_env.within do
+              Runner.start name, working_env
+            end
+          }
         end
         Process.waitall
       end

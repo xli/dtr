@@ -2,10 +2,14 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 include DTR::AgentHelper
 
-class ScenarioTests < Test::Unit::TestCase
+class GeneralTest < Test::Unit::TestCase
   
   def setup
+    #start_agents first for test files loaded would be copied into sub processes
+    start_agents
     # put these here for we don't want run them in current process
+    @pwd = Dir.pwd
+    Dir.chdir(File.expand_path(File.dirname(__FILE__) + "/../../testdata/"))
     require 'a_test_case'
     require 'a_test_case2'
     require 'a_failed_test_case'
@@ -14,12 +18,12 @@ class ScenarioTests < Test::Unit::TestCase
     require 'scenario_test_case'
     require 'setup_agent_env_test_case'
 
-    start_agents
     DTR.inject
   end
 
   def teardown
     DTR.reject
+    Dir.chdir(@pwd)
     stop_agents
     $argv_dup = nil
   end

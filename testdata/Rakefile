@@ -11,7 +11,5 @@ DTR::TestTask.new :dtr do |t|
 end
 
 DTR::PackageTask.new do |p|
-  p.package_files.include("lib/**/*")
-  p.package_files.include("*.rb")
-  p.package_files.exclude("*test_case.rb")
+  p.package_files.include("**/*")
 end

@@ -13,6 +13,7 @@
 # limitations under the License.
 
 require 'dtr/shared/service/rinda'
+require 'dtr/shared/service/file'
 require 'dtr/shared/service/runner'
 require 'dtr/shared/service/working_env'
 require 'dtr/shared/service/agent'

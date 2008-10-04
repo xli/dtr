@@ -42,9 +42,13 @@ module DTR
         setup_env(working_env)
       end
 
+      #move into working_env?
       def setup_env(working_env)
         ENV['DTR_MASTER_ENV'] = working_env[:dtr_master_env]
-        if Cmd.execute(@agent_env_setup_cmd || working_env[:agent_env_setup_cmd])
+        setup_env_success = working_env.within do
+          Cmd.execute(@agent_env_setup_cmd || working_env[:agent_env_setup_cmd])
+        end
+        if setup_env_success
           @env_store[@working_env_key] = working_env
         else
           DTR.info {'Run env setup command failed, no runner started.'}
