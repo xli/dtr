@@ -29,7 +29,7 @@ class SyncCodebaseTest < Test::Unit::TestCase
     assert File.exists?("test_sync_codebase/#{package_copy_file}")
   ensure
     Process.kill 'TERM', master
-    # FileUtils.rm_rf("test_sync_codebase")
+    FileUtils.rm_rf("test_sync_codebase")
     Dir.chdir(testdata_dir) do
       FileUtils.rm_rf("dtr_pkg")
     end

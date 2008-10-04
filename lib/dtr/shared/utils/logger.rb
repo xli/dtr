@@ -55,7 +55,7 @@ module DTR
     def output(level, msg=nil, &block)
       logger.send(level) do
         message = block_given? ? block.call : msg.to_s
-        puts "log: #{message}"
+        # puts "log: #{message}"
 
         #output message when it's an error for agent error log should be displayed in console
         if level == :error
