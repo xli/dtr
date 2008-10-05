@@ -1,15 +1,21 @@
 require 'fileutils'
 module DTR
   module AgentHelper
-    def start_agents(size=3)
+    def start_agents
       @agents_dir = File.join(Dir.pwd, 'agents')
-      FileUtils.rm_rf(@agents_dir)
-      Dir.mkdir(@agents_dir)
+      @agents = []
+      @agents << start_agent_at(File.join(@agents_dir, 'agent1'), 1)
+      @agents << start_agent_at(File.join(@agents_dir, 'agent2'), 2)
+    end
+
+    def start_agent_at(agent_dir, size)
+      FileUtils.rm_rf(agent_dir)
+      FileUtils.mkdir_p(agent_dir)
       runner_names = []
       size.times {|i| runner_names << "runner#{i}"}
-      @agents = Process.fork do
+      Process.fork do
         begin
-          Dir.chdir(@agents_dir) do
+          Dir.chdir(agent_dir) do
             DTR.launch_agent(runner_names, nil)
           end
         rescue Exception => e
@@ -18,13 +24,16 @@ module DTR
         end
       end
     end
-    
+
     def stop_agents
       if @agents
-        Process.kill 'TERM', @agents rescue nil
+        @agents.each do |agent|
+          Process.kill 'TERM', agent rescue nil
+        end
+        Process.waitall
       end
-      Process.waitall
-      FileUtils.rm_rf(@agents_dir)
+    ensure
+      FileUtils.rm_rf(@agents_dir) rescue nil
     end
   end
 end

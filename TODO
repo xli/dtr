@@ -3,7 +3,6 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
-  setup agent_helper to start multi-agents for all tests
   fix: xtest_multi_dtr_tasks_should_be_queued_and_processed_one_by_one
   should not sync codebase when agents is on same machine and same dir with master process
   
