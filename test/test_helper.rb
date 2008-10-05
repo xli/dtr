@@ -4,11 +4,11 @@ require 'test/unit/ui/console/testrunner'
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + '/../lib')
 
 require 'rubygems'
-# require 'growling_test'
+require 'growling_test'
 require 'dtr'
 require 'dtr/test_unit'
-DTR.configuration.master_yell_interval = 2
-DTR.configuration.follower_listen_sleep_timeout = 3
+# DTR.configuration.master_yell_interval = 2
+# DTR.configuration.follower_listen_sleep_timeout = 3
 
 require File.dirname(__FILE__) + '/agent_helper'
 require File.dirname(__FILE__) + '/logger_stub'

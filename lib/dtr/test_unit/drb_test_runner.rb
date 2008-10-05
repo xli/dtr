@@ -20,7 +20,6 @@ module DTR
       include Service::Runner
 
       RUN_TEST_FINISHED = "::DRbTestRunner::RUN_TEST_FINISHED"
-      DEFAULT_RUN_TEST_TIMEOUT = 60 #seconds
 
       def initialize(test, result, &progress_block)
         @test = test
@@ -39,7 +38,7 @@ module DTR
       def run_test_on(runner)
         @result.start_thread do
           begin
-            Timeout.timeout(ENV['RUN_TEST_TIMEOUT'] || DEFAULT_RUN_TEST_TIMEOUT) do
+            Timeout.timeout(@result.timeout) do
               runner.run(@test, @result, &@progress_block)
             end
             @progress_block.call(RUN_TEST_FINISHED, @test.name)

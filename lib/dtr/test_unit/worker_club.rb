@@ -15,6 +15,8 @@
 module DTR
   module TestUnit
     module WorkerClub
+      DEFAULT_RUN_TEST_TIMEOUT = 60 #seconds
+
       def start_thread(&block)
         thread = Thread.start do
           block.call
@@ -24,21 +26,21 @@ module DTR
       end
 
       # Performs a wait on all the currently running threads and kills any that take
-      # too long. It waits by ENV['RUN_TEST_TIMEOUT'] seconds
+      # too long. It waits by ENV['RUN_TEST_TIMEOUT'] || 60 seconds
       def graceful_shutdown
         while reap_dead_workers("shutdown") > 0
-          Mongrel.info "Waiting for #{workers.list.length} requests to finish, could take #{timeout} seconds."
-          sleep timeout / 10
+          DTR.info "Waiting for #{workers.list.length} requests to finish, could take #{timeout} seconds."
+          sleep timeout / 60
         end
+      end
+
+      def timeout
+        ENV['RUN_TEST_TIMEOUT'] || DEFAULT_RUN_TEST_TIMEOUT
       end
 
       private
       def workers
         @workers ||= ThreadGroup.new
-      end
-
-      def timeout
-        ENV['RUN_TEST_TIMEOUT'] || 60
       end
 
       # Used internally to kill off any worker threads that have taken too long

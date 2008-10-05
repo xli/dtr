@@ -4,7 +4,6 @@ Send suggestions for this list to iam@li-xiao.com
 
 === To Do
   should trigger started on runner in agent runner, for some tools is using this hook(e.g. inbrowser_test)
-  DEFAULT_RUN_TEST_TIMEOUT
   
   ???? agent brain should wakeup when worker is dead
   problem: when agent can't find test files, drb can't undump test object, the error would be: undefined method `run' for #<DRb::DRbUnknown:0x318800>
