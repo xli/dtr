@@ -8,8 +8,8 @@ module DTR
       @agents << start_agent_at(File.join(@agents_dir, 'agent2'), 2)
     end
 
-    def start_agent_at(agent_dir, size)
-      FileUtils.rm_rf(agent_dir)
+    def start_agent_at(agent_dir, size, clean_dir=true)
+      FileUtils.rm_rf(agent_dir) if clean_dir
       FileUtils.mkdir_p(agent_dir)
       runner_names = []
       size.times {|i| runner_names << "runner#{i}"}

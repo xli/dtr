@@ -23,14 +23,21 @@ module DTR
       end
 
       def setup_env_with_sync_codebase(setup_env_cmd)
-        Dir.chdir(working_dir_without_sync_codebase) do
-          sync_codebase
+        unless same_working_dir_with_master_process?
+          Dir.chdir(working_dir_without_sync_codebase) do
+            sync_codebase
+          end
         end
         setup_env_without_sync_codebase(setup_env_cmd)
       end
 
       def working_dir_with_sync_codebase
-        File.join(working_dir_without_sync_codebase, package_name)
+        same_working_dir_with_master_process? ? Dir.pwd : File.join(working_dir_without_sync_codebase, package_name)
+      end
+
+      private
+      def same_working_dir_with_master_process?
+        self[:host] == Socket.gethostname && self[:pwd] == Dir.pwd
       end
     end
   end
