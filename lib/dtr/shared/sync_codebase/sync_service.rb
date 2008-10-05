@@ -18,6 +18,8 @@ module DTR
       include Package
       include Service::File
       def sync_codebase
+        FileUtils.rm_rf(File.join(Dir.pwd, package_name))
+
         codebase = lookup_file
         File.open(package_copy_file, 'w') do |f|
           codebase.write(f)
@@ -29,6 +31,7 @@ module DTR
           raise "Extracting #{package_copy_file} by 'tar' failed."
         end
         FileUtils.rm_f(package_copy_file)
+        true
       end
     end
   end

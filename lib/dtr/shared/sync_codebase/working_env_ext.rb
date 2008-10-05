@@ -26,7 +26,9 @@ module DTR
           working_dtr = File.join(Dir.pwd, package_name)
 
           #first time, need sync codebase first
-          sync_codebase unless File.exists?(working_dtr)
+          #working env is not a drbundump object, it is a copy from rinda server
+          #the status changed would not effect other process
+          @sync ||= sync_codebase
 
           DTR.info {"working dir: #{working_dtr}"}
           Dir.chdir(working_dtr) do
