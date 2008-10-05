@@ -12,11 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'dtr/master'
+module DTR
+  module TestUnit
+    module TestCaseInjection
 
-require 'dtr/test_unit/counter'
-require 'dtr/test_unit/thread_safe_test_result'
-require 'dtr/test_unit/drb_test_runner'
-require 'dtr/test_unit/test_case_injection'
-require 'dtr/test_unit/test_suite_injection'
-require 'dtr/test_unit/injection'
+      def self.included(base)
+        base.alias_method_chain :run, :dtr_injection
+      end
+
+      def run_with_dtr_injection(result, &progress_block)
+        DTR.debug {"start of run TestCase(#{name})"}
+        DRbTestRunner.new(self, result, &progress_block).run
+        DTR.debug {"end of run TestCase(#{name})"}
+      end
+    end
+  end
+end
