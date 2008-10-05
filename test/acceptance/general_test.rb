@@ -232,40 +232,40 @@ class GeneralTest < Test::Unit::TestCase
     ENV['DTR_AGENT_ENV_SETUP_CMD'] = nil
   end
 
-  def xtest_multi_dtr_tasks_should_be_queued_and_processed_one_by_one
+  def test_multi_dtr_tasks_should_be_queued_and_processed_one_by_one
+    testdata_dir = File.expand_path('./../testdata')
     $argv_dup = ['a_test_case.rb', 'a_test_case2.rb', 'a_file_system_test_case.rb']
     suite = Test::Unit::TestSuite.new('run_test_passed')
     suite << ATestCase.suite
     suite << ATestCase2.suite
     suite << AFileSystemTestCase.suite
+    process_assertion = Proc.new do |master_dir|
+      FileUtils.cp_r testdata_dir, master_dir
+      begin
+        Dir.chdir(master_dir) do
+          result = runit(suite)
+          assert result.passed?
+          assert_equal 3, result.run_count
+        end
+      ensure
+        FileUtils.rm_rf master_dir
+      end
+    end
 
-    p1 = Process.fork do
-      result = runit(suite)
-      assert result.passed?
-      assert_equal 3, result.run_count
+    @test_processes = []
+    4.times do |index|
+      @test_processes << Process.fork do
+        process_assertion.call("#{testdata_dir}_copy#{index}")
+      end
     end
-    p2 = Process.fork do
-      result = runit(suite)
-      assert result.passed?
-      assert_equal 3, result.run_count
-    end
-    p3 = Process.fork do
-      result = runit(suite)
-      assert result.passed?
-      assert_equal 3, result.run_count
-    end
-    p4 = Process.fork do
-      result = runit(suite)
-      assert result.passed?
-      assert_equal 3, result.run_count
-    end
-    Process.waitpid p1
+
+    Process.waitpid @test_processes[0]
     assert_equal 0, $?.exitstatus
-    Process.waitpid p2
+    Process.waitpid @test_processes[1]
     assert_equal 0, $?.exitstatus
-    Process.waitpid p3
+    Process.waitpid @test_processes[2]
     assert_equal 0, $?.exitstatus
-    Process.waitpid p4
+    Process.waitpid @test_processes[3]
     assert_equal 0, $?.exitstatus
   end
 end
