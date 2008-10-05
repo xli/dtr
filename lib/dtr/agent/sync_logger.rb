@@ -14,6 +14,13 @@
 
 module DTR
   module SyncLogger
+
+    # Synchronizer loads SyncLogger from master process
+    # Any process need sync logs with master process should start service first.
+    # For logs would be sent back to master process, output log code should use 
+    # message string instead of block, for example: 
+    #    right: DTR.debug 'message'
+    #    not:   DTR.debug { 'message' }
     module Synchronizer
       def self.included(base)
         base.alias_method_chain :start_service, :sync_logger

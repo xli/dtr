@@ -42,41 +42,41 @@ module DTR
       end
 
       def init_environment
-        DTR.info {"#{name}: Initialize working environment..."}
+        DTR.info "#{name}: Initialize working environment..."
         @env[:libs].select{ |lib| !$LOAD_PATH.include?(lib) && File.exists?(lib) }.each do |lib|
           $LOAD_PATH << lib
-          DTR.debug {"#{name}: appended lib: #{lib}"}
+          DTR.debug "#{name}: appended lib: #{lib}"
         end
-        DTR.info {"#{name}: libs loaded"}
-        DTR.debug {"#{name}: $LOAD_PATH: #{$LOAD_PATH.inspect}"}
+        DTR.info "#{name}: libs loaded"
+        DTR.debug "#{name}: $LOAD_PATH: #{$LOAD_PATH.inspect}"
 
         @env[:files].each do |f|
           begin
             load f unless f =~ /^-/
-            DTR.debug {"#{name}: loaded #{f}"}
+            DTR.debug "#{name}: loaded #{f}"
           rescue LoadError => e
             DTR.error "#{name}: No such file to load -- #{f}"
-            DTR.debug {"Environment: #{@env}"}
+            DTR.debug "Environment: #{@env}"
           end
         end
         DTR.info "#{name}: test files loaded"
       end
 
       def run(test, result, &progress_block)
-        DTR.info {"+"}
-        DTR.debug {"#{name}: running #{test}..."}
+        DTR.info "+"
+        DTR.debug "#{name}: running #{test}..."
         @started << test.name
         test.run(result, &progress_block)
       rescue DRb::DRbConnError => e
-        DTR.info{ "Rescued DRb::DRbConnError(#{e.message}), while running test: #{test.name}. The master process may be stopped." }
+        DTR.info "Rescued DRb::DRbConnError(#{e.message}), while running test: #{test.name}. The master process may be stopped."
       rescue Exception => e
-        DTR.error {"Unexpected exception: #{e.message}"}
-        DTR.error {e.backtrace.join("\n")}
+        DTR.error "Unexpected exception: #{e.message}"
+        DTR.error e.backtrace.join("\n")
         result.add_error(Test::Unit::Error.new(test.name, e))
         result.add_run
         progress_block.call(Test::Unit::TestCase::FINISHED, test.name)
       ensure
-        DTR.debug {"#{name}: done #{test}"}
+        DTR.debug "#{name}: done #{test}"
         @run_finished << test.name
         provide_runner(self)
       end

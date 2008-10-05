@@ -16,13 +16,13 @@ module DTR
   module Agent
     module WorkingEnvExt
       def within
+        ENV['DTR_MASTER_ENV'] = self[:dtr_master_env]
         Dir.chdir(working_dir) do
           yield
         end
       end
 
       def setup_env(setup_env_cmd)
-        ENV['DTR_MASTER_ENV'] = self[:dtr_master_env]
         within do
           Cmd.execute(setup_env_cmd || self[:agent_env_setup_cmd])
         end

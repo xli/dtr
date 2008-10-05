@@ -32,7 +32,7 @@ module DTR
           run
         ensure
           teardown
-          DTR.info { "Agent worker is dieing" }
+          DTR.info "Agent worker is dieing"
         end
       end
 
@@ -46,7 +46,7 @@ module DTR
         if @herald
           Process.kill 'TERM', @herald rescue nil
           @herald = nil
-          DTR.info {"=> Herald is killed." }
+          DTR.info "=> Herald is killed."
         end
       end
 
@@ -56,7 +56,6 @@ module DTR
           sleep(1)
         end
         working_env = @env_store[@working_env_key]
-        ENV['DTR_MASTER_ENV'] = working_env[:dtr_master_env]
 
         @runner_names.each do |name|
           @runner_pids << drb_fork {
@@ -82,8 +81,8 @@ module DTR
             yield
           rescue Interrupt, SystemExit, SignalException
           rescue Exception => e
-            DTR.info {"Worker drb fork is stopped by Exception => #{e.class.name}, message => #{e.message}"}
-            DTR.debug {e.backtrace.join("\n")}
+            DTR.info "Worker drb fork is stopped by Exception => #{e.class.name}, message => #{e.message}"
+            DTR.debug e.backtrace.join("\n")
           end
         end
       end

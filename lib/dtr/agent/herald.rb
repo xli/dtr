@@ -33,9 +33,9 @@ module DTR
         provide_agent_info(@agent_env_setup_cmd, @runners)
 
         working_env = lookup_working_env
-        DTR.info {"=> Got working environment created at #{working_env[:created_at]} by #{working_env[:host]}"}
+        DTR.info "=> Got working environment created at #{working_env[:created_at]} by #{working_env[:host]}"
         if working_env[:files].blank?
-          DTR.error {"No test files need to load?(working env: #{working_env})"}
+          DTR.error "No test files need to load?(working env: #{working_env})"
           return
         end
 
