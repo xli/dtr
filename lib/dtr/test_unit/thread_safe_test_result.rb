@@ -21,6 +21,7 @@ module DTR
     class ThreadSafeTestResult
       include Test::Unit::Util::Observable
       include DRbUndumped
+      include WorkerClub
 
       def initialize(rs)
         extend MonitorMixin
@@ -80,6 +81,30 @@ module DTR
       def error_count
         synchronize do
           @rs.error_count
+        end  
+      end
+
+      def run_count
+        synchronize do
+          @rs.run_count
+        end  
+      end
+
+      def assertion_count
+        synchronize do
+          @rs.assertion_count
+        end  
+      end
+
+      def errors
+        synchronize do
+          @rs.errors
+        end  
+      end
+
+      def failures
+        synchronize do
+          @rs.failures
         end  
       end
     end

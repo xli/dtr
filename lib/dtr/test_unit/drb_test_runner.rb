@@ -18,27 +18,16 @@ module DTR
   module TestUnit
     class DRbTestRunner
       include Service::Runner
-    
-      # because some test case will rewrite TestCase#run to ignore some tests, which
-      # makes TestResult#run_count different with TestSuite#size, so we need to count
-      # by ourselves.(for example: ActionController::IntegrationTest)
-      class << self
-        def counter
-          @counter ||= Counter.new
-        end
-      end
-    
+
       RUN_TEST_FINISHED = "::DRbTestRunner::RUN_TEST_FINISHED"
       DEFAULT_RUN_TEST_TIMEOUT = 60 #seconds
-    
+
       def initialize(test, result, &progress_block)
         @test = test
         @result = result
         @progress_block = progress_block
-      
-        DRbTestRunner.counter.add_start_count
       end
-    
+
       def run
         if runner = lookup_runner
           run_test_on(runner)
@@ -46,9 +35,9 @@ module DTR
           self.run
         end
       end
-    
+
       def run_test_on(runner)
-        Thread.start do
+        @result.start_thread do
           begin
             Timeout.timeout(ENV['RUN_TEST_TIMEOUT'] || DEFAULT_RUN_TEST_TIMEOUT) do
               runner.run(@test, @result, &@progress_block)

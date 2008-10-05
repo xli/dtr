@@ -13,31 +13,20 @@
 # limitations under the License.
 
 require 'test/unit/testcase'
-require 'test/unit/testsuite'
+require 'test/unit/ui/testrunnermediator'
 
 module DTR
   def reject
-    return unless Test::Unit::TestSuite.method_defined?(:dtr_injected?)
-    Test::Unit::TestCase.send(:include, TestUnit::Rejection)
-    Test::Unit::TestSuite.send(:include, TestUnit::Rejection)
+    return unless Test::Unit::UI::TestRunnerMediator.respond_to?(:reject_dtr)
+    Test::Unit::UI::TestRunnerMediator.reject_dtr
+    Test::Unit::TestCase.reject_dtr
   end
 
   def inject
-    return if Test::Unit::TestSuite.method_defined?(:dtr_injected?)
+    return if Test::Unit::UI::TestRunnerMediator.respond_to?(:reject_dtr)
+    Test::Unit::UI::TestRunnerMediator.send(:include, TestUnit::TestRunnerMediatorInjection)
     Test::Unit::TestCase.send(:include, TestUnit::TestCaseInjection)
-    Test::Unit::TestSuite.send(:include, TestUnit::TestSuiteInjection)
   end
 
   module_function :reject, :inject
-
-  module TestUnit
-    module Rejection
-      def self.included(base)
-        base.send(:remove_method, :dtr_injected?) if base.method_defined?(:dtr_injected?)
-        base.send(:remove_method, :run)
-        base.send(:alias_method, :run, :run_without_dtr_injection)
-        base.send(:remove_method, :run_without_dtr_injection)
-      end
-    end
-  end
 end

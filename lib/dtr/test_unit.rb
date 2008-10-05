@@ -14,9 +14,9 @@
 
 require 'dtr/master'
 
-require 'dtr/test_unit/counter'
+require 'dtr/test_unit/worker_club'
 require 'dtr/test_unit/thread_safe_test_result'
 require 'dtr/test_unit/drb_test_runner'
 require 'dtr/test_unit/test_case_injection'
-require 'dtr/test_unit/test_suite_injection'
+require 'dtr/test_unit/testrunnermediator_injection'
 require 'dtr/test_unit/injection'

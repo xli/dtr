@@ -33,6 +33,7 @@ module DTR
         end
       rescue Exception => e
         DTR.info {"Agent brain is stopped by Exception => #{e.class.name}, message => #{e.message}"}
+        DTR.debug {e.backtrace.join("\n")}
       end
 
       def work(worker)
