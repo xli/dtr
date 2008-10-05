@@ -4,16 +4,15 @@ Send suggestions for this list to iam@li-xiao.com
 
 === To Do
   setup agent_helper to start multi-agents for all tests
-  test: sync_codebase should clean working dir first
   fix: xtest_multi_dtr_tasks_should_be_queued_and_processed_one_by_one
-
+  should not sync codebase when agents is on same machine and same dir with master process
+  
   clean dtr/test_unit.rb
   use thread.join instead of counter to count test result size
   ???? agent brain should wakeup when worker is dead
   problem: when agent can't find test files, drb can't undump test object, the error would be: undefined method `run' for #<DRb::DRbUnknown:0x318800>
      * tell Master this error that agent can't know what's item sent from Master
   
-  ?specify a working dir for agent
   master process is alive when using ctrl-c to cancel rake functional tests
   monitor dtr rinda server status
   monitor acceptance test

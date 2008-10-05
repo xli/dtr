@@ -19,16 +19,6 @@ module DTR
       @env = {:libs => $LOAD_PATH.dup, :files => files, :created_at => Time.now.to_s, :dtr_master_env => ENV['DTR_MASTER_ENV'], :agent_env_setup_cmd => ENV['DTR_AGENT_ENV_SETUP_CMD'], :identifier => "#{Time.now.to_s}:#{rand}:#{object_id}", :host => Socket.gethostname, :pwd => Dir.pwd}
     end
 
-    def within
-      project_name = self[:pwd].length > 20 ? self[:pwd][-20..-1] : self[:pwd]
-      working_dir = File.join(escape(self[:host]), escape(project_name))
-
-      FileUtils.mkdir_p(working_dir)
-      Dir.chdir(working_dir) do
-        yield
-      end
-    end
-
     def [](key)
       @env[key]
     end
@@ -43,11 +33,6 @@ module DTR
     
     def ==(obj)
       obj && obj[:identifier] == self[:identifier]
-    end
-
-    private
-    def escape(str)
-      str.gsub(/[^a-zA-Z0-9]/, '_')
     end
   end
 end

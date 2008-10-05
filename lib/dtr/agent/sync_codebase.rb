@@ -13,5 +13,25 @@
 # limitations under the License.
 
 module DTR
-  WorkingEnv.send(:include, SyncCodebase::WorkingEnvExt)
+  module SyncCodebase
+    module WorkingEnvExt
+      include SyncService
+
+      def self.included(base)
+        base.alias_method_chain :setup_env, :sync_codebase
+        base.alias_method_chain :working_dir, :sync_codebase
+      end
+
+      def setup_env_with_sync_codebase(setup_env_cmd)
+        Dir.chdir(working_dir_without_sync_codebase) do
+          sync_codebase
+        end
+        setup_env_without_sync_codebase(setup_env_cmd)
+      end
+
+      def working_dir_with_sync_codebase
+        File.join(working_dir_without_sync_codebase, package_name)
+      end
+    end
+  end
 end

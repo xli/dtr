@@ -17,9 +17,6 @@ require 'dtr/shared'
 module DTR
   module Master
     def with_dtr_master(&block)
-      #require working_env_ext only when need it, otherwise how could we test working_env without ext?
-      #todo: figure out better way, shouldn't make it complex for test
-      require 'dtr/working_env_ext'
       if defined?(ActiveRecord::Base)
         ActiveRecord::Base.clear_active_connections! rescue nil
       end

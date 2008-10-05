@@ -1,4 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
+require 'dtr/agent/working_env_ext'
+DTR::WorkingEnv.send(:include, DTR::Agent::WorkingEnvExt)
 
 class WorkingEnvTest < Test::Unit::TestCase
   def test_identifier_of_working_env

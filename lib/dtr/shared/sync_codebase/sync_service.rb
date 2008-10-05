@@ -31,7 +31,6 @@ module DTR
           raise "Extracting #{package_copy_file} by 'tar' failed."
         end
         FileUtils.rm_f(package_copy_file)
-        true
       end
     end
   end
