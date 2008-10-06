@@ -22,7 +22,10 @@ module DTR
         end
         def run(result, &block)
           @suite.run(result, &block)
-          @result.graceful_shutdown
+          result.graceful_shutdown
+        end
+        def size
+          @suite.size
         end
       end
 
@@ -52,7 +55,7 @@ module DTR
 
       def run_suite_with_dtr_injection
         DTR.logger('dtr_master_process.log')
-        @suite
+        @suite = SuiteWrapper.new(@suite)
         with_dtr_master do
           run_suite_without_dtr_injection
         end

@@ -24,7 +24,18 @@ module DTR
       def with_dtr_master_with_sync_codebase(&block)
         with_dtr_master_without_sync_codebase do
           unless Cmd.execute('rake dtr_repackage --trace')
-            raise 'No dtr_package task defined in your rake tasks'
+            $stderr.puts %{
+Execute dtr_repackage rake task failed, see log for details.
+For running DTR test task, you must define a DTR::PackageTask task in your rakefile for DTR need package and synchronize your codebase within grid.
+Example:
+  require 'dtr/raketasks'
+  DTR::PackageTask.new do |p|
+    p.package_files.include("**/*")
+    p.package_files.exclude("tmp")
+    p.package_files.exclude("log")
+  end
+}
+            return Test::Unit::TestResult.new
           end
           begin
             provide_file Codebase.new

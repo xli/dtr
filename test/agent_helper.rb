@@ -5,7 +5,7 @@ module DTR
       @agents_dir = File.join(Dir.pwd, 'agents')
       @agents = []
       @agents << start_agent_at(File.join(@agents_dir, 'agent1'), 3)
-      @agents << start_agent_at(File.join(@agents_dir, 'agent2'), 1)
+      # @agents << start_agent_at(File.join(@agents_dir, 'agent2'), 1)
     end
 
     def start_agent_at(agent_dir, size, clean_dir=true)

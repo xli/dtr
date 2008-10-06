@@ -25,7 +25,7 @@ module DTR
           codebase.write(f)
         end
         unless File.exists?(package_copy_file)
-          raise "#{package_copy_file} does not exist, sync codebase maybe failed."
+          raise "#{package_copy_file} does not exist, sync codebase failed."
         end
         unless Cmd.execute("tar -xjf #{package_copy_file}")
           raise "Extracting #{package_copy_file} by 'tar' failed."

@@ -29,7 +29,7 @@ module DTR
 
       desc "Run tests" + (@name==:test ? "" : " for #{@name}")
       task @name do
-        start_agent
+        @agent = start_agent
         run_code = ''
         begin
           RakeFileUtils.verbose(@verbose) do
@@ -61,7 +61,7 @@ module DTR
       runner_names = []
       self.processes.to_i.times {|i| runner_names << "runner#{i}"}
       
-      @agent = Process.fork do
+      Process.fork do
         DTR_AGENT_OPTIONS[:runners] = runner_names unless DTR_AGENT_OPTIONS[:runners]
         DTR.start_agent
       end
