@@ -77,7 +77,7 @@ module DTR
 
       private
       def yell_agents(msg)
-        DTR.info {"yell agents #{msg}: #{DTR.configuration.broadcast_list.inspect}\n"}
+        DTR.info {"yell agents #{msg}: #{DTR.configuration.broadcast_list.inspect}"}
         DTR.configuration.broadcast_list.each do |it|
           broadcast(it, msg)
         end

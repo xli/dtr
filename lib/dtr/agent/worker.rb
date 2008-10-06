@@ -26,7 +26,7 @@ module DTR
       end
 
       def launch
-        DTR.info "=> Agent worker started at: #{Dir.pwd}, pid: #{Process.pid}"
+        DTR.info "=> Agent worker started at: #{Dir.pwd}, pid: #{Process.pid}, at: #{Dir.pwd}"
         setup
         begin
           run
@@ -81,7 +81,7 @@ module DTR
             yield
           rescue Interrupt, SystemExit, SignalException
           rescue Exception => e
-            DTR.info "Worker drb fork is stopped by Exception => #{e.class.name}, message => #{e.message}"
+            DTR.error "Worker drb fork is stopped by Exception => #{e.class.name}, message => #{e.message}"
             DTR.debug e.backtrace.join("\n")
           end
         end

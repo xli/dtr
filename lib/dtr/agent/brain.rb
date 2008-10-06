@@ -54,7 +54,7 @@ module DTR
             Worker.new(@runner_names, @agent_env_setup_cmd).launch
           rescue Interrupt, SystemExit, SignalException
           rescue Exception => e
-            DTR.info {"Worker is stopped by Exception => #{e.class.name}, message => #{e.message}"}
+            DTR.error {"Worker is stopped by Exception => #{e.class.name}, message => #{e.message}"}
             DTR.debug {e.backtrace.join("\n")}
           end
         end

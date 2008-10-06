@@ -31,7 +31,7 @@ module DTR
 
     def initialize
       store = EnvStore.new
-      @broadcast_list = store[:broadcast_list] || ['localhost']
+      @broadcast_list = ['localhost'].concat(store[:broadcast_list] || []).uniq
       @rinda_server_port = store[:port] || 3344
       @master_yell_interval = store[:master_yell_interval] || 10
       @follower_listen_sleep_timeout =  store[:follower_listen_sleep_timeout] || 15
@@ -59,9 +59,13 @@ module DTR
     end
 
     def lookup_ring_any
-      DTR.info {"broadcast list: #{@broadcast_list.inspect} on port #{@rinda_server_port}"}
-      @ring ||= ::Rinda::TupleSpaceProxy.new(Rinda::RingFinger.new(@broadcast_list, @rinda_server_port).lookup_ring_any)
+      @ring ||= __lookup_ring_any__
     end
 
+    private
+    def __lookup_ring_any__
+      DTR.info {"broadcast list: #{@broadcast_list.inspect} on port #{@rinda_server_port}"}
+      ::Rinda::TupleSpaceProxy.new(Rinda::RingFinger.new(@broadcast_list, @rinda_server_port).lookup_ring_any)
+    end
   end
 end
