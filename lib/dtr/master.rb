@@ -21,6 +21,8 @@ module DTR
         ActiveRecord::Base.clear_active_connections! rescue nil
       end
 
+      DTR.info ""
+      DTR.info "--------------------beautiful line--------------------------"
       DTR.info {"Master process started at #{Time.now}"}
 
       start_service

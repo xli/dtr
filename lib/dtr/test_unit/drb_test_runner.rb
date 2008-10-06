@@ -46,6 +46,7 @@ module DTR
             self.run
           rescue DRb::DRbConnError => e
             DTR.info {"DRb::DRbConnError(#{e.message}), rerun test: #{@test.name}"}
+            DTR.debug { e.backtrace.join("\n") }
             self.run
           rescue Exception => e
             DTR.info{ "#{test.name}, rescue an exception: #{e.message}, add error into result." }
