@@ -267,5 +267,9 @@ class GeneralTest < Test::Unit::TestCase
     assert_equal 0, $?.exitstatus
     Process.waitpid @test_processes[3]
     assert_equal 0, $?.exitstatus
+  ensure
+    @test_processes.each do |pid|
+      Process.kill 'TERM', pid rescue nil
+    end
   end
 end

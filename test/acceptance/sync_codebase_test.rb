@@ -33,6 +33,7 @@ class SyncCodebaseTest < Test::Unit::TestCase
   ensure
     stop_service rescue nil
     Process.kill 'TERM', master rescue nil
+    Process.kill 'TERM', client rescue nil
     FileUtils.rm_rf("test_sync_codebase")
     Dir.chdir(testdata_dir) do
       DTR::Cmd.execute('rake dtr_clobber_package')

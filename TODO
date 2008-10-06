@@ -3,14 +3,12 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
-  dtr_package bug
   should trigger started on runner in agent runner, for some tools is using this hook(e.g. inbrowser_test)
   
   ???? agent brain should wakeup when worker is dead
   problem: when agent can't find test files, drb can't undump test object, the error would be: undefined method `run' for #<DRb::DRbUnknown:0x318800>
      * tell Master this error that agent can't know what's item sent from Master
   
-  master process is alive when using ctrl-c to cancel rake functional tests
   monitor dtr rinda server status
   monitor acceptance test
   
