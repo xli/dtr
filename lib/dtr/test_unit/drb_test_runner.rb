@@ -19,8 +19,6 @@ module DTR
     class DRbTestRunner
       include Service::Runner
 
-      RUN_TEST_FINISHED = "::DRbTestRunner::RUN_TEST_FINISHED"
-
       def initialize(test, result, &progress_block)
         @test = test
         @result = result
@@ -41,7 +39,6 @@ module DTR
             Timeout.timeout(@result.timeout) do
               runner.run(@test, @result, &@progress_block)
             end
-            @progress_block.call(RUN_TEST_FINISHED, @test.name)
           rescue Timeout::Error => e
             DTR.info {"Run test timeout(#{ENV['RUN_TEST_TIMEOUT'] || DEFAULT_RUN_TEST_TIMEOUT}), reboot runner"}
             runner.reboot rescue nil
@@ -55,7 +52,6 @@ module DTR
             @result.add_error(Test::Unit::Error.new(@test.name, e))
             @result.add_run
             @progress_block.call(Test::Unit::TestCase::FINISHED, @test.name)
-            @progress_block.call(RUN_TEST_FINISHED, @test.name)
           end
         end
       end

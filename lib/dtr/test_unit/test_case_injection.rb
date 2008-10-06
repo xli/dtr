@@ -30,9 +30,7 @@ module DTR
       end
 
       def run_with_dtr_injection(result, &progress_block)
-        DTR.debug {"start of run TestCase(#{name})"}
         DRbTestRunner.new(self, result, &progress_block).run
-        DTR.debug {"end of run TestCase(#{name})"}
       end
     end
   end
