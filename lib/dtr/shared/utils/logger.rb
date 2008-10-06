@@ -30,7 +30,7 @@ module DTR
       do_print "dtr logfile at #{log_file}\n"
       logger = Logger.new(log_file, 1, 5*1024*1024)
       logger.datetime_format = "%m-%d %H:%M:%S"
-      logger.level = Logger::INFO
+      logger.level = ENV['DTR_LOG_LEVEL'] || Logger::INFO
       logger
     end
 
