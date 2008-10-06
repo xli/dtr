@@ -47,7 +47,7 @@ opts = OptionParser.new do |opts|
   end
 
   opts.on("-i", "--setup COMMAND", "Set command for initializing test runner test environment, e.g. 'rake db:test:prepare'. Default is do nothing.") do |command|
-    DTR_AGENT_OPTIONS[:setup_env_cmd] = command.untaint
+    DTR_AGENT_OPTIONS[:agent_env_setup_cmd] = command.untaint
   end
 
   opts.on_tail("-d", "--debug", "output debug log") do

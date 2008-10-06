@@ -213,7 +213,7 @@ end
 
 task :c2 do
   DTR_AGENT_OPTIONS[:runners] = ['c1', 'c2']
-  DTR_AGENT_OPTIONS[:setup_env_cmd] = nil
+  DTR_AGENT_OPTIONS[:agent_env_setup_cmd] = nil
   Dir.chdir('testdata') do
     DTR.start_agent
   end

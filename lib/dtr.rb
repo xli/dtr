@@ -18,7 +18,7 @@ DTR_AGENT_OPTIONS = {:runners => [], :agent_env_setup_cmd => nil}
 module DTR
 
   def start_agent
-    launch_agent(DTR_AGENT_OPTIONS[:runners], DTR_AGENT_OPTIONS[:setup_env_cmd])
+    launch_agent(DTR_AGENT_OPTIONS[:runners], DTR_AGENT_OPTIONS[:agent_env_setup_cmd])
   end
 
   def launch_agent(names, setup=nil)
