@@ -100,7 +100,8 @@ module DTR
 
       file, flag = package_file, 'j'
       task :dtr_package => ["#{package_dir}/#{file}"]
-      file "#{package_dir}/#{file}" => [package_dir_path] + package_files do
+
+      file "#{package_dir}/#{file}" => [package_dir_path] do
         chdir(package_dir) do
           sh %{#{@tar_command} #{flag}cvf #{file} #{package_name}}
         end
@@ -108,7 +109,7 @@ module DTR
 
       directory package_dir
 
-      file package_dir_path => @package_files do
+      file package_dir_path do
         mkdir_p package_dir rescue nil
         @package_files.each do |fn|
           f = File.join(package_dir_path, fn)
