@@ -30,8 +30,8 @@ module DTR
         @name = name
         @identifier = env[:identifier]
         @env = env
-        @started = []
-        @run_finished = []
+        @started = 0
+        @run_finished = 0
       end
       
       def start
@@ -64,9 +64,9 @@ module DTR
       end
 
       def run(test, result, &progress_block)
-        DTR.info "+"
+        DTR.info "#{name}: +"
         DTR.debug "#{name}: running #{test}..."
-        @started << test.name
+        @started += 1
         test.run(result, &progress_block)
       rescue DRb::DRbConnError => e
         DTR.info "Rescued DRb::DRbConnError(#{e.message}), while running test: #{test.name}. The master process may be stopped."
@@ -78,17 +78,17 @@ module DTR
         progress_block.call(Test::Unit::TestCase::FINISHED, test.name)
       ensure
         DTR.debug "#{name}: done #{test}"
-        @run_finished << test.name
+        @run_finished += 1
         provide_runner(self)
       end
 
       def reboot
-        DTR.info "#{self} is rebooting. Ran #{@started.size} tests, finished #{@run_finished.size}."
+        DTR.info "#{self} is rebooting. Ran #{@started} tests, finished #{@run_finished}."
         provide_runner(self)
       end
 
       def shutdown
-        DTR.info "#{self} is shutting down. Ran #{@started.size} tests, finished #{@run_finished.size}."
+        DTR.info "#{self} is shutting down. Ran #{@started} tests, finished #{@run_finished}."
         stop_service rescue exit!
       end
 

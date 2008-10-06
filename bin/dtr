@@ -22,7 +22,6 @@ opts = OptionParser.new do |opts|
   opts.banner = "DTR usage: #{$0} [options]"
   opts.separator ""
   opts.separator "Synopsis:"
-  opts.separator "dtr -s"
   opts.separator "dtr -r runner1_name,runner2_name"
   opts.separator "dtr -a broadcast_ip -m"
   opts.separator ""

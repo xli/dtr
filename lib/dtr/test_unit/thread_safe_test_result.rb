@@ -41,6 +41,7 @@ module DTR
         synchronize do
           @rs.add_failure(failure)
         end  
+        DTR.info { failure.long_display }
         notify_listeners(Test::Unit::TestResult::FAULT, failure)
         notify_listeners(Test::Unit::TestResult::CHANGED, self)
       end
@@ -49,6 +50,7 @@ module DTR
         synchronize do
           @rs.add_error(error)
         end  
+        DTR.info { error.long_display }
         notify_listeners(Test::Unit::TestResult::FAULT, error)
         notify_listeners(Test::Unit::TestResult::CHANGED, self)
       end

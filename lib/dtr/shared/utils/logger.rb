@@ -27,7 +27,7 @@ module DTR
     def create_default_logger(file=nil)
       dir = File.exist?('log') ? 'log' : '/tmp'
       log_file = File.join(dir,  file || "dtr.log")
-      do_print "logfile at #{log_file}\n"
+      do_print "dtr logfile at #{log_file}\n"
       logger = Logger.new(log_file, 1, 5*1024*1024)
       logger.datetime_format = "%m-%d %H:%M:%S"
       logger.level = Logger::INFO

@@ -6,6 +6,7 @@ Send suggestions for this list to iam@li-xiao.com
   how to enable debug level log in master?
      * logger in agents would be delegated to logger from master
   auto mkdir log&tmp for agent?
+  update help doc
   should trigger started on runner in agent runner, for some tools is using this hook(e.g. inbrowser_test)
   
   ???? agent brain should wakeup when worker is dead

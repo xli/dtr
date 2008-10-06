@@ -26,7 +26,7 @@ module DTR
       end
 
       def launch
-        DTR.info "=> Agent worker started at: #{Dir.pwd}, pid: #{Process.pid}, at: #{Dir.pwd}"
+        DTR.info "=> Agent worker started at: #{Dir.pwd}, pid: #{Process.pid}"
         setup
         begin
           run

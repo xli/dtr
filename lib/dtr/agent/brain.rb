@@ -22,6 +22,8 @@ module DTR
         raise 'No runner? What can I do for you?' if runner_names.blank?
         @runner_names = runner_names
         @agent_env_setup_cmd = agent_env_setup_cmd
+        DTR.info ""
+        DTR.info "--------------------beautiful line--------------------------"
         DTR.info "=> Agent environment setup cmd: #{@agent_env_setup_cmd}"
         DTR.info "=> Runner names: #{@runner_names.join(', ')}"
       end
