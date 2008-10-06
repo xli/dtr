@@ -15,6 +15,7 @@
 require "rubygems"
 require 'dtr'
 require 'dtr/shared/sync_codebase/package'
+require 'dtr/shared/ruby_ext'
 require 'rake'
 require 'rake/testtask'
 require 'rake/tasklib'
@@ -62,7 +63,7 @@ module DTR
       self.processes.to_i.times {|i| runner_names << "runner#{i}"}
       
       Process.fork do
-        DTR_AGENT_OPTIONS[:runners] = runner_names unless DTR_AGENT_OPTIONS[:runners]
+        DTR_AGENT_OPTIONS[:runners] = runner_names if DTR_AGENT_OPTIONS[:runners].empty?
         DTR.start_agent
       end
     end

@@ -233,9 +233,9 @@ DTR::TestTask.new :mt do |t|
   t.processes = 2
 end
 
-# DTR::PackageTask.new do |p|
-#   p.package_files.include("**/*")
-#   p.package_files.exclude("tmp")
-#   p.package_files.exclude("log")
-# end
+DTR::PackageTask.new do |p|
+  p.package_files.include("**/*")
+  p.package_files.exclude("tmp")
+  p.package_files.exclude("log")
+end
 

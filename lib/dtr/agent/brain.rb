@@ -19,8 +19,11 @@ module DTR
       include Adapter::Follower
       
       def initialize(runner_names, agent_env_setup_cmd)
+        raise 'No runner? What can I do for you?' if runner_names.blank?
         @runner_names = runner_names
         @agent_env_setup_cmd = agent_env_setup_cmd
+        DTR.info "=> Agent environment setup cmd: #{@agent_env_setup_cmd}"
+        DTR.info "=> Runner names: #{@runner_names.join(', ')}"
       end
 
       def hypnotize
