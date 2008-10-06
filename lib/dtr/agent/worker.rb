@@ -65,6 +65,7 @@ module DTR
           }
         end
         Process.waitall
+        DTR.info "=> All agent worker sub processes exited."
       end
 
       def kill_all_runners

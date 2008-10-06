@@ -41,9 +41,10 @@ module DTR
           end
           [msg, host]
         end
-        DTR.info {"Received: #{msg} from #{host}"}
+        DTR.info "Received: #{msg} from #{host}"
         msg == Adapter::SLEEP_MESSAGE
       rescue Timeout::Error => e
+        DTR.info "Timeout while listening command"
         true
       end
 
