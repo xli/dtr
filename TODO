@@ -3,6 +3,8 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
+  master process log doesn't have time
+  sleep in test would cause yelling delayed? add a test for it
   auto mkdir log&tmp for agent?
   update help doc
   should trigger started on runner in agent runner, for some tools is using this hook(e.g. inbrowser_test)

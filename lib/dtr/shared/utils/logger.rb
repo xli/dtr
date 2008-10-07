@@ -60,7 +60,7 @@ module DTR
         #output message when it's an error for agent error log should be displayed in console
         if level == :error
           $stderr.puts ''
-          $stderr.puts message
+          $stderr.puts "#{Time.now}: #{message}"
         end
         message
       end

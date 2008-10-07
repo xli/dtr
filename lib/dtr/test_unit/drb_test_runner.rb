@@ -40,7 +40,7 @@ module DTR
               runner.run(@test, @result, &@progress_block)
             end
           rescue Timeout::Error => e
-            DTR.info {"Run test timeout(#{ENV['RUN_TEST_TIMEOUT'] || DEFAULT_RUN_TEST_TIMEOUT}), reboot runner"}
+            DTR.info {"Run test timeout(#{@result.timeout}), reboot runner"}
             runner.reboot rescue nil
             DTR.info {"rerun test: #{@test.name}"}
             self.run
