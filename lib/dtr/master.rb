@@ -28,12 +28,8 @@ module DTR
       start_service
       DTR.configuration.start_rinda
       provide_working_env WorkingEnv.new
-      yelling_thread = wakeup_agents
-      block.call
+      with_wakeup_agents(&block)
     ensure
-      #kill yelling_thread first, so that agents wouldn't be wakeup after were hypnotized
-      Thread.kill yelling_thread rescue nil
-      hypnotize_agents rescue nil
       stop_service rescue nil
     end
 

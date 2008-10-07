@@ -26,14 +26,11 @@ module DTR
       end
       puts "Monitor process started at #{Time.now}"
       
-      yelling_thread = wakeup_agents
-      
-      monitor_thread.join
+      with_wakeup_agents do
+        monitor_thread.join
+      end
     rescue Interrupt
     ensure
-      #kill yelling_thread first, so that agents wouldn't be wakeup after were hypnotized
-      Thread.kill yelling_thread rescue nil
-      hypnotize_agents rescue nil
       stop_service rescue nil
     end
   end

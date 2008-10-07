@@ -63,13 +63,18 @@ module DTR
         yell_agents("#{Adapter::SLEEP_MESSAGE} #{host}")
       end
 
-      def wakeup_agents
-        Thread.start do
+      def with_wakeup_agents(&block)
+        yelling = Process.fork do
           loop do
             do_wakeup_agents
             sleep(DTR.configuration.master_yell_interval)
           end
         end
+        block.call
+      ensure
+        #kill yelling_process first, so that agents wouldn't be wakeup after were hypnotized
+        Process.kill 'TERM', yelling rescue nil
+        hypnotize_agents rescue nil
       end
 
       def do_wakeup_agents
