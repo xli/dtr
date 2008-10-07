@@ -19,19 +19,19 @@ module DTR
     include Adapter::Master
     include Service::Agent
     def start
-      start_service
-      DTR.configuration.start_rinda
-      monitor_thread = Thread.start do
-        new_agent_monitor.each { |t| puts t.last.last }
-      end
-      puts "Monitor process started at #{Time.now}"
+      DTR.configuration.with_rinda_server do
+        monitor_thread = Thread.start do
+          new_agent_monitor.each { |t| puts t.last.last }
+        end
+        puts "Monitor process started at #{Time.now}"
       
-      with_wakeup_agents do
-        monitor_thread.join
+        with_wakeup_agents do
+          begin
+            monitor_thread.join
+          rescue Interrupt
+          end
+        end
       end
-    rescue Interrupt
-    ensure
-      stop_service rescue nil
     end
   end
 end

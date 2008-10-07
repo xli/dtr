@@ -26,6 +26,7 @@ module DTR
 
   class Configuration
     include Singleton
+    include Service::Rinda
 
     attr_accessor :broadcast_list, :rinda_server_port, :master_yell_interval, :follower_listen_sleep_timeout
 
@@ -45,7 +46,8 @@ module DTR
       store[:follower_listen_sleep_timeout] = @follower_listen_sleep_timeout
     end
 
-    def start_rinda
+    def with_rinda_server(&block)
+      start_service
       DTR.info '-- Booting DTR Rinda server...'
       loop do
         begin
@@ -56,6 +58,9 @@ module DTR
         end
       end
       DTR.info "-- DTR Rinda server started on port #{@rinda_server_port}"
+      block.call
+    ensure
+      stop_service rescue nil
     end
 
     def lookup_ring_any

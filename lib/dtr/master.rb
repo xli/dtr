@@ -25,12 +25,10 @@ module DTR
       DTR.info "--------------------beautiful line--------------------------"
       DTR.info {"Master process started at #{Time.now}"}
 
-      start_service
-      DTR.configuration.start_rinda
-      provide_working_env WorkingEnv.new
-      with_wakeup_agents(&block)
-    ensure
-      stop_service rescue nil
+      DTR.configuration.with_rinda_server do
+        provide_working_env WorkingEnv.new
+        with_wakeup_agents(&block)
+      end
     end
 
     include Adapter::Master

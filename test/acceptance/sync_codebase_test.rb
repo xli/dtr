@@ -9,13 +9,12 @@ class SyncCodebaseTest < Test::Unit::TestCase
     testdata_dir = File.expand_path(File.dirname(__FILE__) + '/../../testdata')
 
     master = Process.fork do
-      start_service
-      DTR.configuration.start_rinda
-
-      Dir.chdir(testdata_dir) do
-        DTR::Cmd.execute('rake dtr_repackage')
-        provide_file DTR::SyncCodebase::Codebase.new
-        DRb.thread.join
+      DTR.configuration.with_rinda_server do
+        Dir.chdir(testdata_dir) do
+          DTR::Cmd.execute('rake dtr_repackage')
+          provide_file DTR::SyncCodebase::Codebase.new
+          DRb.thread.join
+        end
       end
     end
     #sleep for waiting rinda server start

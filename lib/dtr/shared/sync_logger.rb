@@ -58,13 +58,14 @@ module DTR
 
     module Provider
       def self.included(base)
-        base.send(:include, Service::Rinda)
-        base.alias_method_chain :start_rinda, :providing_sync_logger
+        base.alias_method_chain :with_rinda_server, :providing_sync_logger
       end
 
-      def start_rinda_with_providing_sync_logger
-        start_rinda_without_providing_sync_logger
-        lookup_ring.write [:logger, UndumpedLogger.new(DTR.logger)]
+      def with_rinda_server_with_providing_sync_logger(&block)
+        with_rinda_server_without_providing_sync_logger do
+          lookup_ring.write [:logger, UndumpedLogger.new(DTR.logger)]
+          block.call
+        end
       end
     end
   end
