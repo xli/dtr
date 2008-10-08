@@ -27,34 +27,30 @@ module DTR
 
       def run
         if runner = lookup_runner
-          run_test_on(runner)
+          WorkerClub.instance.start_thread(self, runner)
         else
           self.run
         end
       end
 
-      def run_test_on(runner)
-        WorkerClub.instance.start_thread do
-          begin
-            Timeout.timeout(WorkerClub.instance.timeout) do
-              runner.run(@test, @result, &@progress_block)
-            end
-          rescue Timeout::Error => e
-            DTR.info {"Run test timeout(#{WorkerClub.instance.timeout}), reboot runner"}
-            runner.reboot rescue nil
-            DTR.info {"rerun test: #{@test.name}"}
-            self.run
-          rescue DRb::DRbConnError => e
-            DTR.info {"DRb::DRbConnError(#{e.message}), rerun test: #{@test.name}"}
-            DTR.debug { e.backtrace.join("\n") }
-            self.run
-          rescue Exception => e
-            DTR.info{ "#{test.name}, rescue an exception: #{e.message}, add error into result." }
-            @result.add_error(Test::Unit::Error.new(@test.name, e))
-            @result.add_run
-            @progress_block.call(Test::Unit::TestCase::FINISHED, @test.name)
-          end
+      def run_test_on(runner, timeout)
+        Timeout.timeout(timeout) do
+          runner.run(@test, @result, &@progress_block)
         end
+      rescue Timeout::Error => e
+        DTR.info {"Run test timeout(#{timeout}), reboot runner"}
+        runner.reboot rescue nil
+        DTR.info {"rerun test: #{@test.name}"}
+        self.run
+      rescue DRb::DRbConnError => e
+        DTR.info {"DRb::DRbConnError(#{e.message}), rerun test: #{@test.name}"}
+        DTR.debug { e.backtrace.join("\n") }
+        self.run
+      rescue Exception => e
+        DTR.info{ "#{@test.name}, rescue an exception: #{e.message}, add error into result." }
+        @result.add_error(Test::Unit::Error.new(@test.name, e))
+        @result.add_run
+        @progress_block.call(Test::Unit::TestCase::FINISHED, @test.name)
       end
     end
   end
