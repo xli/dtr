@@ -83,7 +83,7 @@ module DTR
           rescue Interrupt, SystemExit, SignalException
           rescue Exception => e
             DTR.error "Worker drb fork is stopped by Exception => #{e.class.name}, message => #{e.message}"
-            DTR.debug e.backtrace.join("\n")
+            DTR.info e.backtrace.join("\n")
           end
         end
       end

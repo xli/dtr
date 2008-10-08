@@ -19,13 +19,11 @@ module DTR
   def reject
     return unless Test::Unit::UI::TestRunnerMediator.respond_to?(:reject_dtr)
     Test::Unit::UI::TestRunnerMediator.reject_dtr
-    Test::Unit::TestCase.reject_dtr
   end
 
   def inject
     return if Test::Unit::UI::TestRunnerMediator.respond_to?(:reject_dtr)
     Test::Unit::UI::TestRunnerMediator.send(:include, TestUnit::TestRunnerMediatorInjection)
-    Test::Unit::TestCase.send(:include, TestUnit::TestCaseInjection)
   end
 
   module_function :reject, :inject

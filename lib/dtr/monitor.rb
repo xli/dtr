@@ -20,7 +20,7 @@ module DTR
     include Service::Agent
     def start
       DTR.configuration.with_rinda_server do
-        monitor_thread = Thread.start do
+        monitor_thread = Thread.new do
           new_agent_monitor.each { |t| puts t.last.last }
         end
         puts "Monitor process started at #{Time.now}"

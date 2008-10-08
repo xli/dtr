@@ -57,7 +57,14 @@ module DTR
         DTR.logger('dtr_master_process.log')
         @suite = SuiteWrapper.new(@suite)
         with_dtr_master do
-          run_suite_without_dtr_injection
+          # inject testcase as late as possible, for in ruby world there is lots hacks added to TestCase#run method,
+          # DTR should be the last one to add dtr injection chain into run method
+          Test::Unit::TestCase.send(:include, TestUnit::TestCaseInjection)
+          begin
+            run_suite_without_dtr_injection
+          ensure
+            Test::Unit::TestCase.reject_dtr
+          end
         end
       end
     end

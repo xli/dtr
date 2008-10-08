@@ -22,7 +22,7 @@ module DTR
       DEFAULT_RUN_TEST_TIMEOUT = 60 #seconds
 
       def start_thread(drb_runner, remote_runner)
-        thread = Thread.start(drb_runner, remote_runner) do |local, remote|
+        thread = Thread.new(drb_runner, remote_runner) do |local, remote|
           local.run_test_on(remote, timeout)
         end
         thread[:started_on] = Time.now

@@ -37,7 +37,7 @@ module DTR
       def start
         #start service first, so that all logs can be sync with master process
         start_service
-        DTR.info("=> Starting runner #{name} at #{Dir.pwd}")
+        DTR.info("=> Starting runner #{name} at #{Dir.pwd}, pid: #{Process.pid}")
         init_environment
         provide_runner(self)
       end

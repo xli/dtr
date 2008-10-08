@@ -64,16 +64,18 @@ module DTR
       end
 
       def with_wakeup_agents(&block)
-        yelling = Process.fork do
+        heartbeat = Thread.new do
           loop do
             do_wakeup_agents
             sleep(DTR.configuration.master_yell_interval)
           end
         end
+        #heartbeat thread should have high priority for agent is listening
+        heartbeat.priority = Thread.current.priority + 10
         block.call
       ensure
-        #kill yelling_process first, so that agents wouldn't be wakeup after were hypnotized
-        Process.kill 'TERM', yelling rescue nil
+        #kill heartbeat first, so that agents wouldn't be wakeup after hypnotized
+        Thread.kill heartbeat rescue nil
         hypnotize_agents rescue nil
       end
 
