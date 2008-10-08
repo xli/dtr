@@ -22,7 +22,7 @@ module DTR
         end
         def run(result, &block)
           @suite.run(result, &block)
-          result.graceful_shutdown
+          WorkerClub.instance.graceful_shutdown
         end
         def size
           @suite.size

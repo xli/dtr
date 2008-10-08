@@ -12,9 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'singleton'
+
 module DTR
   module TestUnit
-    module WorkerClub
+    class WorkerClub
+      include Singleton
+
       DEFAULT_RUN_TEST_TIMEOUT = 60 #seconds
 
       def start_thread(&block)

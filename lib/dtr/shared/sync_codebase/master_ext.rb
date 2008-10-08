@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'test/unit/testresult'
+
 module DTR
   module SyncCodebase
     module MasterExt

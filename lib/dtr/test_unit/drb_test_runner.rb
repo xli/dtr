@@ -34,13 +34,13 @@ module DTR
       end
 
       def run_test_on(runner)
-        @result.start_thread do
+        WorkerClub.instance.start_thread do
           begin
-            Timeout.timeout(@result.timeout) do
+            Timeout.timeout(WorkerClub.instance.timeout) do
               runner.run(@test, @result, &@progress_block)
             end
           rescue Timeout::Error => e
-            DTR.info {"Run test timeout(#{@result.timeout}), reboot runner"}
+            DTR.info {"Run test timeout(#{WorkerClub.instance.timeout}), reboot runner"}
             runner.reboot rescue nil
             DTR.info {"rerun test: #{@test.name}"}
             self.run
