@@ -11,8 +11,8 @@ end
 NOTES = <<-NOTES
 ----------------
 Notes: 
-  * The default value of broadcast address is 'localhost'.
-  * Agent start by specifying runners by -r option, every runner would be started in different process for running test.
+  * DTR would always add 'localhost' into broadcast list.
+  * Agent start by specifying runners by -r option, every runner would be started in different process for running test. e.g. dtr -r runner1,runner2
   * DTR master environment options:
     * DTR_MASTER_ENV: this variable would be copied into runner process for sharing info between master and agents
     * DTR_AGENT_ENV_SETUP_CMD: this variable would be applied as agent setup environment command when agent have no setup environment command specified.

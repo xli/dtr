@@ -32,13 +32,11 @@ module DTR
         loop do
           if wakeup?
             DTR.info {"Agent brain wakes up"}
-            work(wakeup_worker)
+            work(fork { Worker.new(@runner_names, @agent_env_setup_cmd).launch })
             DTR.info {"Agent brain is going to sleep"}
           end
         end
-      rescue Exception => e
-        DTR.info {"Agent brain is stopped by Exception => #{e.class.name}, message => #{e.message}"}
-        DTR.debug {e.backtrace.join("\n")}
+      rescue Interrupt, SystemExit, SignalException
       end
 
       def work(worker)
@@ -48,18 +46,6 @@ module DTR
       ensure
         DTR.info {"Killing worker"}
         Process.kill 'TERM', worker
-      end
-      
-      def wakeup_worker
-        Process.fork do
-          begin
-            Worker.new(@runner_names, @agent_env_setup_cmd).launch
-          rescue Interrupt, SystemExit, SignalException
-          rescue Exception => e
-            DTR.error {"Worker is stopped by Exception => #{e.class.name}, message => #{e.message}"}
-            DTR.debug {e.backtrace.join("\n")}
-          end
-        end
       end
     end
   end

@@ -32,6 +32,8 @@ module DTR
 
     def initialize
       store = EnvStore.new
+      # always have 'localhost' in broadcast_list, for our master process would start rinda server locally,
+      # and dtr should work well on local machine when the machine leaves dtr grid network environment.
       @broadcast_list = ['localhost'].concat(store[:broadcast_list] || []).uniq
       @rinda_server_port = store[:port] || 3344
       @master_yell_interval = store[:master_yell_interval] || 10

@@ -3,7 +3,6 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
-  clean Process.fork and rescue Exception inside and its log
   change to use zip instead of tar for easy use dtr master in windows
   add a test for problem of injecting dtr early
   master process log doesn't have time label in mingle
@@ -18,6 +17,8 @@ Send suggestions for this list to iam@li-xiao.com
   
   monitor dtr rinda server status
   monitor acceptance test
+  
+  fix problem: start agent -> run tests -> stop agent before test finished -> restart agent -> can't
   
   
 (moved DONE list to CHANGES file)

@@ -51,14 +51,14 @@ module DTR
       end
 
       def run
-        @herald = drb_fork { Herald.new @working_env_key, @agent_env_setup_cmd, @runner_names }
+        @herald = fork { Herald.new @working_env_key, @agent_env_setup_cmd, @runner_names }
         while @env_store[@working_env_key].nil?
           sleep(1)
         end
         working_env = @env_store[@working_env_key]
 
         @runner_names.each do |name|
-          @runner_pids << drb_fork {
+          @runner_pids << fork {
             working_env.within do
               Runner.start name, working_env
             end
@@ -73,18 +73,6 @@ module DTR
           @runner_pids.each{ |pid| Process.kill 'TERM', pid rescue nil }
           DTR.info "=> All runners(#{@runner_pids.join(", ")}) were killed." 
           @runner_pids = []
-        end
-      end
-
-      def drb_fork
-        Process.fork do
-          begin
-            yield
-          rescue Interrupt, SystemExit, SignalException
-          rescue Exception => e
-            DTR.error "Worker drb fork is stopped by Exception => #{e.class.name}, message => #{e.message}"
-            DTR.info e.backtrace.join("\n")
-          end
         end
       end
     end
