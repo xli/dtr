@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-DTRVERSION="0.0.5"
+DTRVERSION="1.0.0"
 DTR_AGENT_OPTIONS = {:runners => [], :agent_env_setup_cmd => nil}
 
 module DTR

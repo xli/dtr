@@ -1,6 +1,6 @@
 = DTR -- Distributed Test Runner
 
-Supporting DTR version: 0.0.x
+Supporting DTR version: 1.x.x
 
 This package contains DTR, a distributed test runner program for decreasing 
 time of running ruby tests, only supporting Test::Unit ruby testing framework
@@ -20,12 +20,14 @@ DTR works in two parts: Runner Agent and DTR Master.
 
 * DTR Master is the process finding runner service to run tests and collect test results. It works by loading 'dtr/test_unit_injection.rb' with all test files.
 
-DTR doesn't synchronize codebase, so you need to consider using synchronize tools 
-(e.g. rsync(http://samba.anu.edu.au/rsync/)) or distributed version control system
-(e.g. mercurial(http://www.selenic.com/mercurial/wiki/)) to synchronize project 
-files between machines. The distributed version control system Mercurial is cool for
-synchronizing codebase between machines, see the example "Setup a development build 
-grid".
+DTR support synchronize codebase by creating a DTR::PackageTask in your rakefile. The DTR::PackageTask is a similar task with Rake::PackageTask, the following is a simple example:
+
+  % require 'dtr/raketasks'
+  % DTR::PackageTask.new do |p|
+  %   p.package_files.include("**/*")
+  %   p.package_files.exclude("tmp")
+  %   p.package_files.exclude("log")
+  % end
 
 == Download
 
@@ -41,13 +43,29 @@ You can install DTR with the following command.
 
   % ruby install.rb
 
-from its distribution directory.
+from its distribution directory. or create a gem and install it:
+
+  % rake gem
+  % sudo gem install pkg/dtr-version.gem
 
 === GEM Installation
+
+==== Last stable version from rubyforge.org
 
 Download and install DTR with the following.
 
    gem install --remote dtr
+
+==== Last version from on github master branch
+
+Run the following if you haven't already:
+
+  gem sources -a http://gems.github.com
+
+Install the gem:
+
+  sudo gem install xli-dtr
+
 
 === Running the DTR Test Suite
 
@@ -60,17 +78,9 @@ If you wish to run the unit and functional tests that come with DTR:
 
 == Simple Example
 
-Once installed, you can run DTR server anywhere:
+Start DTR agent with providing 2 runners as follows:
 
-  % dtr -s
-  
-If you are running Runner Agent on remote machine, please specify the DTR server machine ip:
-
-  % dtr -s --server_address dtr_server_ip
-
-After server started, you can run DTR runner agent at your project directory as follows:
-
-  % dtr --server_address dtr_server_ip -r runner_name
+  % dtr --broadcast_ip broadcast_ip -r runner1,runner2
 
 Type "dtr --help" for an up-to-date option summary.
 Invoking <tt>dtr</tt> without any options causes dtr to show help too.
@@ -78,15 +88,17 @@ Invoking <tt>dtr</tt> without any options causes dtr to show help too.
 Most of time your project test suite need setup environment before run tests, you
 can set setup command by option '--setup', for example:
 
-  % dtr --server_address dtr_server_ip -r runner1 --setup "rake db:test:prepare"
-  
+  % dtr --broadcast_ip broadcast_ip -r runner1,runner2 --setup "rake db:test:prepare"
+
+You also can specify DTR_AGENT_ENV_SETUP_CMD in your master process environment to let all agents setup same environment.
+
 At last, you need to add 'dtr/test_unit_injection.rb' into test_files of your test 
 task in your Rakefile, and for load it, you also need add dtr lib path:
-  
+
   require 'dtr'
 
-  DTR.broadcast_list = ['dtr server ip']
-  
+  DTR.broadcast_list = ['broadcast_ip']
+
   Rake::TestTask.new(:dtr_tests) do |t|
     t.libs << DTR.lib_path
     t.test_files = FileList['dtr/test_unit_injection.rb', 'test/*test.rb']
@@ -94,10 +106,9 @@ task in your Rakefile, and for load it, you also need add dtr lib path:
     t.verbose = false
   end
 
-In the case above we changed dtr broadcast list for listening remote dtr server.
-And you also can use *DTR.port = 1234* to change the port listening. These two
-options would be cached in the directory running the test or any other dtr processes
-(e.g. dtr runner agent or dtr server).
+In the case above we changed dtr broadcast list for looking for agents.
+
+All DTR options would be cached in the directory running the test or agent process.
 
 == Run tests in multi-processes on one machine
 
@@ -110,19 +121,6 @@ The following is the test task example in the rake file:
     t.test_files = FileList['test/*test.rb']
     t.processes = 2 #default is 2
   end
-
-=== Runner Agent
-
-* Clone repository from M1 to M2 in home directory: hg clone http: //M1_IP:8000/pet_store
-* Start runner agent in the directory ~/pet_store on M2: rake --rakefile dtr_tasks.rake dtr:runner_agent
-* Start runner agent on M3 same with above.
-
-=== Run DTR Master on M1
-
-* Commit all changes into Mercurial
-* rake --rakefile dtr_tasks.rake dtr
-* After you started the DTR Master, you can type the following to monitor the DTR Server status: dtr -a $DEV_BUILD_SERVER -m
-* For output into console, open the debug option: dtr -a $DEV_BUILD_SERVER -d -m
 
 == Credits
 
@@ -140,27 +138,24 @@ DTR is available under an Apache License Version 2.
 
 == Support
 
-Feel free to submit commits or feature requests.  If you send a patch,
-remember to update the corresponding unit tests.  If fact, I prefer
-new feature to be submitted in the form of new unit tests.
-
+Feel free to submit commits or feature requests.
 For other information, feel free to contact mailto:iam@li-xiao.com.
 
 == Usage
 
-DTR client is invoked from the command line using:
+DTR agent command is invoked from the command line using:
 
    % dtr [<em>options</em> ...]
 
 === Options are:
 
-  -p, --port PORT                  Port number DTR will listen to. Default is 3344.
+  -p, --port PORT                  Port number of DTR rinda server. Default is 3344.
   -r runner1_name,runner2_name     Start DTR test runner agent with unique runner names.
-  -a, --server_address ADDRESS     Specify dtr server address, domain name or ip address, e.g. 192.168.0.1. Default is 'localhost'.
-  -i, --setup COMMAND              Set command for initializing test runner test environment, e.g. 'rake db:test:prepare'. Default is do nothing.
-  -m, --monitor                    Monitor the status of the dtr rinda server, e.g. dtr -a 10.11.1.2 -m
-  -b, --be_silent                  Only show error messages
+  -a, --broadcast_address ADDRESS  Specify broadcast address for looking up dtr rinda server, e.g. 192.168.255.255. Default is 'localhost'.
+  -i, --setup COMMAND              Set command for initializing test runner test environment, e.g. 'rake db:test:prepare'. Default is do nothing. You also can specify DTR_AGENT_ENV_SETUP_CMD in your master process environment to let all agents setup same environment.
+  -m, --monitor                    Monitor the status of the dtr agents.
   -d, --debug                      output debug log
+  -b, --be_silent                  Only show error messages
   -v, --version                    Show version
   -h, --help                       Show this help doc
 

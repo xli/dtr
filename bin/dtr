@@ -12,7 +12,7 @@ NOTES = <<-NOTES
 ----------------
 Notes: 
   * The default value of broadcast address is 'localhost'.
-  * Runners specified by -r option will be started in different processes by the runner agent.
+  * Agent start by specifying runners by -r option, every runner would be started in different process for running test.
   * DTR master environment options:
     * DTR_MASTER_ENV: this variable would be copied into runner process for sharing info between master and agents
     * DTR_AGENT_ENV_SETUP_CMD: this variable would be applied as agent setup environment command when agent have no setup environment command specified.
@@ -49,7 +49,7 @@ opts = OptionParser.new do |opts|
     end
   end
 
-  opts.on("-i", "--setup COMMAND", "Set command for initializing test runner test environment, e.g. 'rake db:test:prepare'. Default is do nothing.") do |command|
+  opts.on("-i", "--setup COMMAND", "Set command for initializing test runner test environment, e.g. 'rake db:test:prepare'. Default is do nothing. You also can specify DTR_AGENT_ENV_SETUP_CMD in your master process environment to let all agents setup same environment.") do |command|
     DTR_AGENT_OPTIONS[:agent_env_setup_cmd] = command.untaint
   end
 
