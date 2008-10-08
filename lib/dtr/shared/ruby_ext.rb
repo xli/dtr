@@ -12,30 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class Null
-  class << self
-    def instance(overrides = {})
-      self.new.define_overrides(overrides)
-    end  
-  end
-
-  #override Object#id for removing the warning
-  def id
-    nil
-  end
-
-  def method_missing(sym, *args, &block)
-    nil
-  end
-
-  def define_overrides(overrides)
-    overrides.each_pair do |key, value|
-      (class << self; self; end;).send(:define_method, key, lambda { value })
-    end
-    self
-  end
-end
-
 # from activesupport-2.1.1
 class Object
   def blank?

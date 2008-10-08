@@ -15,6 +15,8 @@
 module DTR
 
   module Agent
+    # Worker works during one dtr test task running.
+    # Worker manages Herald & Runner processes life cycle
     class Worker
       def initialize(runner_names, agent_env_setup_cmd)
         @runner_names = runner_names.is_a?(Array) ? runner_names : [runner_names.to_s]

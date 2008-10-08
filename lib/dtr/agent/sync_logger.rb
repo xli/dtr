@@ -15,10 +15,12 @@
 module DTR
   module SyncLogger
 
-    # Synchronizer loads SyncLogger from master process
-    # Any process need sync logs with master process should start service first.
+    # Synchronizer loads SyncLogger provided by master process from Rinda server.
+    # Any process need sync logs with master process should start service first,
+    # so that local logger could be replaced by SyncLogger.
     # For logs would be sent back to master process, output log code should use 
-    # message string instead of block, for example: 
+    # message string instead of block, which causes more remote call for block is
+    # a drbundump object. For example: 
     #    right: DTR.debug 'message'
     #    not:   DTR.debug { 'message' }
     module Synchronizer

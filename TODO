@@ -3,6 +3,13 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
+  output master process workflow:
+    * start rinda server
+    * provide working environment
+    * synchronize codebase
+    * setup agent environment
+    * look for runner service
+  give sync_codebase/codebase a better name
   change to use zip instead of tar for easy use dtr master in windows
   add a test for problem of injecting dtr early
   master process log doesn't have time label in mingle

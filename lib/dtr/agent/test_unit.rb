@@ -35,8 +35,6 @@ module DTR
   end
 end
 
+# set run to true first, so that test auto runner wouldn't work
 Test::Unit.run = true
-
-class Test::Unit::TestCase
-  include DTR::Agent::TestCaseExt
-end
+Test::Unit::TestCase.send(:include, DTR::Agent::TestCaseExt)

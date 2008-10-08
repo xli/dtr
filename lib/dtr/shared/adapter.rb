@@ -16,7 +16,7 @@ require 'timeout'
 
 module DTR
   module Adapter
-    AGENT_PORT = 7788
+    FOLLOWER_LISTENS_PORT = 7788
 
     WAKEUP_MESSAGE = 'wakeup'
     SLEEP_MESSAGE = 'sleep'
@@ -52,7 +52,7 @@ module DTR
       def listen
         unless defined?(@soc)
           @soc = UDPSocket.open
-          @soc.bind('', Adapter::AGENT_PORT)
+          @soc.bind('', Adapter::FOLLOWER_LISTENS_PORT)
         end
         @soc.recv(1024).split
       end
@@ -100,7 +100,7 @@ module DTR
         begin
           soc.setsockopt(Socket::SOL_SOCKET, Socket::SO_BROADCAST, true)
           DTR.debug {"broadcast sending #{msg} to #{it}"}
-          soc.send(msg, 0, it, Adapter::AGENT_PORT)
+          soc.send(msg, 0, it, Adapter::FOLLOWER_LISTENS_PORT)
         rescue
           nil
         ensure

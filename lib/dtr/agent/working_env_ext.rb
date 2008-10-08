@@ -14,6 +14,7 @@
 
 module DTR
   module Agent
+    # Provides working environment setup beheaviours for Herald & Runner process
     module WorkingEnvExt
       def within
         ENV['DTR_MASTER_ENV'] = self[:dtr_master_env]
@@ -35,7 +36,8 @@ module DTR
 
       def working_dir
         return @working_dir if defined?(@working_dir)
-        project_name = self[:pwd].length > 20 ? self[:pwd][-20..-1] : self[:pwd]
+        project_specific_len = 20
+        project_name = self[:pwd].length > project_specific_len ? self[:pwd][-project_specific_len..-1] : self[:pwd]
         @working_dir = File.join(escape(self[:host]), escape(project_name))
         FileUtils.mkdir_p(@working_dir)
         @working_dir
