@@ -4,6 +4,7 @@ Send suggestions for this list to iam@li-xiao.com
 
 === To Do
   clean Process.fork and rescue Exception inside and its log
+  change to use zip instead of tar for easy use dtr master in windows
   add a test for problem of injecting dtr early
   master process log doesn't have time label in mingle
   sleep in test would cause yelling delayed? add a test for it
