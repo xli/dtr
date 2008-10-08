@@ -12,6 +12,8 @@ DTR has the following features:
 
 * Hot plug distributed agents.
 
+* Synchronizing codebase between agent and master processes.
+
 * Runtime injection, all tests run in same environment.
 
 DTR works in two parts: Runner Agent and DTR Master.
@@ -20,7 +22,7 @@ DTR works in two parts: Runner Agent and DTR Master.
 
 * DTR Master is the process finding runner service to run tests and collect test results. It works by loading 'dtr/test_unit_injection.rb' with all test files.
 
-DTR support synchronize codebase by creating a DTR::PackageTask in your rakefile. The DTR::PackageTask is a similar task with Rake::PackageTask, the following is a simple example:
+DTR support synchronize codebase by creating a DTR::PackageTask in your rake tasks. The DTR::PackageTask is a similar task with Rake::PackageTask, the following is a simple example:
 
   % require 'dtr/raketasks'
   % DTR::PackageTask.new do |p|
@@ -56,7 +58,7 @@ Download and install DTR with the following.
 
    gem install --remote dtr
 
-==== Last version from on github master branch
+==== Last version on github master branch
 
 Run the following if you haven't already:
 
@@ -65,7 +67,6 @@ Run the following if you haven't already:
 Install the gem:
 
   sudo gem install xli-dtr
-
 
 === Running the DTR Test Suite
 
@@ -90,25 +91,35 @@ can set setup command by option '--setup', for example:
 
   % dtr --broadcast_ip broadcast_ip -r runner1,runner2 --setup "rake db:test:prepare"
 
-You also can specify DTR_AGENT_ENV_SETUP_CMD in your master process environment to let all agents setup same environment.
+You also can specify DTR_AGENT_ENV_SETUP_CMD in your master process environment to let all agents which is not started with --setup option specified, setup same environment.
 
 At last, you need to add 'dtr/test_unit_injection.rb' into test_files of your test 
 task in your Rakefile, and for load it, you also need add dtr lib path:
 
-  require 'dtr'
+  % require 'dtr'
+  % 
+  % ENV['DTR_AGENT_ENV_SETUP_CMD'] = 'rake db:test:prepare'
+  % DTR.broadcast_list = ['broadcast_ip']
+  % 
+  % Rake::TestTask.new(:dtr) do |t|
+  %   t.libs << DTR.lib_path
+  %   t.test_files = FileList['dtr/test_unit_injection.rb', 'test/**/*_test.rb']
+  %   t.warning = false
+  %   t.verbose = false
+  % end
 
-  DTR.broadcast_list = ['broadcast_ip']
+In the case above we also changed dtr broadcast list for looking for agents.
+You can simply use DTR::TestTask instead of Rake::TestTask to setup your dtr task:
 
-  Rake::TestTask.new(:dtr_tests) do |t|
-    t.libs << DTR.lib_path
-    t.test_files = FileList['dtr/test_unit_injection.rb', 'test/*test.rb']
-    t.warning = false
-    t.verbose = false
-  end
+  % DTR::TestTask.new :dtr do |t|
+  %   t.test_files = FileList['test/**/*_test.rb']
+  %   t.processes = 0 # don't start agent in local machine, default is 2, so we reset to 0 here.
+  % end
 
-In the case above we changed dtr broadcast list for looking for agents.
+Also you must define a DTR::PackageTask in your rakefile for packaging files need for running test.
 
-All DTR options would be cached in the directory running the test or agent process.
+DTR broadcast_list & port configuration would be cached in the directory running the test or agent process.
+The configuration file named .dtr_env_pstore
 
 == Run tests in multi-processes on one machine
 
@@ -154,8 +165,6 @@ DTR agent command is invoked from the command line using:
   -a, --broadcast_address ADDRESS  Specify broadcast address for looking up dtr rinda server, e.g. 192.168.255.255. Default is 'localhost'.
   -i, --setup COMMAND              Set command for initializing test runner test environment, e.g. 'rake db:test:prepare'. Default is do nothing. You also can specify DTR_AGENT_ENV_SETUP_CMD in your master process environment to let all agents setup same environment.
   -m, --monitor                    Monitor the status of the dtr agents.
-  -d, --debug                      output debug log
-  -b, --be_silent                  Only show error messages
   -v, --version                    Show version
   -h, --help                       Show this help doc
 

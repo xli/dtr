@@ -14,9 +14,9 @@ Notes:
   * DTR would always add 'localhost' into broadcast list.
   * Agent start by specifying runners by -r option, every runner would be started in different process for running test. e.g. dtr -r runner1,runner2
   * DTR master environment options:
-    * DTR_MASTER_ENV: this variable would be copied into runner process for sharing info between master and agents
-    * DTR_AGENT_ENV_SETUP_CMD: this variable would be applied as agent setup environment command when agent have no setup environment command specified.
-    * DTR_LOG_LEVEL: master process logger level, e.g. ENV['DTR_LOG_LEVEL'] = Logger::DEBUG
+    * DTR_MASTER_ENV: this variable would be copied into agent process for sharing info between master and agents. Normally used in agent setup environment command.
+    * DTR_AGENT_ENV_SETUP_CMD: this variable would be applied as agent setup environment command when agent have no setup environment command specified by --setup option.
+    * DTR_LOG_LEVEL: master process logger level, e.g. ENV['DTR_LOG_LEVEL'] = Logger::DEBUG. Agent process logs would be output in master process log file, so setting this option also changes agent logger level.
 
 DTR is a distributed test runner program for decreasing time of running ruby tests based on ruby 'test/unit' package.
 For additional information, see http://dtr.rubyforge.org/
@@ -26,7 +26,7 @@ opts = OptionParser.new do |opts|
   opts.banner = "DTR usage: #{$0} [options]"
   opts.separator ""
   opts.separator "Synopsis:"
-  opts.separator "dtr -r runner1_name,runner2_name"
+  opts.separator "dtr -a broadcast_ip -r runner1_name,runner2_name"
   opts.separator "dtr -a broadcast_ip -m"
   opts.separator ""
   opts.separator "Options:"
@@ -51,14 +51,6 @@ opts = OptionParser.new do |opts|
 
   opts.on("-i", "--setup COMMAND", "Set command for initializing test runner test environment, e.g. 'rake db:test:prepare'. Default is do nothing. You also can specify DTR_AGENT_ENV_SETUP_CMD in your master process environment to let all agents setup same environment.") do |command|
     DTR_AGENT_OPTIONS[:agent_env_setup_cmd] = command.untaint
-  end
-
-  opts.on_tail("-d", "--debug", "output debug log") do
-    DTR.logger.log_level = Logger::DEBUG
-  end
-
-  opts.on_tail("-b", "--be_silent", "Only show error messages") do
-    DTR.logger.log_level = Logger::ERROR
   end
 
   opts.on_tail("-v", "--version", "Show version") do
