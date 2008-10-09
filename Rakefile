@@ -63,24 +63,6 @@ Rake::TestTask.new(:test_functionals) do |t|
   t.verbose = false
 end
 
-begin
-  require 'rcov/rcovtask'
-
-  Rcov::RcovTask.new do |t|
-    t.libs << "test"
-    t.rcov_opts = [
-      '-xRakefile', '-xrakefile', '-xpublish.rf', '--text-report',
-    ]
-    t.test_files = FileList[
-      'test/*test.rb'
-    ]
-    t.output_dir = 'coverage'
-    t.verbose = true
-  end
-rescue LoadError
-  # No rcov available
-end
-
 directory 'testdata'
 [:test_units].each do |t|
   task t => ['testdata']
@@ -99,15 +81,13 @@ end
 
 rd = Rake::RDocTask.new("rdoc") { |rdoc|
   rdoc.rdoc_dir = 'html'
-#  rdoc.template = 'kilmer'
-#  rdoc.template = 'css2'
-  rdoc.template = 'doc/jamis.rb'
+  rdoc.template = 'html'
   rdoc.title    = "DTR -- Distributed Test Runner"
   rdoc.options << '--line-numbers' << '--inline-source' <<
     '--main' << 'README' <<
     '--title' <<  '"DTR -- Distributed Test Runner' 
   rdoc.rdoc_files.include('README', 'LICENSE.txt', 'TODO', 'CHANGES')
-  rdoc.rdoc_files.include('lib/**/*.rb', 'doc/**/*.rdoc')
+  rdoc.rdoc_files.include('lib/**/*.rb')
 }
 
 # ====================================================================
