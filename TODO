@@ -10,8 +10,8 @@ Send suggestions for this list to iam@li-xiao.com
     * setup agent environment
     * look for runner service
   give sync_codebase/codebase a better name
-  change to use zip instead of tar for easy use dtr master in windows
-  add a test for problem of injecting dtr early
+  add option for using zip instead of tar to package codebase
+  
   master process log doesn't have time label in mingle
   sleep in test would cause yelling delayed? add a test for it
   auto mkdir log&tmp for agent?

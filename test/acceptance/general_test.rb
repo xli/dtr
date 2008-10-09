@@ -272,4 +272,21 @@ class GeneralTest < Test::Unit::TestCase
       Process.kill 'TERM', pid rescue nil
     end
   end
+
+  def test_run_test_case_hacked_run_method
+    require 'hacked_run_method_test_case'
+
+    $argv_dup = ['hacked_run_method_test_case.rb']
+    suite = Test::Unit::TestSuite.new('run_test_case_hacked_run_method')
+    suite << HackedRunMethodTestCase.suite
+
+    assert_fork_process_exits_ok do
+      @result = runit(suite)
+
+      assert @result.passed?
+      assert_equal 1, @result.run_count
+      assert_equal 0, @result.failure_count
+      assert_equal 0, @result.error_count
+    end
+  end
 end
