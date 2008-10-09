@@ -291,10 +291,10 @@ class GeneralTest < Test::Unit::TestCase
   end
 
   def test_should_not_break_heartbeat_of_master_process_when_run_with_a_test_case_sleep_long_time
-    master_yell_interval = DTR.configuration.master_yell_interval
-    follower_listen_sleep_timeout = DTR.configuration.follower_listen_sleep_timeout
-    DTR.configuration.master_yell_interval = 1
-    DTR.configuration.follower_listen_sleep_timeout = 2
+    master_heartbeat_interval = DTR.configuration.master_heartbeat_interval
+    follower_listen_heartbeat_timeout = DTR.configuration.follower_listen_heartbeat_timeout
+    DTR.configuration.master_heartbeat_interval = 1
+    DTR.configuration.follower_listen_heartbeat_timeout = 2
 
     require 'sleep_3_secs_test_case'
 
@@ -311,7 +311,7 @@ class GeneralTest < Test::Unit::TestCase
       assert_equal 0, @result.error_count
     end
   ensure
-    DTR.configuration.master_yell_interval = master_yell_interval
-    DTR.configuration.follower_listen_sleep_timeout = follower_listen_sleep_timeout
+    DTR.configuration.master_heartbeat_interval = master_heartbeat_interval
+    DTR.configuration.follower_listen_heartbeat_timeout = follower_listen_heartbeat_timeout
   end
 end

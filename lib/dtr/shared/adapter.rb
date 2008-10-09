@@ -34,7 +34,7 @@ module DTR
 
       def sleep?
         return true unless defined?(@wakeup_for_host)
-        msg, host = Timeout.timeout(DTR.configuration.follower_listen_sleep_timeout) do
+        msg, host = Timeout.timeout(DTR.configuration.follower_listen_heartbeat_timeout) do
           loop do
             msg, host = listen
             break if host == @wakeup_for_host
@@ -67,7 +67,7 @@ module DTR
         heartbeat = Thread.new do
           loop do
             do_wakeup_agents
-            sleep(DTR.configuration.master_yell_interval)
+            sleep(DTR.configuration.master_heartbeat_interval)
           end
         end
         #heartbeat thread should have high priority for agent is listening

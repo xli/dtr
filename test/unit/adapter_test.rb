@@ -9,11 +9,11 @@ class AdapterTests < Test::Unit::TestCase
   def setup
     @timeout = false
     @messages = []
-    DTR.configuration.follower_listen_sleep_timeout = 1
+    DTR.configuration.follower_listen_heartbeat_timeout = 1
   end
 
   def teardown
-    DTR.configuration.follower_listen_sleep_timeout = 15
+    DTR.configuration.follower_listen_heartbeat_timeout = 15
   end
 
   def test_should_be_sleep_if_never_wakeup

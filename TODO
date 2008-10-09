@@ -11,7 +11,6 @@ Send suggestions for this list to iam@li-xiao.com
     * look for runner service
   give sync_codebase/codebase a better name
   add option for using zip instead of tar to package codebase
-  change master_yell_interval to master_heartbeat_interval, follower_listen_sleep_timeout to follower_listen_heartbeat_timeout
   master process log doesn't have time label in mingle
   auto mkdir log&tmp for agent?
   update help doc
