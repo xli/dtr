@@ -25,6 +25,13 @@ module DTR
     attr_accessor :processes
     
     def define
+      PackageTask.new do |p|
+        p.package_files = package_files
+        if p.package_files.empty?
+          p.package_files.include("**/*")
+        end
+      end
+
       @libs.unshift DTR.lib_path
       lib_path = @libs.join(File::PATH_SEPARATOR)
 
@@ -51,11 +58,15 @@ module DTR
       end
       self
     end
-    
+
     def processes
       @processes ? @processes.to_i : 2
     end
-    
+
+    def package_files
+      @package_files ||= Rake::FileList.new
+    end
+
     private
     def start_agent
       return if self.processes.to_i <= 0

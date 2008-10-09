@@ -173,30 +173,8 @@ file "TAGS" => RUBY_FILES do
   sh "#{TAGS} #{RUBY_FILES}", :verbose => false
 end
 
-# --------------------------------------------------------------------
-# Creating a release
-
 task :update_site do
   puts %x[scp -r html/* lixiao@rubyforge.org:/var/www/gforge-projects/dtr/]
-end
-
-task :c1 do
-  DTR.launch_agent(['c1'], nil)
-end
-
-task :c3 do
-  DTR.launch_agent(['c1', 'c2', 'c3'], nil)
-end
-task :c10 do
-  DTR.launch_agent(['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10'], nil)
-end
-
-task :c2 do
-  DTR_AGENT_OPTIONS[:runners] = ['c1', 'c2']
-  DTR_AGENT_OPTIONS[:agent_env_setup_cmd] = nil
-  Dir.chdir('testdata') do
-    DTR.start_agent
-  end
 end
 
 Rake::TestTask.new(:dtr) do |t|
@@ -207,15 +185,11 @@ Rake::TestTask.new(:dtr) do |t|
 end
 
 require 'dtr/raketasks'
-
-DTR::TestTask.new :mt do |t|
+DTR::TestTask.new :dtt do |t|
   t.test_files = FileList['testdata/*.rb']
   t.processes = 2
-end
-
-DTR::PackageTask.new do |p|
-  p.package_files.include("**/*")
-  p.package_files.exclude("tmp")
-  p.package_files.exclude("log")
+  t.package_files.include('testdata/*.rb')
+  t.package_files.exclude('testdata/*error*.rb')
+  t.package_files.exclude('testdata/*failed*.rb')
 end
 
