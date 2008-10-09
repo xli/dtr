@@ -27,7 +27,7 @@ module DTR
     def create_default_logger(file=nil)
       dir = File.exist?('log') ? 'log' : '/tmp'
       log_file = File.join(dir,  file || "dtr.log")
-      do_print "dtr logfile at #{log_file}\n"
+      do_println "DTR logfile at #{log_file}"
       logger = Logger.new(log_file, 1, 5*1024*1024)
       logger.datetime_format = "%m-%d %H:%M:%S"
       logger.level = (ENV['DTR_LOG_LEVEL'] || Logger::INFO).to_i
@@ -38,6 +38,10 @@ module DTR
       unless ENV['DTR_ENV'] == 'test'
         print str
       end
+    end
+
+    def do_println(str)
+      do_print("#{str}\n")
     end
 
     def debug(message=nil, &block)

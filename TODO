@@ -3,18 +3,12 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
-  output master process workflow:
-    * start rinda server
-    * provide working environment
-    * synchronize codebase
-    * setup agent environment
-    * look for runner service
   give sync_codebase/codebase a better name
   add option for using zip instead of tar to package codebase
   master process log doesn't have time label in mingle
   auto mkdir log&tmp for agent?
   update help doc
-  should trigger started on runner in agent runner, for some tools is using this hook(e.g. inbrowser_test)
+  should trigger started notification on runner in agent runner, for some tools are using this hook(e.g. inbrowser_test)
   
   ???? agent brain should wakeup when worker is dead
   problem: when agent can't find test files, drb can't undump test object, the error would be: undefined method `run' for #<DRb::DRbUnknown:0x318800>

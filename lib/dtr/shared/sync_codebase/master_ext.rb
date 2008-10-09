@@ -25,6 +25,7 @@ module DTR
 
       def with_dtr_master_with_sync_codebase(&block)
         with_dtr_master_without_sync_codebase do
+          DTR.do_println("Packaging codebase")
           unless Cmd.execute('rake dtr_repackage --trace')
             $stderr.puts %{
 Execute dtr_repackage rake task failed, see log for details.

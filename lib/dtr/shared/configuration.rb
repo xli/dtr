@@ -49,8 +49,9 @@ module DTR
     end
 
     def with_rinda_server(&block)
+      DTR.do_println("Booting DTR service")
       start_service
-      DTR.info '-- Booting DTR Rinda server...'
+      DTR.info '-- Booting DTR Rinda server'
       loop do
         begin
           Rinda::RingServer.new Rinda::TupleSpace.new, @rinda_server_port

@@ -53,6 +53,7 @@ module DTR
         unless defined?(@soc)
           @soc = UDPSocket.open
           @soc.bind('', Adapter::FOLLOWER_LISTENS_PORT)
+          DTR.info("DTR Agent is listening on port #{Adapter::FOLLOWER_LISTENS_PORT}")
         end
         @soc.recv(1024).split
       end
