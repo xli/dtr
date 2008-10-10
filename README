@@ -113,7 +113,7 @@ You can simply use DTR::TestTask instead of Rake::TestTask to setup your dtr tas
 
   % DTR::TestTask.new :dtr do |t|
   %   t.test_files = FileList['test/**/*_test.rb']
-  %   t.processes = 0 # don't start agent in local machine, default is 2, so we reset to 0 here.
+  %   t.processes = 0 # don't start agent in local machine, default is 1, so we reset to 0 here.
   % end
 
 Also you must define a DTR::PackageTask in your rakefile for packaging files need for running test.
@@ -130,7 +130,7 @@ The following is the test task example in the rake file:
 
   DTR::TestTask.new :test do |t|
     t.test_files = FileList['test/*test.rb']
-    t.processes = 2 #default is 2
+    t.processes = 2 #default is 1
   end
 
 == Credits

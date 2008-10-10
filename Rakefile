@@ -177,7 +177,7 @@ task :update_site do
   puts %x[scp -r html/* lixiao@rubyforge.org:/var/www/gforge-projects/dtr/]
 end
 
-Rake::TestTask.new(:dtr) do |t|
+Rake::TestTask.new(:dtr_injected) do |t|
   t.libs.unshift DTR.lib_path
   t.test_files = FileList['dtr/test_unit_injection.rb', 'testdata/*.rb']
   t.warning = true
@@ -185,7 +185,8 @@ Rake::TestTask.new(:dtr) do |t|
 end
 
 require 'dtr/raketasks'
-DTR::TestTask.new :dtt do |t|
+
+DTR::TestTask.new do |t|
   t.test_files = FileList['testdata/*.rb']
   t.processes = 2
   t.package_files.include('testdata/*.rb')

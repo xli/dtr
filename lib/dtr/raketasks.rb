@@ -21,9 +21,51 @@ require 'rake/testtask'
 require 'rake/tasklib'
 
 module DTR
+  # Create tasks that run a set of tests with DTR injected.
+  #
+  # Example:
+  #   require 'dtr/raketasks'
+  #
+  #   # Creates the following tasks: 
+  #   #   dtr                  # Run tests with DTR injected
+  #   #   dtr_clobber_package  # Remove package for dtr task
+  #   #   dtr_package          # Build packages for dtr task
+  #   #   dtr_repackage        # Force a rebuild of the package files for dtr task
+  #   DTR::TestTask.new do |t|
+  #     t.libs << "test"
+  #     t.test_files = FileList['test/test*.rb']
+  #     t.verbose = true
+  #     t.processes = 1 # default is 1
+  #     t.package_files.include("lib/**/*") # default is FileList["**/*"]
+  #     t.package_files.include("test/**/*")
+  #   end
+  #
+  # This task inherits from Rake::TestTask, and adds 2 DTR specific 
+  # options: processes and package_files.
+  #
   class TestTask < Rake::TestTask
+
+    #
+    # The option processes is used to start an DTR agent in same directory
+    # with master process. The number of processes is the size of runners
+    # launched by agent for running tests. If processes is set to 0, 
+    # then there is no agent started locally.
+    # Default is 1.
     attr_accessor :processes
-    
+
+    # List of files to be included in the package for running tests on
+    # remote agent.
+    # The agent, which starts in same directory on same machine with 
+    # master process, would skip copying codebase.
+    # The default package files is Rake::FileList["**/*"].
+    attr_accessor :package_files
+
+    def initialize(name=:dtr)
+      @processes = 1
+      @package_files = Rake::FileList.new
+      super(name)
+    end
+
     def define
       PackageTask.new do |p|
         p.package_files = package_files
@@ -35,7 +77,7 @@ module DTR
       @libs.unshift DTR.lib_path
       lib_path = @libs.join(File::PATH_SEPARATOR)
 
-      desc "Run tests" + (@name==:test ? "" : " for #{@name}")
+      desc "Run tests with DTR injected"
       task @name do
         @agent = start_agent
         run_code = ''
@@ -59,14 +101,6 @@ module DTR
       self
     end
 
-    def processes
-      @processes ? @processes.to_i : 2
-    end
-
-    def package_files
-      @package_files ||= Rake::FileList.new
-    end
-
     private
     def start_agent
       return if self.processes.to_i <= 0
@@ -80,7 +114,7 @@ module DTR
     end
   end
 
-  # The following task is copied & modified from 'rake/packagetask'
+  # Create a set of tasks for packaging codebase and clean package created
   class PackageTask < Rake::TaskLib
     include SyncCodebase::Package
     # List of files to be included in the package.
