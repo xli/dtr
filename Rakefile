@@ -97,6 +97,44 @@ rd = Rake::RDocTask.new("rdoc") { |rdoc|
 if ! defined?(Gem)
   puts "Package Target requires RubyGEMs"
 else
+  gem_content = <<-GEM
+Gem::Specification.new do |spec|
+  spec.name = 'dtr'
+  spec.version = "1.0.0"
+  spec.summary = "DTR is a distributed test runner to run tests on distributed computers for decreasing build time."
+
+  #### Dependencies and requirements.
+
+  spec.files = #{(Dir.glob("lib/**/*.rb") + ["bin/dtr", "CHANGES", "dtr.gemspec", "install.rb", "lib", "LICENSE.TXT", "Rakefile", "README", "TODO"]).inspect}
+
+  spec.test_files = #{(Dir.glob("test/**/*.rb") + Dir.glob("testdata/**/*")).inspect}
+  #### Load-time details: library and application (you will need one or both).
+
+  spec.require_path = 'lib'                         # Use these for libraries.
+
+  spec.bindir = "bin"                               # Use these for applications.
+  spec.executables = ["dtr"]
+  spec.default_executable = "dtr"
+
+  #### Documentation and testing.
+
+  spec.has_rdoc = true
+  spec.extra_rdoc_files = #{rd.rdoc_files.reject { |fn| fn =~ /\.rb$/ }.to_a.inspect}
+  spec.rdoc_options = #{rd.options.inspect}
+
+  #### Author and project details.
+
+  spec.author = "Li Xiao"
+  spec.email = "iam@li-xiao.com"
+  spec.homepage = "http://github.com/xli/dtr/tree/master"
+  spec.rubyforge_project = "dtr"
+end
+GEM
+  File.open(File.dirname(__FILE__) + '/dtr.gemspec', 'w') do |f|
+    f.write(gem_content)
+  end
+
+  #build gem package same steps with github
   File.open(File.dirname(__FILE__) + '/dtr.gemspec') do |f|
     data = f.read
     spec = nil

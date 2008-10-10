@@ -27,7 +27,7 @@ module DTR
   # [<b>:dtr</b>]
   #   Create a task that runs a set of tests by DTR master.
   #
-  # [<b>DTR::PackageTask</b>]
+  # [DTR::PackageTask]
   #   Create a packaging task that will package the project into
   #   distributable files for running test on remote machine.
   #   All test files should be included.

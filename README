@@ -27,8 +27,18 @@ DTR support synchronize codebase by creating a DTR::PackageTask in your rake tas
   % require 'dtr/raketasks'
   % DTR::PackageTask.new do |p|
   %   p.package_files.include("**/*")
-  %   p.package_files.exclude("tmp")
-  %   p.package_files.exclude("log")
+  %   p.package_files.exclude('tmp/**/*')
+  %   p.package_files.exclude('log/*')
+  % end
+
+The DTR::TestTask will create a DTR::PackageTask for you directly, and you can specify package_files too
+
+  % DTR::TestTask.new do |t|
+  %   t.test_files = FileList['test/*_test.rb']
+  %   t.processes = 2
+  %   t.package_files.include('**/*.rb')
+  %   t.package_files.exclude('tmp/**/*')
+  %   t.package_files.exclude('log/*')
   % end
 
 == Download
