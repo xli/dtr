@@ -37,6 +37,8 @@ module DTR
           end
         end
       rescue Interrupt, SystemExit, SignalException
+      ensure
+        relax
       end
 
       def work(worker)

@@ -48,6 +48,12 @@ module DTR
         true
       end
 
+      def relax
+        if defined?(@soc) && @soc
+          @soc.close rescue nil
+        end
+      end
+
       private
       def listen
         unless defined?(@soc)
