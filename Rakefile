@@ -193,4 +193,3 @@ DTR::TestTask.new do |t|
   t.package_files.exclude('testdata/*error*.rb')
   t.package_files.exclude('testdata/*failed*.rb')
 end
-

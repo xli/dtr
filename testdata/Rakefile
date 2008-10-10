@@ -5,11 +5,7 @@ require 'rake/testtask'
 desc "Default Task"
 task :default => :dtr
 
-DTR::TestTask.new :dtr do |t|
+DTR::TestTask.new do |t|
   t.test_files = FileList['*test_case.rb']
   t.processes = 2
-end
-
-DTR::PackageTask.new do |p|
-  p.package_files.include("**/*")
 end

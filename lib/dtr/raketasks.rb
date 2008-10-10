@@ -22,15 +22,19 @@ require 'rake/tasklib'
 
 module DTR
   # Create tasks that run a set of tests with DTR injected.
+  # The TestTask will create the following targets:
+  #
+  # [<b>:dtr</b>]
+  #   Create a task that runs a set of tests by DTR master.
+  #
+  # [<b>DTR::PackageTask</b>]
+  #   Create a packaging task that will package the project into
+  #   distributable files for running test on remote machine.
+  #   All test files should be included.
   #
   # Example:
   #   require 'dtr/raketasks'
   #
-  #   # Creates the following tasks: 
-  #   #   dtr                  # Run tests with DTR injected
-  #   #   dtr_clobber_package  # Remove package for dtr task
-  #   #   dtr_package          # Build packages for dtr task
-  #   #   dtr_repackage        # Force a rebuild of the package files for dtr task
   #   DTR::TestTask.new do |t|
   #     t.libs << "test"
   #     t.test_files = FileList['test/test*.rb']
@@ -114,7 +118,30 @@ module DTR
     end
   end
 
-  # Create a set of tasks for packaging codebase and clean package created
+  # Create a packaging task that will package the project into
+  # distributable files for running test on remote machine.
+  # All test files should be included.
+  #
+  # The PackageTask will create the following targets:
+  #
+  # [<b>:dtr_package</b>]
+  #   Create all the requested package files.
+  #
+  # [<b>:dtr_clobber_package</b>]
+  #   Delete all the package files. This target is automatically
+  #   added to the main clobber target.
+  #
+  # [<b>:dtr_repackage</b>]
+  #   Rebuild the package files from scratch, even if they are not out
+  #   of date.
+  #
+  # Example:
+  #
+  #   DTR::PackageTask.new do |p|
+  #     p.package_files.include("lib/**/*.rb")
+  #     p.package_files.include("test/**/*.rb")
+  #   end
+  #
   class PackageTask < Rake::TaskLib
     include SyncCodebase::Package
     # List of files to be included in the package.
