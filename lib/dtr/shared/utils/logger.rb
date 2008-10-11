@@ -13,6 +13,7 @@
 # limitations under the License.
 
 require 'logger'
+require 'fileutils'
 
 module DTR
   module LoggerExt
@@ -24,9 +25,18 @@ module DTR
       @logger = logger
     end
 
-    def create_default_logger(file=nil)
-      dir = File.exist?('log') ? 'log' : '/tmp'
-      log_file = File.join(dir,  file || "dtr.log")
+    def create_default_logger(file)
+      if file.nil?
+        if ENV['DTR_ENV'] == 'test'
+          raise 'Log file is nil!'
+        else
+          file = 'dtr.log'
+        end
+      end
+
+      FileUtils.mkdir_p('log')
+      dir = 'log'
+      log_file = File.join(dir,  file)
       do_println "DTR logfile at #{log_file}"
       logger = Logger.new(log_file, 1, 5*1024*1024)
       logger.datetime_format = "%m-%d %H:%M:%S"
