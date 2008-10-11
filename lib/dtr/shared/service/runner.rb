@@ -20,14 +20,15 @@ module DTR
       include Rinda
 
       def provide_runner(runner)
-        renewer = ::Rinda::SimpleRenewer.new
-        tuple = [:name, 'DTR::Runner'.to_sym, runner, "DTR remote runner #{Process.pid}-#{runner.name}"]
-        lookup_ring.write(tuple, renewer)
+        tuple = ['DTR::Runner'.to_sym, runner, "DTR remote runner #{Process.pid}-#{runner.name}"]
+        #expires after 1 sec for we don't need runner service anymore if there is no one is waiting for taking it
+        lookup_ring.write(tuple, 1)
       end
 
       def lookup_runner
-        lookup(:take, [:name, 'DTR::Runner'.to_sym, nil, nil])[2]
+        lookup(:take, ['DTR::Runner'.to_sym, nil, nil])[1]
       end
+
     end
   end
 end
