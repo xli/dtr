@@ -18,6 +18,8 @@ Send suggestions for this list to iam@li-xiao.com
   monitor acceptance test
   
   fix problem: start agent -> run tests -> stop agent before test finished -> restart agent -> can't
+  add a Facade#lib_path test
+  DTR::TestTask test
   
   
 (moved DONE list to CHANGES file)

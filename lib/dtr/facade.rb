@@ -25,7 +25,7 @@ module DTR
     end
 
     def lib_path
-      File.expand_path(File.dirname(__FILE__))
+      File.expand_path(File.dirname(__FILE__) + '/../')
     end
 
     def broadcast_list=(list)
@@ -46,12 +46,13 @@ module DTR
       Monitor.new.start
     end
 
+    # For safe fork & kill sub process, should use Process.kill and Process.fork
+    # At least have problem on ruby 1.8.6 114 with Kernel#kill & fork
     def kill_process(pid)
       Process.kill 'TERM', pid rescue nil
     end
 
-    # should not use Kernel#fork, which causes process can't be killed by Process.kill
-    def fork(&block)
+    def fork_process(&block)
       Process.fork(&block)
     end
   end

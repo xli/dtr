@@ -32,7 +32,7 @@ module DTR
         loop do
           if wakeup?
             DTR.info {"Agent brain wakes up"}
-            work(DTR.fork { Worker.new(@runner_names, @agent_env_setup_cmd).launch })
+            work(DTR.fork_process { Worker.new(@runner_names, @agent_env_setup_cmd).launch })
             DTR.info {"Agent brain is going to sleep"}
           end
         end

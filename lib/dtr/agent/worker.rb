@@ -53,14 +53,14 @@ module DTR
       end
 
       def run
-        @herald = DTR.fork { Herald.new @working_env_key, @agent_env_setup_cmd, @runner_names }
+        @herald = DTR.fork_process { Herald.new @working_env_key, @agent_env_setup_cmd, @runner_names }
         while @env_store[@working_env_key].nil?
           sleep(1)
         end
         working_env = @env_store[@working_env_key]
 
         @runner_names.each do |name|
-          @runner_pids << DTR.fork {
+          @runner_pids << DTR.fork_process {
             working_env.within do
               Runner.start name, working_env
             end
