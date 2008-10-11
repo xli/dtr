@@ -226,8 +226,6 @@ require 'dtr/raketasks'
 
 DTR::TestTask.new do |t|
   t.test_files = FileList['testdata/*.rb']
-  t.processes = 2
+  t.processes = 0
   t.package_files.include('testdata/*.rb')
-  t.package_files.exclude('testdata/*error*.rb')
-  t.package_files.exclude('testdata/*failed*.rb')
 end
