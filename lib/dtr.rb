@@ -49,5 +49,9 @@ module DTR
     Monitor.new.start
   end
 
-  module_function :start_agent, :launch_agent, :lib_path, :broadcast_list=, :monitor, :port=
+  def kill_process(pid)
+    Process.kill 'TERM', pid rescue nil
+  end
+
+  module_function :start_agent, :launch_agent, :lib_path, :broadcast_list=, :monitor, :port=, :kill_process
 end

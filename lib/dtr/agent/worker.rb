@@ -46,7 +46,7 @@ module DTR
       def teardown
         kill_all_runners
         if @herald
-          Process.kill 'TERM', @herald rescue nil
+          DTR.kill_process @herald
           @herald = nil
           DTR.info "=> Herald is killed."
         end
@@ -72,7 +72,7 @@ module DTR
 
       def kill_all_runners
         unless @runner_pids.blank?
-          @runner_pids.each{ |pid| Process.kill 'TERM', pid rescue nil }
+          @runner_pids.each{ |pid| DTR.kill_process pid }
           DTR.info "=> All runners(#{@runner_pids.join(", ")}) were killed." 
           @runner_pids = []
         end

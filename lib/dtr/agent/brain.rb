@@ -47,7 +47,7 @@ module DTR
         end
       ensure
         DTR.info {"Killing worker"}
-        Process.kill 'TERM', worker
+        DTR.kill_process worker
       end
     end
   end

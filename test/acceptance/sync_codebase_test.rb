@@ -31,8 +31,8 @@ class SyncCodebaseTest < Test::Unit::TestCase
     assert !File.exists?("test_sync_codebase/#{package_copy_file}")
   ensure
     stop_service rescue nil
-    Process.kill 'TERM', master rescue nil
-    Process.kill 'TERM', client rescue nil
+    DTR.kill_process master
+    DTR.kill_process client
     FileUtils.rm_rf("test_sync_codebase")
     Dir.chdir(testdata_dir) do
       DTR::Cmd.execute('rake dtr_clobber_package')
@@ -59,7 +59,7 @@ class SyncCodebaseTest < Test::Unit::TestCase
       end
     ensure
       DTR.reject
-      Process.kill 'TERM', @agent rescue nil
+      DTR.kill_process @agent
       Process.waitall
     end
   end

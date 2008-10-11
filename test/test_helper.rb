@@ -29,7 +29,7 @@ module Test
         Process.waitpid pid
         assert_equal 0, $?.exitstatus
       ensure
-        Process.kill 'TERM', pid rescue nil
+        DTR.kill_process pid
       end
       def runit(suite)
         Test::Unit::UI::Console::TestRunner.run(suite, Test::Unit::UI::SILENT)

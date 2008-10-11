@@ -2,13 +2,14 @@ require File.dirname(__FILE__) + '/../test_helper'
 
 include DTR::AgentHelper
 
-class AdapterTests < Test::Unit::TestCase
+class AdapterTest < Test::Unit::TestCase
   include DTR::Adapter::Master
   include DTR::Adapter::Follower
 
   def setup
     @timeout = false
     @messages = []
+    DTR.logger('test.log')
     DTR.configuration.follower_listen_heartbeat_timeout = 1
   end
 

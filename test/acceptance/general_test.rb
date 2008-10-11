@@ -269,7 +269,7 @@ class GeneralTest < Test::Unit::TestCase
     assert_equal 0, $?.exitstatus
   ensure
     @test_processes.each do |pid|
-      Process.kill 'TERM', pid rescue nil
+      DTR.kill_process pid
     end
   end
 

@@ -98,7 +98,7 @@ module DTR
           end
         ensure
           if defined?(@agent)
-            Process.kill 'TERM', @agent rescue nil
+            DTR.kill_process @agent
           end
         end
       end

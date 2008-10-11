@@ -28,9 +28,10 @@ module DTR
     def stop_agents
       if @agents
         @agents.each do |agent|
-          Process.kill 'TERM', agent rescue nil
+          DTR.kill_process agent
         end
         Process.waitall
+        sleep 1
       end
     ensure
       FileUtils.rm_rf(@agents_dir) rescue nil

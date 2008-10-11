@@ -90,6 +90,7 @@ module DTR
       def shutdown
         DTR.info "#{self} is shutting down. Ran #{@started} tests, finished #{@run_finished}."
         stop_service rescue exit!
+        exit!
       end
 
       def to_s
