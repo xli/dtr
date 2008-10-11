@@ -22,7 +22,7 @@ DTR works in two parts: Runner Agent and DTR Master.
 
 * DTR Master is the process finding runner service to run tests and collect test results. It works by loading 'dtr/test_unit_injection.rb' with all test files.
 
-DTR support synchronize codebase by creating a DTR::PackageTask in your rake tasks. The DTR::PackageTask is a similar task with Rake::PackageTask, the following is a simple example:
+DTR (version >= 1.0.0) supports synchronizing codebase by creating a DTR::PackageTask in your rake tasks. The DTR::PackageTask is a similar task with Rake::PackageTask, the following is a simple example:
 
   % require 'dtr/raketasks'
   % DTR::PackageTask.new do |p|
@@ -31,7 +31,7 @@ DTR support synchronize codebase by creating a DTR::PackageTask in your rake tas
   %   p.package_files.exclude('log/*')
   % end
 
-The DTR::TestTask will create a DTR::PackageTask for you directly, and you can specify package_files too
+The DTR::TestTask will create a DTR::PackageTask for you directly, and you can specify package_files too.
 
   % DTR::TestTask.new do |t|
   %   t.test_files = FileList['test/*_test.rb']
@@ -40,6 +40,8 @@ The DTR::TestTask will create a DTR::PackageTask for you directly, and you can s
   %   t.package_files.exclude('tmp/**/*')
   %   t.package_files.exclude('log/*')
   % end
+
+Note: Exclude('log/*') only excludes all files inside 'log' directory except 'log' directory itself.
 
 == Download
 
@@ -149,7 +151,7 @@ The following is the test task example in the rake file:
 
 [<b>Wang Pengchao</b>] For sharing lots of ideas.
 
-[<b>Barrow H Kwan</b>] For patch of specifying DTR server port.
+[<b>Barrow H Kwan</b>] For patch of specifying DTR Rinda server port.
 
 [<b>Mingle team</b>(http://studios.thoughtworks.com/mingle-project-intelligence)] For making all these happen.
 

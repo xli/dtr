@@ -23,4 +23,14 @@ class DTRPackageTaskTest < Test::Unit::TestCase
   ensure
     FileUtils.rm_rf(testdata_dir + "/dtr_pkg") rescue nil
   end
+
+  def test_should_not_include_dtr_pkg_dir
+    testdata_dir = File.expand_path(File.dirname(__FILE__) + '/../../testdata')
+    Dir.chdir(testdata_dir) do
+      %x[rake dtr_repackage]
+      assert !File.exists?(testdata_dir + "/dtr_pkg/codebase-dump/dtr_pkg")
+    end
+  ensure
+    FileUtils.rm_rf(testdata_dir + "/dtr_pkg") rescue nil
+  end
 end

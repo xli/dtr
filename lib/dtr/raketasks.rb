@@ -24,10 +24,10 @@ module DTR
   # Create tasks that run a set of tests with DTR injected.
   # The TestTask will create the following targets:
   #
-  # [<b>:dtr</b>]
+  # [<b>:dtr</b>]: 
   #   Create a task that runs a set of tests by DTR master.
   #
-  # [DTR::PackageTask]
+  # [DTR::PackageTask]: 
   #   Create a packaging task that will package the project into
   #   distributable files for running test on remote machine.
   #   All test files should be included.
@@ -111,7 +111,7 @@ module DTR
       runner_names = []
       self.processes.to_i.times {|i| runner_names << "runner#{i}"}
       
-      DTR.fork do
+      DTR.fork_process do
         DTR_AGENT_OPTIONS[:runners] = runner_names if DTR_AGENT_OPTIONS[:runners].empty?
         DTR.start_agent
       end
@@ -184,6 +184,7 @@ module DTR
 
       file package_dir_path do
         mkdir_p package_dir rescue nil
+        @package_files.exclude(package_dir)
         @package_files.each do |fn|
           f = File.join(package_dir_path, fn)
           fdir = File.dirname(f)
