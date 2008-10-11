@@ -12,46 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'dtr/facade'
+
 DTRVERSION="1.0.0"
 DTR_AGENT_OPTIONS = {:runners => [], :agent_env_setup_cmd => nil}
 
 module DTR
-
-  def start_agent
-    launch_agent(DTR_AGENT_OPTIONS[:runners], DTR_AGENT_OPTIONS[:agent_env_setup_cmd])
-  end
-
-  def launch_agent(names, setup=nil)
-    require 'dtr/agent'
-    names = names || "DTR(#{Time.now})"
-    DTR::Agent.start(names, setup)
-  end
-
-  def lib_path
-    File.expand_path(File.dirname(__FILE__))
-  end
-
-  def broadcast_list=(list)
-    require 'dtr/shared'
-    DTR.configuration.broadcast_list = list
-    DTR.configuration.save
-  end
-
-  def port=(port)
-    require 'dtr/shared'
-    DTR.configuration.rinda_server_port = port
-    DTR.configuration.save
-  end
-
-  def monitor
-    require 'dtr/monitor'
-    DTR.logger('dtr_monitor.log')
-    Monitor.new.start
-  end
-
-  def kill_process(pid)
-    Process.kill 'TERM', pid rescue nil
-  end
-
-  module_function :start_agent, :launch_agent, :lib_path, :broadcast_list=, :monitor, :port=, :kill_process
+  extend Facade
 end

@@ -44,6 +44,7 @@ module DTR
         else
           DTR.info {'Setup working environment failed, no runner started.'}
         end
+        stop_service
       end
     end
   end

@@ -3,9 +3,6 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
-  merge package task into test task
-   * can't find package task which is put into a namespace
-   * ?? define multi package task
   add option for using zip instead of tar to package codebase
   give sync_codebase/codebase a better name
   master process log doesn't have time label in mingle

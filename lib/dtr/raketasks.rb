@@ -111,7 +111,7 @@ module DTR
       runner_names = []
       self.processes.to_i.times {|i| runner_names << "runner#{i}"}
       
-      Process.fork do
+      DTR.fork do
         DTR_AGENT_OPTIONS[:runners] = runner_names if DTR_AGENT_OPTIONS[:runners].empty?
         DTR.start_agent
       end
