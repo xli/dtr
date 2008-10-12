@@ -16,6 +16,8 @@ require 'test/unit/testresult'
 
 module DTR
   module SyncCodebase
+    # Inject synchronizing codebase ability into Master#with_dtr_master
+    # Packaging codebase by rake task dtr_repackage (See DTR::PackageTask)
     module MasterExt
       include Service::File
 
@@ -26,20 +28,7 @@ module DTR
       def with_dtr_master_with_sync_codebase(&block)
         with_dtr_master_without_sync_codebase do
           DTR.do_println("Packaging codebase")
-          unless Cmd.execute('rake dtr_repackage --trace')
-            $stderr.puts %{
-Execute dtr_repackage rake task failed, see log for details.
-For running DTR test task, you must define a DTR::PackageTask task in your rakefile for DTR need package and synchronize your codebase within grid.
-Example:
-  require 'dtr/raketasks'
-  DTR::PackageTask.new do |p|
-    p.package_files.include("**/*")
-    p.package_files.exclude("tmp")
-    p.package_files.exclude("log")
-  end
-}
-            return Test::Unit::TestResult.new
-          end
+          Cmd.execute('rake dtr_repackage --trace')
           begin
             provide_file Codebase.new
             block.call

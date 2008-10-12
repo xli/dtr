@@ -28,11 +28,25 @@ module DTR
       end
 
       def package_file
-        "#{package_name}.tar.bz2"
+        "#{package_name}.zip"
       end
 
       def package_copy_file
         "copy_#{package_file}"
+      end
+
+      def unpackage_cmd
+        "unzip #{package_copy_file}"
+      end
+
+      def package_cmd
+        "zip -r #{package_file} #{package_name}"
+      end
+
+      def do_work(cmd)
+        unless Cmd.execute(cmd)
+          raise "Execute command: #{cmd} failed. See log for details."
+        end
       end
     end
   end

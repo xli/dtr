@@ -3,7 +3,7 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
-  add option for using zip instead of tar to package codebase
+  error timestamp format
   give sync_codebase/codebase a better name
   master process log doesn't have time label in mingle
   auto mkdir log&tmp for agent?

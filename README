@@ -18,11 +18,11 @@ DTR has the following features:
 
 DTR works in two parts: Runner Agent and DTR Master.
 
-* Runner Agent is a DRb service hosting on distributed machines to run tests. For using 'fork' to create runner process, Runner Agent can't run on Windows directly.
+* Runner Agent is a DRb service hosting on distributed machines to run tests. For using 'fork' to create runner process, Runner Agent can't run on Windows directly. Requisites for running agent: Unix/Linux based OS System for forking sub-process; 'unzip' command for extracting codebase package.
 
-* DTR Master is the process finding runner service to run tests and collect test results. It works by loading 'dtr/test_unit_injection.rb' with all test files.
+* DTR Master is the process finding runner service to run tests and collect test results. It works by loading 'dtr/test_unit_injection.rb' with all test files. Requisites for running agent: 'zip' command for creating codebase package.
 
-DTR (version >= 1.0.0) supports synchronizing codebase by creating a DTR::PackageTask in your rake tasks. The DTR::PackageTask is a similar task with Rake::PackageTask, the following is a simple example:
+DTR (version >= 1.0.0) supports synchronizing codebase by a DTR::PackageTask defined in your rake tasks. The DTR::PackageTask is a similar task with Rake::PackageTask, the following is a simple example:
 
   % require 'dtr/raketasks'
   % DTR::PackageTask.new do |p|

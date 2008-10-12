@@ -20,12 +20,20 @@ module DTR
 
       CHUNK_SIZE = 1024*1024
 
+      def initialize
+        raise "Package(#{codebase_package}) doesn't exist!" unless File.exist?(codebase_package)
+      end
+
       def write(remote_io)
-        File.open(File.join(package_dir, package_file), "rb") do |f|
+        File.open(codebase_package, "rb") do |f|
           while chunk = f.read(CHUNK_SIZE) and chunk.length > 0
             remote_io.write(chunk)
           end
         end
+      end
+
+      def codebase_package
+        File.join(package_dir, package_file)
       end
     end
   end

@@ -13,12 +13,13 @@
 # limitations under the License.
 
 require "rubygems"
-require 'dtr'
-require 'dtr/shared/sync_codebase/package'
-require 'dtr/shared/ruby_ext'
 require 'rake'
 require 'rake/testtask'
 require 'rake/tasklib'
+
+require 'dtr'
+require 'dtr/shared/utils'
+require 'dtr/shared/sync_codebase/package'
 
 module DTR
   # Create tasks that run a set of tests with DTR injected.
@@ -120,6 +121,7 @@ module DTR
 
   # Create a packaging task that will package the project into
   # distributable files for running test on remote machine.
+  # It uses zip and unzip to package and unpackage files.
   # All test files should be included.
   #
   # The PackageTask will create the following targets:
@@ -147,13 +149,9 @@ module DTR
     # List of files to be included in the package.
     attr_accessor :package_files
 
-    # Tar command for gzipped or bzip2ed archives.  The default is 'tar'.
-    attr_accessor :tar_command
-
     # Create a Package Task with the given name and version. 
     def initialize
       @package_files = Rake::FileList.new
-      @tar_command = 'tar'
       yield self if block_given?
       define
     end
@@ -176,7 +174,7 @@ module DTR
 
       file "#{package_dir}/#{file}" => [package_dir_path] do
         chdir(package_dir) do
-          sh %{#{@tar_command} #{flag}cvf #{file} #{package_name}}
+          do_work(package_cmd)
         end
       end
 
