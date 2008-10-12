@@ -20,7 +20,6 @@ Send suggestions for this list to iam@li-xiao.com
   fix problem: start agent -> run tests -> stop agent before test finished -> restart agent -> can't
   
   need test:
-    Facade#lib_path
     monitor
     DTR::TestTask test
   
