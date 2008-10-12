@@ -17,18 +17,44 @@ require 'dtr/master'
 module DTR
   class Monitor
     include Adapter::Master
+    include Adapter::Follower
     include Service::Agent
+
     def start
-      DTR.configuration.with_rinda_server do
-        monitor_thread = Thread.new do
-          new_agent_monitor.each { |t| puts t.last.last }
+      masters_monitor
+      agents_monitor
+      Process.waitall
+    end
+
+    def masters_monitor
+      DTR.fork_process do
+        begin
+          loop do
+            msg, from_host = listen
+            puts "Master process message from #{from_host}: #{msg}" if from_host != host
+          end
+        rescue Errno::EADDRINUSE
+          puts "There is DTR agent started on this machine."
+          puts "Shutdown it for monitoring working DTR Master info."
+        ensure
+          relax
         end
-        puts "Monitor process started at #{Time.now}"
+      end
+    end
+
+    def agents_monitor
+      DTR.fork_process do
+        DTR.configuration.with_rinda_server do
+          monitor_thread = Thread.new do
+            new_agent_monitor.each { |t| puts t.last.last }
+          end
+          puts "Monitor process started at #{Time.now}"
       
-        with_wakeup_agents do
-          begin
-            monitor_thread.join
-          rescue Interrupt
+          with_wakeup_agents do
+            begin
+              monitor_thread.join
+            rescue Interrupt
+            end
           end
         end
       end
