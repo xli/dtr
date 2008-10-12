@@ -17,6 +17,7 @@ require 'fileutils'
 
 module DTR
   module LoggerExt
+    DATETIME_FORMAT = "%m-%d %H:%M:%S"
     def logger(file=nil)
       @logger ||= create_default_logger(file)
     end
@@ -31,7 +32,7 @@ module DTR
       log_file = File.join(dir,  file || 'dtr.log')
       do_println "DTR logfile at #{log_file}"
       logger = Logger.new(log_file, 1, 5*1024*1024)
-      logger.datetime_format = "%m-%d %H:%M:%S"
+      logger.datetime_format = DATETIME_FORMAT
       logger.level = (ENV['DTR_LOG_LEVEL'] || Logger::INFO).to_i
       logger
     end
@@ -66,7 +67,7 @@ module DTR
         #output message when it's an error for agent error log should be displayed in console
         if level == :error
           $stderr.puts ''
-          $stderr.puts "#{Time.now}: #{message}"
+          $stderr.puts "[#{Time.now.strftime(DATETIME_FORMAT)}] ERROR: #{message}"
         end
         message
       end
