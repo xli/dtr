@@ -40,7 +40,7 @@ class SyncCodebaseTest < Test::Unit::TestCase
   end
 
   def test_should_not_sync_codebase_and_setup_working_dir_when_agent_is_in_same_dir_with_master_process
-    @master_dir = File.expand_path(File.dirname(__FILE__) + '/../../testdata/should_not_sync_codebase_and_setup_working_dir_when_agent_is_in_same_dir_with_master_process')
+    @master_dir = File.expand_path(File.dirname(__FILE__) + '/../../testdata/verify_dir_pwd')
     Dir.chdir(@master_dir) do
       require 'verify_dir_pwd_test_case'
     end

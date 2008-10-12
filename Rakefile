@@ -97,6 +97,9 @@ rd = Rake::RDocTask.new("rdoc") { |rdoc|
 if ! defined?(Gem)
   puts "Package Target requires RubyGEMs"
 else
+  FileUtils.rm_rf('testdata/log')
+  FileUtils.rm_rf('testdata/another_project/log')
+  FileUtils.rm_rf('testdata/verify_dir_pwd/log')
   gem_content = <<-GEM
 Gem::Specification.new do |spec|
   spec.name = 'dtr'
