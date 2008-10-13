@@ -24,6 +24,7 @@ module DTR
       masters_monitor
       agents_monitor
       Process.waitall
+    rescue Interrupt
     end
 
     def masters_monitor
@@ -36,6 +37,7 @@ module DTR
         rescue Errno::EADDRINUSE
           puts "There is DTR agent started on this machine."
           puts "Shutdown it for monitoring working DTR Master info."
+        rescue Interrupt
         ensure
           relax
         end
