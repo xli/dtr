@@ -32,7 +32,38 @@ module DTR
         start_service_without_sync_logger
         if logger_tuple = lookup_ring.read_all([:logger, nil]).first
           sync_logger = logger_tuple[1]
-          DTR.logger = sync_logger
+          DTR.logger = MessageDecoratedLogger.new(sync_logger)
+        end
+      end
+    end
+
+    class MessageDecoratedLogger
+      include MessageDecorator
+
+      def initialize(logger)
+        @logger = logger
+      end
+
+      def debug(message=nil, &block)
+        with_decorating_message(:debug, message, &block)
+      end
+
+      def info(message=nil, &block)
+        with_decorating_message(:info, message, &block)
+      end
+
+      def error(message=nil, &block)
+        with_decorating_message(:error, message, &block)
+      end
+
+      private
+      def with_decorating_message(level, msg, &block)
+        if block_given?
+          @logger.send(level) do
+            decorate_message(block.call)
+          end
+        else
+          @logger.send(level, decorate_message(msg))
         end
       end
     end

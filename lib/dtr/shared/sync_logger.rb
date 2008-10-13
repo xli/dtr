@@ -18,22 +18,21 @@ module DTR
   module SyncLogger
     class UndumpedLogger
       include DRbUndumped
-      include MessageDecorator
 
       def initialize(logger)
         @logger = logger
       end
 
       def debug(message=nil, &block)
-        with_decorating_message(:debug, message, &block)
+        @logger.send(:debug, message, &block)
       end
 
       def info(message=nil, &block)
-        with_decorating_message(:info, message, &block)
+        @logger.send(:info, message, &block)
       end
 
       def error(message=nil, &block)
-        with_decorating_message(:error, message, &block)
+        @logger.send(:error, message, &block)
       end
 
       def datetime_format=(format)
@@ -42,17 +41,6 @@ module DTR
 
       def level=(level)
         @logger.level = level
-      end
-
-      private
-      def with_decorating_message(level, msg, &block)
-        if block_given?
-          @logger.send(level) do
-            decorate_message(block.call)
-          end
-        else
-          @logger.send(level, decorate_message(msg))
-        end
       end
     end
 
