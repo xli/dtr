@@ -21,7 +21,8 @@ module DTR
 
       def start_service
         DTR.info "-- Start drb service..."
-        DRb.start_service
+        # for ruby 1.8.7 need specify uri
+        DRb.start_service("druby://#{Socket.gethostname}:0")
       end
 
       def stop_service
