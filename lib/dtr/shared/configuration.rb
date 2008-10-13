@@ -13,7 +13,7 @@
 # limitations under the License.
 
 require 'singleton'
-require 'rinda/rinda'
+require 'rinda/ring'
 require 'rinda/tuplespace'
 
 module DTR

@@ -26,6 +26,8 @@ module DTR
         DTR.info "--------------------beautiful line--------------------------"
         DTR.info "=> Agent environment setup command: #{@agent_env_setup_cmd}"
         DTR.info "=> Runner names: #{@runner_names.join(', ')}"
+        DTR.info "=> Broadcast list: #{DTR.configuration.broadcast_list.inspect}"
+        DTR.info "=> Listening port: #{Adapter::FOLLOWER_LISTENS_PORT}"
       end
 
       def hypnotize
