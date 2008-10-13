@@ -3,6 +3,9 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
+  bug: local host name is wrong
+  run on ruby1.8.7
+  output broadcast list for agent started log
   give sync_codebase/codebase a better name
   master process log doesn't have time label in mingle
   auto mkdir log&tmp for agent? --rails option?
