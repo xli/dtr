@@ -28,6 +28,7 @@ module DTR
         DTR.info "=> Runner names: #{@runner_names.join(', ')}"
         DTR.info "=> Broadcast list: #{DTR.configuration.broadcast_list.inspect}"
         DTR.info "=> Listening port: #{DTR.configuration.agent_listen_port}"
+        DTR.info "=> Group: #{DTR.configuration.group}"
       end
 
       def hypnotize
