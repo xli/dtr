@@ -23,7 +23,7 @@ module Test
       end
       def assert_fork_process_exits_ok(&block)
         pid = Process.fork do
-          block.call
+          with_agent_helper_group(&block)
           exit 0
         end
         Process.waitpid pid
@@ -31,6 +31,16 @@ module Test
       ensure
         DTR.kill_process pid
       end
+
+      def with_agent_helper_group(&block)
+        DTR.configuration.group = DTR::AgentHelper::GROUP
+        begin
+          block.call
+        ensure
+          DTR.configuration.group = nil
+        end
+      end
+
       def runit(suite)
         Test::Unit::UI::Console::TestRunner.run(suite, Test::Unit::UI::SILENT)
       end

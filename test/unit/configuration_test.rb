@@ -22,6 +22,20 @@ class ConfigurationTest < Test::Unit::TestCase
     assert_equal 'mingle', DTR::EnvStore.new[:group]
   end
 
+  def test_should_save_as_nil_when_group_is_blank
+    DTR.configuration.group = ''
+    assert_nil DTR.configuration.group
+    DTR.configuration.save
+    assert_nil DTR::EnvStore.new[:group]
+  end
+
+  def test_shoul_convert_space_in_group_name_to_underscore
+    DTR.configuration.group = 'mingle group'
+    assert_equal 'mingle_group', DTR.configuration.group
+    DTR.configuration.save
+    assert_equal 'mingle_group', DTR::EnvStore.new[:group]
+  end
+
   def test_load
     DTR::EnvStore.new[:group] = 'new group'
     DTR.configuration.load

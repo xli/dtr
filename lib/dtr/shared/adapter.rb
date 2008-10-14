@@ -85,7 +85,7 @@ module DTR
       end
 
       def do_wakeup_agents
-        yell_agents("#{Adapter::WAKEUP_MESSAGE} #{host}")
+        yell_agents("#{Adapter::WAKEUP_MESSAGE} #{host} #{DTR.configuration.group}")
       end
 
       private

@@ -55,6 +55,10 @@ module DTR
       store[:group] = @group
     end
 
+    def group=(group)
+      @group = group.blank? ? nil : group.gsub(' ', '_')
+    end
+
     def with_rinda_server(&block)
       DTR.do_println("Booting DTR service")
       start_service

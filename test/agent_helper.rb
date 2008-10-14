@@ -1,6 +1,7 @@
 require 'fileutils'
 module DTR
   module AgentHelper
+    GROUP = 'dtr acceptance tests'
     def start_agents
       @agents_dir = File.join(Dir.pwd, 'agents')
       @agents = []
@@ -14,13 +15,9 @@ module DTR
       runner_names = []
       size.times {|i| runner_names << "runner#{i}"}
       Process.fork do
-        begin
-          Dir.chdir(agent_dir) do
-            DTR.launch_agent(runner_names, nil)
-          end
-        rescue Exception => e
-          puts e.message
-          puts e.backtrace.join("\n")
+        Dir.chdir(agent_dir) do
+          DTR.configuration.group = GROUP
+          DTR.launch_agent(runner_names, nil)
         end
       end
     end

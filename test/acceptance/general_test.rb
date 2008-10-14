@@ -243,9 +243,11 @@ class GeneralTest < Test::Unit::TestCase
       FileUtils.cp_r testdata_dir, master_dir
       begin
         Dir.chdir(master_dir) do
-          result = runit(suite)
-          assert result.passed?
-          assert_equal 3, result.run_count
+          with_agent_helper_group do
+            result = runit(suite)
+            assert result.passed?
+            assert_equal 3, result.run_count
+          end
         end
       ensure
         FileUtils.rm_rf master_dir

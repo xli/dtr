@@ -1,6 +1,6 @@
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + '/../../lib')
 require 'dtr/raketasks'
-
+DTR.group = 'dtr acceptance tests'
 DTR::TestTask.new do |t|
   t.test_files = FileList['success_test_case.rb']
   t.processes = 0

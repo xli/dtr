@@ -31,8 +31,8 @@ module DTR
       DTR.fork_process do
         begin
           loop do
-            msg, from_host = listen
-            puts "Master process message from #{from_host}: #{msg}" if from_host != host
+            msg, from_host, group = listen
+            puts "Master process message from #{from_host}: #{msg} for group #{group}" if from_host != host
           end
         rescue Errno::EADDRINUSE
           puts "There is DTR agent started on this machine."

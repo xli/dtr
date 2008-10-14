@@ -113,6 +113,12 @@ class AdapterTest < Test::Unit::TestCase
     assert sleep?
   end
 
+  def test_do_wakeup_agents_should_include_group_configured
+    DTR.configuration.group = 'mingle'
+    do_wakeup_agents
+    assert wakeup?
+  end
+
   def listen
     raise Timeout::Error.new('timeout') if @timeout
     @messages.shift.to_s.split
