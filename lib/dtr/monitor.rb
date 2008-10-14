@@ -15,6 +15,8 @@
 require 'dtr/master'
 
 module DTR
+  
+  # Monitor provides a way to monitor agent/master process working status.
   class Monitor
     include Adapter::Master
     include Adapter::Follower

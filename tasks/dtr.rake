@@ -25,7 +25,7 @@ namespace :dtr do
    t.package_files.exclude("log/*")
   end
   
-  desc 'monitoring server and agents communication'
+  desc 'Monitoring server and agents status. Used for testing your dtr grid environment. CAUTION! monitoring agents causes all idle agents hang on by the monitor process.'
   task(:monitor) do |t|
     DTR.monitor
   end
