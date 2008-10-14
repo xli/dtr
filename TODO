@@ -3,11 +3,9 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
-  config agent listen group
   agent should merge master broadcast list?
   give sync_codebase/codebase a better name
   master process log doesn't have time label in mingle
-  auto mkdir log&tmp for agent? --rails option?
   update help doc
   should trigger started notification on runner in agent runner, for some tools are using this hook(e.g. inbrowser_test)
   

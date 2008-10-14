@@ -70,7 +70,7 @@ end
 
 # CVS Tasks ----------------------------------------------------------
 
-# Install DTR using the standard install.rb script.
+# Install DTR using the standard setup.rb script.
 
 desc "Install the application"
 task :install do
@@ -109,7 +109,7 @@ Gem::Specification.new do |spec|
 
   #### Dependencies and requirements.
 
-  spec.files = #{(Dir.glob("lib/**/*.rb") + ["bin/dtr", "CHANGES", "dtr.gemspec", "install.rb", "lib", "LICENSE.TXT", "Rakefile", "README", "TODO"]).inspect}
+  spec.files = #{(Dir.glob("lib/**/*.rb") + ["bin/dtr", "CHANGES", "dtr.gemspec", "setup.rb", "lib", "LICENSE.TXT", "Rakefile", "README", "TODO"]).inspect}
 
   spec.test_files = #{(Dir.glob("test/**/*.rb") + Dir.glob("testdata/**/*")).inspect}
   #### Load-time details: library and application (you will need one or both).
