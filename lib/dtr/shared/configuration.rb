@@ -24,11 +24,25 @@ module DTR
 
   module_function :configuration
 
+  # DTR Configuration includes: 
+  #   For both master & agent process:
+  #     * broadcast_list: broadcast ip list for looking for dtr services(agent and DTR master rinda server).
+  #     * group: grouping agents for specific usage, master process should specify same group for catching agents to work
+  #   For master process:
+  #     * rinda_server_port: DTR would automatically detect unused port for master rinda server. The default port is 3344.
+  #     * master_heartbeat_interval: master process heartbeat for keeping agents working. The default is 10 sec.
+  #   For agent process:
+  #     * agent_listen_port: agent listen master process command port, the default port is 7788.
+  #     * follower_listen_heartbeat_timeout: agents would be going to sleep if listening master heartbeat timeout. The default is 15 sec.
+  #
+  # All configurations except rinda_server_port would be stored into pstore file .dtr_env_pstore in the DTR process launching directory.
+  #
   class Configuration
     include Singleton
     include Service::Rinda
 
-    attr_accessor :broadcast_list, :rinda_server_port, :agent_listen_port, :master_heartbeat_interval, :follower_listen_heartbeat_timeout, :group
+    attr_accessor :broadcast_list, :rinda_server_port, :agent_listen_port, :master_heartbeat_interval, :follower_listen_heartbeat_timeout
+    attr_reader :group
 
     def initialize
       load

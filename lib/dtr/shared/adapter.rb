@@ -32,14 +32,14 @@ module DTR
 
       def sleep?
         return true unless defined?(@wakeup_for_host)
-        msg, host = Timeout.timeout(DTR.configuration.follower_listen_heartbeat_timeout) do
+        msg, host, group = Timeout.timeout(DTR.configuration.follower_listen_heartbeat_timeout) do
           loop do
-            msg, host = listen
+            msg, host, group = listen
             break if host == @wakeup_for_host
           end
-          [msg, host]
+          [msg, host, group]
         end
-        DTR.info "Received: #{msg} from #{host}"
+        DTR.info "Received: #{msg} for group #{group} from #{host}"
         msg == Adapter::SLEEP_MESSAGE
       rescue Timeout::Error => e
         DTR.info "Timeout while listening command"
