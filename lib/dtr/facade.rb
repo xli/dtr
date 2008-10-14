@@ -34,9 +34,9 @@ module DTR
       DTR.configuration.save
     end
 
-    def port=(port)
+    def agent_listen_port=(port)
       require 'dtr/shared'
-      DTR.configuration.rinda_server_port = port
+      DTR.configuration.agent_listen_port = port
       DTR.configuration.save
     end
 

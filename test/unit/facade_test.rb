@@ -16,10 +16,19 @@ class FacadeTest < Test::Unit::TestCase
     DTR::EnvStore.destroy
   end
 
-  def test_save_port
+  def test_should_not_save_rinda_server_port
     DTR::EnvStore.destroy
-    self.port = '3456'
-    assert_equal '3456', DTR::EnvStore.new[:port]
+    DTR.configuration.rinda_server_port = '3456'
+    assert_equal '3456', DTR.configuration.rinda_server_port
+    assert_nil DTR::EnvStore.new[:rinda_server_port]
+  ensure
+    DTR::EnvStore.destroy
+  end
+
+  def test_save_agent_listen_port
+    DTR::EnvStore.destroy
+    self.agent_listen_port = '7890'
+    assert_equal '7890', DTR::EnvStore.new[:agent_listen_port]
   ensure
     DTR::EnvStore.destroy
   end

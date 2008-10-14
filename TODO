@@ -3,6 +3,7 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
+  config agent listen group
   agent should merge master broadcast list?
   give sync_codebase/codebase a better name
   master process log doesn't have time label in mingle

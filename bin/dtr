@@ -35,15 +35,15 @@ opts = OptionParser.new do |opts|
     DTR.monitor
   end
 
-  opts.on("-p", "--port PORT",  "Port number of DTR rinda server. Default is 3344.") do |port|
-    DTR.port = port
+  opts.on("-p", "--port PORT",  "Port number of DTR agent listening. Default is 7788.") do |port|
+    DTR.agent_listen_port = port
   end
   
   opts.on("-r runner1_name,runner2_name", Array, "Start DTR test runner agent with unique runner names.") do |names|
     DTR_AGENT_OPTIONS[:runners] = names.collect{|name| name.untaint}
   end
   
-  opts.on("-a", "--broadcast_address ADDRESS", "Specify broadcast address for looking up dtr rinda server, e.g. 192.168.255.255. Default is 'localhost'.") do |address|
+  opts.on("-a", "--broadcast_address ADDRESS", "Specify broadcast address for looking up dtr service, e.g. 192.168.255.255. Default is 'localhost'.") do |address|
     if (!address.nil?) && (!address.empty?)
       DTR.broadcast_list = [address]
     end

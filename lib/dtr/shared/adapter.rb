@@ -58,8 +58,8 @@ module DTR
       def listen
         unless defined?(@soc)
           @soc = UDPSocket.open
-          @soc.bind('', Adapter::FOLLOWER_LISTENS_PORT)
-          DTR.info("DTR Agent is listening on port #{Adapter::FOLLOWER_LISTENS_PORT}")
+          @soc.bind('', DTR.configuration.agent_listen_port)
+          DTR.info("DTR Agent is listening on port #{DTR.configuration.agent_listen_port}")
         end
         @soc.recv(1024).split
       end
@@ -107,7 +107,7 @@ module DTR
         begin
           soc.setsockopt(Socket::SOL_SOCKET, Socket::SO_BROADCAST, true)
           DTR.debug {"broadcast sending #{msg} to #{it}"}
-          soc.send(msg, 0, it, Adapter::FOLLOWER_LISTENS_PORT)
+          soc.send(msg, 0, it, DTR.configuration.agent_listen_port)
         rescue
           nil
         ensure
