@@ -54,10 +54,9 @@ module DTR
 
       def run
         @herald = DTR.fork_process { Herald.new @working_env_key, @agent_env_setup_cmd, @runner_names }
-        while @env_store[@working_env_key].nil?
-          sleep(1)
-        end
+        Process.waitpid @herald
         working_env = @env_store[@working_env_key]
+        return unless working_env.is_a?(WorkingEnv)
 
         @runner_names.each do |name|
           @runner_pids << DTR.fork_process {

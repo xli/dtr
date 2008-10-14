@@ -16,8 +16,6 @@ require 'timeout'
 
 module DTR
   module Adapter
-    FOLLOWER_LISTENS_PORT = 7788
-
     WAKEUP_MESSAGE = 'wakeup'
     SLEEP_MESSAGE = 'sleep'
 
