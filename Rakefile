@@ -74,7 +74,7 @@ end
 
 desc "Install the application"
 task :install do
-  ruby "install.rb"
+  ruby "setup.rb"
 end
 
 # Create a task to build the RDOC documentation tree.
