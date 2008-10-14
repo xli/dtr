@@ -21,7 +21,12 @@ module DTR
 
       def start_service
         DTR.info "-- Start drb service..."
-        DRb.start_service("druby://#{Socket.gethostname}:0")
+        #todo need figure why agents couldn't be killed directly when start drb service by DRb.start_service
+        if ENV['DTR_ENV'] == 'test'
+          DRb.start_service("druby://#{Socket.gethostname}:0")
+        else
+          DRb.start_service
+        end
       rescue
         # for ruby 1.8.7 need specify uri
         DRb.start_service("druby://#{Socket.gethostname}:0")
