@@ -39,6 +39,10 @@ opts = OptionParser.new do |opts|
     DTR.agent_listen_port = port
   end
   
+  opts.on("-g", "--group GROUP_NAME",  "If you have several DTR grids working for different project or environment, you should group your agents in different names for different usages. Default is none.") do |group_name|
+    DTR.group = group_name
+  end
+  
   opts.on("-r runner1_name,runner2_name", Array, "Start DTR test runner agent with unique runner names.") do |names|
     DTR_AGENT_OPTIONS[:runners] = names.collect{|name| name.untaint}
   end

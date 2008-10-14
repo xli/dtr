@@ -14,7 +14,7 @@ class AdapterTest < Test::Unit::TestCase
   end
 
   def teardown
-    DTR.configuration.follower_listen_heartbeat_timeout = 15
+    clear_configuration
   end
 
   def test_should_be_sleep_if_never_wakeup
@@ -94,6 +94,22 @@ class AdapterTest < Test::Unit::TestCase
     assert wakeup?
     broadcast('address', "#{DTR::Adapter::WAKEUP_MESSAGE} dtr.remote:1234")
     sleep(2)
+    assert sleep?
+  end
+
+  def test_should_match_group_configured_when_receive_wakeup_cmd
+    DTR.configuration.group = 'mingle'
+    broadcast('address', "#{DTR::Adapter::WAKEUP_MESSAGE} xli.local:1234")
+    assert !wakeup?
+    broadcast('address', "#{DTR::Adapter::WAKEUP_MESSAGE} xli.local:1234 mingle")
+    assert wakeup?
+  end
+
+  def test_should_not_need_match_group_configured_when_receive_sleep_cmd
+    DTR.configuration.group = 'mingle'
+    broadcast('address', "#{DTR::Adapter::WAKEUP_MESSAGE} xli.local:1234 mingle")
+    assert wakeup?
+    broadcast('address', "#{DTR::Adapter::SLEEP_MESSAGE} xli.local:1234")
     assert sleep?
   end
 

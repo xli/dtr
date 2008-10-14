@@ -21,8 +21,8 @@ module DTR
 
     module Follower
       def wakeup?
-        msg, host = listen
-        if msg == Adapter::WAKEUP_MESSAGE
+        msg, host, group = listen
+        if group == DTR.configuration.group && msg == Adapter::WAKEUP_MESSAGE
           port = host.split(':').last.to_i
           DTR.configuration.rinda_server_port = port
           @wakeup_for_host = host

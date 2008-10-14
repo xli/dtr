@@ -28,9 +28,13 @@ module DTR
     include Singleton
     include Service::Rinda
 
-    attr_accessor :broadcast_list, :rinda_server_port, :agent_listen_port, :master_heartbeat_interval, :follower_listen_heartbeat_timeout
+    attr_accessor :broadcast_list, :rinda_server_port, :agent_listen_port, :master_heartbeat_interval, :follower_listen_heartbeat_timeout, :group
 
     def initialize
+      load
+    end
+
+    def load
       store = EnvStore.new
       # always have 'localhost' in broadcast_list, for our master process would start rinda server locally,
       # and dtr should work well on local machine when the machine leaves dtr grid network environment.
@@ -39,6 +43,7 @@ module DTR
       @agent_listen_port = store[:agent_listen_port] || 7788
       @master_heartbeat_interval = store[:master_heartbeat_interval] || 10
       @follower_listen_heartbeat_timeout =  store[:follower_listen_heartbeat_timeout] || 15
+      @group = store[:group]
     end
 
     def save
@@ -47,6 +52,7 @@ module DTR
       store[:agent_listen_port] = @agent_listen_port
       store[:master_heartbeat_interval] = @master_heartbeat_interval
       store[:follower_listen_heartbeat_timeout] = @follower_listen_heartbeat_timeout
+      store[:group] = @group
     end
 
     def with_rinda_server(&block)

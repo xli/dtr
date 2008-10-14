@@ -40,6 +40,12 @@ module DTR
       DTR.configuration.save
     end
 
+    def group=(group)
+      require 'dtr/shared'
+      DTR.configuration.group = group
+      DTR.configuration.save
+    end
+
     def monitor
       require 'dtr/monitor'
       DTR.logger('dtr_monitor.log')

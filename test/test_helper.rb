@@ -4,7 +4,7 @@ require 'test/unit/ui/console/testrunner'
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + '/../lib')
 
 require 'rubygems'
-# require 'growling_test'
+require 'growling_test'
 require 'dtr'
 require 'dtr/test_unit'
 DTR.configuration.master_heartbeat_interval = 2
@@ -33,6 +33,10 @@ module Test
       end
       def runit(suite)
         Test::Unit::UI::Console::TestRunner.run(suite, Test::Unit::UI::SILENT)
+      end
+      def clear_configuration
+        DTR::EnvStore.destroy
+        DTR.configuration.load
       end
     end
   end
