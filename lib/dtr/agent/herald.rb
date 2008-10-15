@@ -38,9 +38,13 @@ module DTR
         provide_agent_info(@agent_env_setup_cmd, @runners)
 
         @env_store[@working_env_key] = fetch_working_env
+      rescue WorkingEnvError
+        @env_store[@working_env_key] = $!.message
+        DTR.error $!.message
       rescue
         @env_store[@working_env_key] = $!.message
         DTR.error $!.message
+        DTR.error $!.backtrace.join("\n")
       end
 
       def fetch_working_env
