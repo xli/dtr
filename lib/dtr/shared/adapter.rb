@@ -23,8 +23,9 @@ module DTR
       def wakeup?
         msg, host, group = listen
         if group == DTR.configuration.group && msg == Adapter::WAKEUP_MESSAGE
-          port = host.split(':').last.to_i
-          DTR.configuration.rinda_server_port = port
+          ip, port = host.split(':')
+          DTR.configuration.rinda_server_port = port.to_i
+          DTR.configuration.broadcast_list = [ip]
           @wakeup_for_host = host
           true
         end
@@ -39,7 +40,6 @@ module DTR
           end
           [msg, host, group]
         end
-        DTR.info "Received: #{msg} for group #{group} from #{host}"
         msg == Adapter::SLEEP_MESSAGE
       rescue Timeout::Error => e
         DTR.info "Timeout while listening command"
@@ -59,13 +59,19 @@ module DTR
           @soc.bind('', DTR.configuration.agent_listen_port)
           DTR.info("DTR Agent is listening on port #{DTR.configuration.agent_listen_port}")
         end
-        @soc.recv(1024).split
+        message, client_address = @soc.recvfrom(400)
+        cmd, port, group = message.split
+
+        hostname = client_address[2]
+        host_ip = client_address[3]
+        DTR.info "Received: #{cmd} for group #{group} from #{hostname}(#{host_ip}):#{port}"
+        [cmd, "#{host_ip}:#{port}", group]
       end
     end
 
     module Master
       def hypnotize_agents
-        yell_agents("#{Adapter::SLEEP_MESSAGE} #{host}")
+        yell_agents("#{Adapter::SLEEP_MESSAGE} #{DTR.configuration.rinda_server_port}")
       end
 
       def with_wakeup_agents(&block)
@@ -85,7 +91,7 @@ module DTR
       end
 
       def do_wakeup_agents
-        yell_agents("#{Adapter::WAKEUP_MESSAGE} #{host} #{DTR.configuration.group}")
+        yell_agents("#{Adapter::WAKEUP_MESSAGE} #{DTR.configuration.rinda_server_port} #{DTR.configuration.group}")
       end
 
       private
@@ -94,10 +100,6 @@ module DTR
         DTR.configuration.broadcast_list.each do |it|
           broadcast(it, msg)
         end
-      end
-
-      def host
-        "#{Socket.gethostname}:#{DTR.configuration.rinda_server_port}"
       end
 
       def broadcast(it, msg)
