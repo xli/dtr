@@ -28,7 +28,7 @@ module DTR
       def with_dtr_master_with_sync_codebase(&block)
         with_dtr_master_without_sync_codebase do
           DTR.do_println("Packaging codebase")
-          Cmd.execute('rake dtr_repackage --trace')
+          raise 'Packaging for dtr task failed, see log for details!' unless Cmd.execute('rake dtr_repackage --trace')
           begin
             provide_file Codebase.new
             block.call

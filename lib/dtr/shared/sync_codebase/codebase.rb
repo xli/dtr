@@ -26,7 +26,7 @@ module DTR
 
       def write(remote_io)
         File.open(codebase_package, "rb") do |f|
-          while chunk = f.read(CHUNK_SIZE) and chunk.length > 0
+          while (chunk = f.read(CHUNK_SIZE) || '') && chunk.length > 0
             remote_io.write(chunk)
           end
         end
