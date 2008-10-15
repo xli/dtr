@@ -3,7 +3,6 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
-  agent should use master process ip as broadcast
   give sync_codebase/codebase a better name
   master process log doesn't have time label in mingle
   update help doc

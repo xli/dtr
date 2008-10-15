@@ -108,7 +108,6 @@ Gem::Specification.new do |spec|
   spec.summary = "DTR is a distributed test runner to run tests on distributed computers for decreasing build time."
 
   #### Dependencies and requirements.
-
   spec.files = #{(Dir.glob("lib/**/*.rb") + ["bin/dtr", "CHANGES", "dtr.gemspec", "setup.rb", "lib", "LICENSE.TXT", "Rakefile", "README", "TODO"]).inspect}
 
   spec.test_files = #{(Dir.glob("test/**/*.rb") + Dir.glob("testdata/**/*")).inspect}
