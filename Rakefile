@@ -111,8 +111,8 @@ Gem::Specification.new do |spec|
   spec.files = #{(Dir.glob("lib/**/*.rb") + ["bin/dtr", "CHANGES", "dtr.gemspec", "setup.rb", "lib", "LICENSE.TXT", "Rakefile", "README", "TODO"]).inspect}
 
   spec.test_files = #{(Dir.glob("test/**/*.rb") + Dir.glob("testdata/**/*")).inspect}
-  #### Load-time details: library and application (you will need one or both).
 
+  #### Load-time details: library and application (you will need one or both).
   spec.require_path = 'lib'                         # Use these for libraries.
 
   spec.bindir = "bin"                               # Use these for applications.
