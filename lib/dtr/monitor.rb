@@ -34,7 +34,9 @@ module DTR
         begin
           loop do
             msg, from_host, group = listen
-            puts "Master process message from #{from_host}: #{msg} for group #{group}" if from_host != host
+            unless ["127.0.0.1:#{DTR.configuration.rinda_server_port}"].include?(from_host)
+              puts "Master process message from #{from_host}: #{msg} for group #{group}"
+            end
           end
         rescue Errno::EADDRINUSE
           puts "There is DTR agent started on this machine."
