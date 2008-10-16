@@ -40,7 +40,7 @@ module DTR
         DTR.info("=> Starting runner #{name} at #{Dir.pwd}, pid: #{Process.pid}")
         init_environment
         provide_runner(self)
-      rescue
+      rescue Exception
         DTR.error($!.message)
         DTR.error($!.backtrace.join("\n"))
       end
