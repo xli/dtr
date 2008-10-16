@@ -43,8 +43,6 @@ module DTR
       rescue
         DTR.error($!.message)
         DTR.error($!.backtrace.join("\n"))
-      ensure
-        stop_service
       end
 
       def init_environment
