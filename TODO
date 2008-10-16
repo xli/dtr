@@ -3,6 +3,7 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
+  Can't agent start as background process
   give sync_codebase/codebase a better name
   master process log doesn't have time label in mingle
   update help doc
