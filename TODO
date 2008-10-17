@@ -3,10 +3,8 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
-  Can't agent start as background process
-  give sync_codebase/codebase a better name
-  master process log doesn't have time label in mingle
   update help doc
+  give sync_codebase/codebase a better name
   should trigger started notification on runner in agent runner, for some tools are using this hook(e.g. inbrowser_test)
   
   ???? agent brain should wakeup when worker is dead

@@ -70,13 +70,6 @@ end
 
 # CVS Tasks ----------------------------------------------------------
 
-# Install DTR using the standard setup.rb script.
-
-desc "Install the application"
-task :install do
-  ruby "setup.rb"
-end
-
 # Create a task to build the RDOC documentation tree.
 
 rd = Rake::RDocTask.new("rdoc") { |rdoc|
@@ -84,9 +77,9 @@ rd = Rake::RDocTask.new("rdoc") { |rdoc|
   rdoc.template = 'html'
   rdoc.title    = "DTR -- Distributed Test Runner"
   rdoc.options << '--line-numbers' << '--inline-source' <<
-    '--main' << 'README' <<
+    '--main' << 'README.rdoc' <<
     '--title' <<  '"DTR -- Distributed Test Runner' 
-  rdoc.rdoc_files.include('README', 'LICENSE.txt', 'TODO', 'CHANGES')
+  rdoc.rdoc_files.include('README.rdoc', 'LICENSE.txt', 'TODO', 'CHANGES')
   rdoc.rdoc_files.include('lib/**/*.rb')
 }
 
@@ -108,11 +101,12 @@ Gem::Specification.new do |spec|
   spec.summary = "DTR is a distributed test runner to run tests on distributed computers for decreasing build time."
 
   #### Dependencies and requirements.
-  spec.files = #{(Dir.glob("lib/**/*.rb") + ["bin/dtr", "CHANGES", "dtr.gemspec", "setup.rb", "lib", "LICENSE.TXT", "Rakefile", "README", "TODO"]).inspect}
+  spec.files = #{(Dir.glob("lib/**/*.rb") + ["bin/dtr", "CHANGES", "dtr.gemspec", "lib", "LICENSE.TXT", "Rakefile", "README.rdoc", "TODO"]).inspect}
 
   spec.test_files = #{(Dir.glob("test/**/*.rb") + Dir.glob("testdata/**/*")).inspect}
 
   #### Load-time details: library and application (you will need one or both).
+
   spec.require_path = 'lib'                         # Use these for libraries.
 
   spec.bindir = "bin"                               # Use these for applications.

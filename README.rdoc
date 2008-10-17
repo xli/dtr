@@ -24,22 +24,22 @@ DTR works in two parts: Runner Agent and DTR Master.
 
 DTR (version >= 1.0.0) supports synchronizing codebase by a DTR::PackageTask defined in your rake tasks. The DTR::PackageTask is a similar task with Rake::PackageTask, the following is a simple example:
 
-  % require 'dtr/raketasks'
-  % DTR::PackageTask.new do |p|
-  %   p.package_files.include("**/*")
-  %   p.package_files.exclude('tmp/**/*')
-  %   p.package_files.exclude('log/*')
-  % end
+  require 'dtr/raketasks'
+  DTR::PackageTask.new do |p|
+    p.package_files.include("**/*")
+    p.package_files.exclude('tmp/**/*')
+    p.package_files.exclude('log/*')
+  end
 
 The DTR::TestTask will create a DTR::PackageTask for you directly, and you can specify package_files too.
 
-  % DTR::TestTask.new do |t|
-  %   t.test_files = FileList['test/*_test.rb']
-  %   t.processes = 2
-  %   t.package_files.include('**/*.rb')
-  %   t.package_files.exclude('tmp/**/*')
-  %   t.package_files.exclude('log/*')
-  % end
+  DTR::TestTask.new do |t|
+    t.test_files = FileList['test/*_test.rb']
+    t.processes = 2
+    t.package_files.include('**/*.rb')
+    t.package_files.exclude('tmp/**/*')
+    t.package_files.exclude('log/*')
+  end
 
 Note: Exclude('log/*') only excludes all files inside 'log' directory except 'log' directory itself.
 
@@ -49,28 +49,15 @@ The latest version of DTR can be found at
 
 * http://github.com/xli/dtr/tree/master
 
-== Installation
+== GEM Installation
 
-=== Normal Installation
-
-You can install DTR with the following command.
-
-  % ruby install.rb
-
-from its distribution directory. or create a gem and install it:
-
-  % rake gem
-  % sudo gem install pkg/dtr-version.gem
-
-=== GEM Installation
-
-==== Last stable version from rubyforge.org
+=== Last stable version from rubyforge.org
 
 Download and install DTR with the following.
 
    gem install --remote dtr
 
-==== Last version on github master branch
+=== Last version on github master branch
 
 Run the following if you haven't already:
 
@@ -80,7 +67,7 @@ Install the gem:
 
   sudo gem install xli-dtr
 
-=== Running the DTR Test Suite
+== Running the DTR Test Suite
 
 If you wish to run the unit and functional tests that come with DTR:
 
@@ -91,9 +78,9 @@ If you wish to run the unit and functional tests that come with DTR:
 
 == Simple Example
 
-Start DTR agent with providing 2 runners as follows:
+Start DTR agent with providing 1 runner in group 'mysql-firefox' as follows:
 
-  % dtr --broadcast_ip broadcast_ip -r runner1,runner2
+  dtr --broadcast_ip broadcast_ip -r runner1 -g mysql-firefox
 
 Type "dtr --help" for an up-to-date option summary.
 Invoking <tt>dtr</tt> without any options causes dtr to show help too.
@@ -101,36 +88,37 @@ Invoking <tt>dtr</tt> without any options causes dtr to show help too.
 Most of time your project test suite need setup environment before run tests, you
 can set setup command by option '--setup', for example:
 
-  % dtr --broadcast_ip broadcast_ip -r runner1,runner2 --setup "rake db:test:prepare"
+  dtr --broadcast_ip broadcast_ip -r runner1,runner2 --setup "rake db:test:prepare"
 
 You also can specify DTR_AGENT_ENV_SETUP_CMD in your master process environment to let all agents which is not started with --setup option specified, setup same environment.
 
-At last, you need to add 'dtr/test_unit_injection.rb' into test_files of your test 
-task in your Rakefile, and for load it, you also need add dtr lib path:
+At last, you need define a DTR::TestTask:
 
-  % require 'dtr'
-  % 
-  % ENV['DTR_AGENT_ENV_SETUP_CMD'] = 'rake db:test:prepare'
-  % DTR.broadcast_list = ['broadcast_ip']
-  % 
-  % Rake::TestTask.new(:dtr) do |t|
-  %   t.libs << DTR.lib_path
-  %   t.test_files = FileList['dtr/test_unit_injection.rb', 'test/**/*_test.rb']
-  %   t.warning = false
-  %   t.verbose = false
-  % end
+  require 'dtr'
 
-In the case above we also changed dtr broadcast list for looking for agents.
-You can simply use DTR::TestTask instead of Rake::TestTask to setup your dtr task:
+  ENV['DTR_AGENT_ENV_SETUP_CMD'] = 'rake db:test:prepare'
+  DTR.broadcast_list = ['broadcast_ip']
+  DTR.group = 'mysql-firefox'
 
-  % DTR::TestTask.new :dtr do |t|
-  %   t.test_files = FileList['test/**/*_test.rb']
-  %   t.processes = 0 # don't start agent in local machine, default is 1, so we reset to 0 here.
-  % end
+  DTR::TestTask.new do |t|
+    t.test_files = FileList['test/**/*_test.rb']
+    t.processes = 0 # don't start agent in local machine, default is 1, so we reset to 0 here.
+    t.package_files.include("Rakefile")
+    t.package_files.include("app/**/*")
+    t.package_files.include("db/migrate/**/*")
+    t.package_files.include("config/**/*")
+    t.package_files.include("lib/**/*")
+    t.package_files.include("vendor/**/*")
+    t.package_files.include("test/**/*")
+  end
 
-Also you must define a DTR::PackageTask in your rakefile for packaging files need for running test.
+The default task name is 'dtr', and it also creates package tasks you need for packaging files need for running test.
+More details about DTR::TestTask and DTR::PackageTask, see the API doc:
 
-DTR broadcast_list & port configuration would be cached in the directory running the test or agent process.
+  ri DTR::TestTask
+  ri DTR::PackageTask
+
+DTR broadcast_list and group configuration would be cached in the directory running the test or agent process.
 The configuration file named .dtr_env_pstore
 
 == Run tests in multi-processes on one machine
@@ -140,7 +128,7 @@ The following is the test task example in the rake file:
 
   require 'dtr/raketasks'
 
-  DTR::TestTask.new :test do |t|
+  DTR::TestTask.new do |t|
     t.test_files = FileList['test/*test.rb']
     t.processes = 2 #default is 1
   end
@@ -149,9 +137,9 @@ The following is the test task example in the rake file:
 
 [<b>Josh Price</b>] For fixing tests packer in release 0.0.1.
 
-[<b>Wang Pengchao</b>] For sharing lots of ideas.
+[<b>Wang Pengchao</b>] For sharing lots of ideas and code contributions.
 
-[<b>Barrow H Kwan</b>] For patch of specifying DTR Rinda server port.
+[<b>Barrow H Kwan</b>] For patch of specifying DTR Rinda server port (version 0.0.x) and testing DTR new version.
 
 [<b>Mingle team</b>(http://studios.thoughtworks.com/mingle-project-intelligence)] For making all these happen.
 
@@ -168,15 +156,16 @@ For other information, feel free to contact mailto:iam@li-xiao.com.
 
 DTR agent command is invoked from the command line using:
 
-   % dtr [<em>options</em> ...]
+  dtr [<em>options</em> ...]
 
 === Options are:
 
-  -p, --port PORT                  Port number of DTR rinda server. Default is 3344.
+  -p, --port PORT                  Port number of DTR agent listening. Default is 7788.
+  -g, --group GROUP_NAME           If you have several DTR grids working for different project or environment, you should group your agents in different names for different usages. Default is none.
   -r runner1_name,runner2_name     Start DTR test runner agent with unique runner names.
-  -a, --broadcast_address ADDRESS  Specify broadcast address for looking up dtr rinda server, e.g. 192.168.255.255. Default is 'localhost'.
+  -a, --broadcast_address ADDRESS  Specify broadcast address for looking up dtr service, e.g. 192.168.255.255. Default is 'localhost'.
   -i, --setup COMMAND              Set command for initializing test runner test environment, e.g. 'rake db:test:prepare'. Default is do nothing. You also can specify DTR_AGENT_ENV_SETUP_CMD in your master process environment to let all agents setup same environment.
-  -m, --monitor                    Monitor the status of the dtr agents.
+  -m, --monitor                    Monitor the status of the dtr agents and master processes. Used for testing your dtr grid environment. CAUTION! monitoring agents causes all idle agents hang on by the monitor process.
   -v, --version                    Show version
   -h, --help                       Show this help doc
 
