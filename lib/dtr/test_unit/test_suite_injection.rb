@@ -12,18 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'test/unit/ui/testrunnermediator'
-
 module DTR
-  def reject
-    return unless Test::Unit::UI::TestRunnerMediator.respond_to?(:reject_dtr)
-    Test::Unit::UI::TestRunnerMediator.reject_dtr
+  module TestUnit
+    module TestSuiteInjection
+      def proxy
+        @tests.collect! {|t| t.proxy}
+        self
+      end
+    end
   end
-
-  def inject
-    return if Test::Unit::UI::TestRunnerMediator.respond_to?(:reject_dtr)
-    Test::Unit::UI::TestRunnerMediator.send(:include, TestUnit::TestRunnerMediatorInjection)
-  end
-
-  module_function :reject, :inject
 end

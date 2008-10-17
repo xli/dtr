@@ -15,22 +15,22 @@
 module DTR
   module TestUnit
     module TestCaseInjection
+      class Proxy
+        def initialize(test)
+          @test = test
+        end
 
-      def self.included(base)
-        base.alias_method_chain :run, :dtr_injection
-        #have to use class_eval for adding it back after removed reject_dtr method
-        base.class_eval do
-          def self.reject_dtr
-            remove_method :run
-            alias_method :run, :run_without_dtr_injection
-            remove_method :run_without_dtr_injection
-            (class << self; self; end;).send :remove_method, :reject_dtr
-          end
+        def run(result, &progress_block)
+          DRbTestRunner.new(@test, result, &progress_block).run
+        end
+
+        def size
+          @test.size
         end
       end
 
-      def run_with_dtr_injection(result, &progress_block)
-        DRbTestRunner.new(self, result, &progress_block).run
+      def proxy
+        Proxy.new(self)
       end
     end
   end

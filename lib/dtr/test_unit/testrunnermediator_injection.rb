@@ -12,18 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'test/unit/testcase'
+require 'test/unit/testsuite'
+
 module DTR
   module TestUnit
     module TestRunnerMediatorInjection
-
       class SuiteWrapper
         def initialize(suite)
           @suite = suite
         end
+
         def run(result, &block)
           @suite.run(result, &block)
           WorkerClub.instance.graceful_shutdown
         end
+
         def size
           @suite.size
         end
@@ -55,16 +59,12 @@ module DTR
 
       def run_suite_with_dtr_injection
         DTR.logger('dtr_master_process.log')
-        @suite = SuiteWrapper.new(@suite)
+        # inject testcase&testsuite as late as possible, for it's too easy to be hacked in ruby world
+        Test::Unit::TestCase.send(:include, TestUnit::TestCaseInjection)
+        Test::Unit::TestSuite.send(:include, TestUnit::TestSuiteInjection)
+        @suite = SuiteWrapper.new(@suite.proxy)
         with_dtr_master do
-          # inject testcase as late as possible, for in ruby world there is lots hacks added to TestCase#run method,
-          # DTR should be the last one to add dtr injection chain into run method
-          Test::Unit::TestCase.send(:include, TestUnit::TestCaseInjection)
-          begin
-            run_suite_without_dtr_injection
-          ensure
-            Test::Unit::TestCase.reject_dtr
-          end
+          run_suite_without_dtr_injection
         end
       end
     end
