@@ -32,7 +32,7 @@ opts = OptionParser.new do |opts|
   opts.separator "Options:"
   
   opts.on_tail("-m", "--monitor", "Monitor the status of the dtr agents and master processes. Used for testing your dtr grid environment. CAUTION! monitoring agents causes all idle agents hang on by the monitor process.") do
-    DTR.monitor
+    $monitor = true
   end
 
   opts.on("-p", "--port PORT",  "Port number of DTR agent listening. Default is 7788.") do |port|
@@ -76,6 +76,9 @@ if no_argv
   puts NOTES
 end
 
+if $monitor
+  DTR.monitor
+end
 if DTR_AGENT_OPTIONS[:runners] && !DTR_AGENT_OPTIONS[:runners].empty?
   DTR.start_agent
 end
