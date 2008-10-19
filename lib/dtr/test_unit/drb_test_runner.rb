@@ -37,13 +37,8 @@ module DTR
         Timeout.timeout(timeout) do
           runner.run(@test, @result, &@progress_block)
         end
-      rescue Timeout::Error => e
-        DTR.info {"Run test timeout(#{timeout}), reboot runner"}
-        runner.reboot rescue nil
-        DTR.info {"rerun test: #{@test.name}"}
-        self.run
-      rescue DRb::DRbConnError => e
-        DTR.info {"DRb::DRbConnError(#{e.message}), rerun test: #{@test.name}"}
+      rescue Timeout::Error, DRb::DRbConnError => e
+        DTR.info {"#{e.class.name}(#{e.message}), rerun test: #{@test.name}"}
         DTR.debug { e.backtrace.join("\n") }
         self.run
       rescue Exception => e

@@ -30,7 +30,9 @@ module DTR
           @test.run(@result, &@progress_block)
         end
       rescue DRb::DRbConnError => e
-        raise e
+        msg = "Rescued DRb::DRbConnError(#{e.message}), while running test: #{test}. The master process may be stopped."
+        DTR.do_println(msg)
+        DTR.info msg
       rescue Exception => e
         unexpected_error(e)
       end
