@@ -2,10 +2,10 @@ require 'fileutils'
 module DTR
   module AgentHelper
     GROUP = 'dtr acceptance tests'
-    def start_agents
+    def start_agents(size = 3)
       @agents_dir = File.join(Dir.pwd, 'agents')
       @agents = []
-      @agents << start_agent_at(File.join(@agents_dir, 'agent1'), 3)
+      @agents << start_agent_at(File.join(@agents_dir, 'agent1'), size)
       # @agents << start_agent_at(File.join(@agents_dir, 'agent2'), 1)
     end
 

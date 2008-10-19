@@ -310,4 +310,22 @@ class GeneralTest < Test::Unit::TestCase
       assert_equal 'DTR::RemoteError: DTR::Agent::UnknownTestError from xli.local: No such test loaded: ATestCase', @result.errors.first.message
     end
   end
+
+  def test_run_test_timeout
+    assert_fork_process_exits_ok do
+      require 'sleep_3_secs_test_case'
+      $argv_dup = ['sleep_3_secs_test_case.rb']
+      suite = Test::Unit::TestSuite.new('run_test_case_sleep_3_secs')
+      suite << Sleep3SecsTestCase.suite
+
+      ENV['RUN_TEST_TIMEOUT'] = '1'
+      @result = runit(suite)
+
+      assert !@result.passed?
+      assert_equal 1, @result.run_count
+      assert_equal 0, @result.failure_count
+      assert_equal 1, @result.error_count
+      assert @result.errors.first.message.include?('Timeout')
+    end
+  end
 end

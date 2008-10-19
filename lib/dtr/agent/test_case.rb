@@ -44,8 +44,7 @@ module DTR
       end
 
       def add_error(e)
-        e = RemoteError.new(e)
-        @result.add_error(Test::Unit::Error.new(@test.name, e))
+        @result.add_error(Test::Unit::Error.new(@test.name, RemoteError.new(e)))
         @result.add_run
         @progress_block.call(Test::Unit::TestCase::FINISHED, @test.name)
       end

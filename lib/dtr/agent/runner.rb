@@ -67,8 +67,8 @@ module DTR
       def run(test, result, &progress_block)
         DTR.debug "#{name}: running #{test}..."
         Agent::TestCase.new(test, result, &progress_block).run
-      ensure
         DTR.debug "#{name}: done #{test}"
+      ensure
         provide_runner(self)
       end
 

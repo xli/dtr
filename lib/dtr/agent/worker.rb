@@ -60,6 +60,10 @@ module DTR
 
         @runner_names.each do |name|
           @runner_pids << DTR.fork_process {
+            at_exit {
+              # exit anyway, for DRb may hang on the process to be a deadwalk
+              exit!
+            }
             working_env.within do
               Runner.start name, working_env
             end

@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'timeout'
-
 module DTR
   module TestUnit
     class DRbTestRunner
@@ -33,13 +31,11 @@ module DTR
         end
       end
 
-      def run_test_on(runner, timeout)
-        Timeout.timeout(timeout) do
-          runner.run(@test, @result, &@progress_block)
-        end
-      rescue Timeout::Error, DRb::DRbConnError => e
-        DTR.info {"#{e.class.name}(#{e.message}), rerun test: #{@test.name}"}
-        DTR.debug { e.backtrace.join("\n") }
+      def run_test_on(runner)
+        runner.run(@test, @result, &@progress_block)
+      rescue DRb::DRbConnError => e
+        DTR.info {"#{cause.class.name}(#{cause.message}), rerun test: #{@test.name}"}
+        DTR.debug { cause.backtrace.join("\n") }
         self.run
       rescue Exception => e
         DTR.info{ "#{@test.name}, rescue an exception: #{e.message}, add error into result." }

@@ -23,7 +23,7 @@ module DTR
 
       def start_thread(drb_runner, remote_runner)
         thread = Thread.new(drb_runner, remote_runner) do |local, remote|
-          local.run_test_on(remote, timeout)
+          local.run_test_on(remote)
         end
         thread[:started_on] = Time.now
         workers.add(thread)
@@ -38,11 +38,11 @@ module DTR
         end
       end
 
+      private
       def timeout
-        ENV['RUN_TEST_TIMEOUT'] || DEFAULT_RUN_TEST_TIMEOUT
+        (ENV['RUN_TEST_TIMEOUT'] || DEFAULT_RUN_TEST_TIMEOUT).to_i
       end
 
-      private
       def workers
         @workers ||= ThreadGroup.new
       end
