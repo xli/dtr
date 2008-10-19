@@ -18,11 +18,9 @@ module DTR
     # Synchronizer loads SyncLogger provided by master process from Rinda server.
     # Any process need sync logs with master process should start service first,
     # so that local logger could be replaced by SyncLogger.
-    # For logs would be sent back to master process, output log code should use 
-    # message string instead of block, which causes more remote call for block is
-    # a drbundump object. For example: 
-    #    right: DTR.debug 'message'
-    #    not:   DTR.debug { 'message' }
+    # For logs would be sent back to master process, all messages would be sent
+    # as string message. The message logged as block would be converted to string
+    # message.
     module Synchronizer
       def self.included(base)
         base.alias_method_chain :start_service, :sync_logger
@@ -38,6 +36,8 @@ module DTR
     end
 
     class MessageDecoratedLogger
+      LOGGER_LEVEL = {:info => Logger::INFO, :error => Logger::ERROR, :debug => Logger::DEBUG}
+
       include MessageDecorator
 
       def initialize(logger)
@@ -58,13 +58,13 @@ module DTR
 
       private
       def with_decorating_message(level, msg, &block)
-        if block_given?
-          @logger.send(level) do
-            decorate_message(block.call)
-          end
-        else
-          @logger.send(level, decorate_message(msg))
-        end
+        return if LOGGER_LEVEL[level] < logger_level
+        msg = block.call if block_given?
+        @logger.send(level, decorate_message(msg))
+      end
+
+      def logger_level
+        @logger_level ||= @logger.level
       end
     end
   end

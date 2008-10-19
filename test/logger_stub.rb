@@ -15,6 +15,10 @@ class LoggerStub
     output(:error, message, &block)
   end
 
+  def level
+    Logger::INFO
+  end
+
   def output(level, msg=nil, &block)
     message = block_given? ? block.call : msg.to_s
     @store << [:logs, [level, message]]

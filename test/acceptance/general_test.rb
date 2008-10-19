@@ -307,7 +307,7 @@ class GeneralTest < Test::Unit::TestCase
       assert_equal 1, @result.run_count
       assert_equal 0, @result.failure_count
       assert_equal 1, @result.error_count
-      assert_equal 'DTR::RemoteError: DTR::Agent::UnknownTestError from xli.local: No such test loaded: ATestCase', @result.errors.first.message
+      assert_equal "DTR::RemoteError: DTR::Agent::UnknownTestError from #{Socket.gethostname}: No such test loaded: ATestCase", @result.errors.first.message
     end
   end
 

@@ -42,6 +42,10 @@ module DTR
       def level=(level)
         @logger.level = level
       end
+
+      def level
+        @logger.level
+      end
     end
 
     module Provider

@@ -4,7 +4,6 @@ Send suggestions for this list to iam@li-xiao.com
 
 === To Do
   update help doc
-  hack logger to output message instead of invoking debug/info/error directly which causes a remote call even the message won't be output
   need test:
     monitor
 
