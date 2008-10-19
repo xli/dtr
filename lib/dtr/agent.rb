@@ -21,6 +21,7 @@ require 'dtr/agent/brain'
 require 'dtr/agent/worker'
 require 'dtr/agent/test_unit'
 require 'dtr/agent/herald'
+require 'dtr/agent/test_case'
 require 'dtr/agent/runner'
 
 module DTR

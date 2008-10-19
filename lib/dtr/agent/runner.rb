@@ -67,20 +67,16 @@ module DTR
       end
 
       def run(test, result, &progress_block)
-        DTR.info "#{name}: +"
-        DTR.debug "#{name}: running #{test}..."
         @started += 1
-        test.run(result, &progress_block)
-      rescue DRb::DRbConnError => e
-        DTR.info "Rescued DRb::DRbConnError(#{e.message}), while running test: #{test.name}. The master process may be stopped."
-      rescue Exception => e
-        DTR.error "Unexpected exception: #{e.message}"
-        DTR.error e.backtrace.join("\n")
-        result.add_error(Test::Unit::Error.new(test.name, e))
-        result.add_run
-        progress_block.call(Test::Unit::TestCase::FINISHED, test.name)
-      ensure
+        DTR.debug "#{name}: running #{test}..."
+        testcase = Agent::TestCase.new(test, result, &progress_block)
+        testcase.run
         DTR.debug "#{name}: done #{test}"
+      rescue DRb::DRbConnError => e
+        msg = "Rescued DRb::DRbConnError(#{e.message}), while running test: #{test}. The master process may be stopped."
+        DTR.do_println(msg)
+        DTR.info msg
+      ensure
         @run_finished += 1
         provide_runner(self)
       end

@@ -23,7 +23,10 @@ module Test
       end
       def assert_fork_process_exits_ok(&block)
         pid = Process.fork do
-          with_agent_helper_group(&block)
+          Dir.chdir(File.expand_path(File.dirname(__FILE__) + "/../testdata/")) do
+            setup_test_env
+            with_agent_helper_group(&block)
+          end
           exit 0
         end
         Process.waitpid pid
@@ -39,6 +42,17 @@ module Test
         ensure
           DTR.configuration.group = nil
         end
+      end
+
+      def setup_test_env
+        require 'a_test_case'
+        require 'a_test_case2'
+        require 'a_failed_test_case'
+        require 'an_error_test_case'
+        require 'a_file_system_test_case'
+        require 'scenario_test_case'
+        require 'setup_agent_env_test_case'
+        DTR.inject
       end
 
       def runit(suite)

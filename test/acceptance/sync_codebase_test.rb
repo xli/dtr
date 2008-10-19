@@ -41,16 +41,16 @@ class SyncCodebaseTest < Test::Unit::TestCase
 
   def test_should_not_sync_codebase_and_setup_working_dir_when_agent_is_in_same_dir_with_master_process
     @master_dir = File.expand_path(File.dirname(__FILE__) + '/../../testdata/verify_dir_pwd')
-    Dir.chdir(@master_dir) do
-      require 'verify_dir_pwd_test_case'
-    end
-    $argv_dup = ['verify_dir_pwd_test_case.rb']
-    suite = Test::Unit::TestSuite.new('test_should_not_sync_codebase_and_setup_working_dir')
-    suite << VerifyDirPwdTestCase.suite
     @agent = start_agent_at @master_dir, 2, false
     begin
-      DTR.inject
       assert_fork_process_exits_ok do
+        Dir.chdir(@master_dir) do
+          require 'verify_dir_pwd_test_case'
+        end
+        $argv_dup = ['verify_dir_pwd_test_case.rb']
+        suite = Test::Unit::TestSuite.new('test_should_not_sync_codebase_and_setup_working_dir')
+        suite << VerifyDirPwdTestCase.suite
+
         Dir.chdir(@master_dir) do
           result = runit(suite)
           assert result.passed?
@@ -58,7 +58,6 @@ class SyncCodebaseTest < Test::Unit::TestCase
         end
       end
     ensure
-      DTR.reject
       DTR.kill_process @agent
       Process.waitall
     end
