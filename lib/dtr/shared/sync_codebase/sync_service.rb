@@ -21,11 +21,11 @@ module DTR
         DTR.info("Start sync codebase, clean #{File.join(Dir.pwd, package_name)}")
         FileUtils.rm_rf(File.join(Dir.pwd, package_name))
 
-        DTR.info("Lookup codebase file")
-        codebase = lookup_file
-        DTR.info("Receiving codebase: #{package_copy_file}")
+        DTR.info("Lookup codebase package file")
+        package = lookup_file
+        DTR.info("Receiving package file and writing to #{package_copy_file}")
         File.open(package_copy_file, 'w') do |f|
-          codebase.write(f)
+          package.copy_into(f)
         end
         do_work(unpackage_cmd)
         DTR.info("sync codebase finished, clean #{package_copy_file}")

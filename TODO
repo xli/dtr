@@ -4,7 +4,6 @@ Send suggestions for this list to iam@li-xiao.com
 
 === To Do
   update help doc
-  give sync_codebase/codebase a better name
   problem: when agent can't find test files, drb can't undump test object, the error would be: undefined method `run' for #<DRb::DRbUnknown:0x318800>
      * tell Master this error that agent can't know what's item sent from Master
   need test:

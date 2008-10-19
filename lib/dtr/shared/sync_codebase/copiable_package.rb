@@ -14,7 +14,7 @@
 
 module DTR
   module SyncCodebase
-    class Codebase
+    class CopiablePackage
       include DRbUndumped
       include Package
 
@@ -24,7 +24,7 @@ module DTR
         raise "Package(#{codebase_package}) doesn't exist!" unless File.exist?(codebase_package)
       end
 
-      def write(remote_io)
+      def copy_into(remote_io)
         File.open(codebase_package, "rb") do |f|
           while (chunk = f.read(CHUNK_SIZE) || '') && chunk.length > 0
             remote_io.write(chunk)

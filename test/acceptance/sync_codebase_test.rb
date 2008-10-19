@@ -12,7 +12,7 @@ class SyncCodebaseTest < Test::Unit::TestCase
       DTR.configuration.with_rinda_server do
         Dir.chdir(testdata_dir) do
           DTR::Cmd.execute('rake dtr_repackage')
-          provide_file DTR::SyncCodebase::Codebase.new
+          provide_file DTR::SyncCodebase::CopiablePackage.new
           DRb.thread.join
         end
       end

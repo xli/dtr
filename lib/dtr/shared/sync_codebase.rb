@@ -13,6 +13,6 @@
 # limitations under the License.
 
 require 'dtr/shared/sync_codebase/package'
-require 'dtr/shared/sync_codebase/codebase'
+require 'dtr/shared/sync_codebase/copiable_package'
 require 'dtr/shared/sync_codebase/sync_service'
 require 'dtr/shared/sync_codebase/master_ext'

@@ -30,7 +30,7 @@ module DTR
           DTR.do_println("Packaging codebase")
           raise 'Packaging for dtr task failed, see log for details!' unless Cmd.execute('rake dtr_repackage --trace')
           begin
-            provide_file Codebase.new
+            provide_file CopiablePackage.new
             block.call
           ensure
             Cmd.execute('rake dtr_clobber_package --trace')
