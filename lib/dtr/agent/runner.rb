@@ -20,7 +20,6 @@ module DTR
 
       def self.start(name, env)
         self.new(name, env).start
-        DTR.info "=> Runner #{name} provided"
         DRb.thread.join if DRb.thread
       end
 
@@ -37,7 +36,7 @@ module DTR
         start_service
         DTR.info("=> Starting runner #{name} at #{Dir.pwd}, pid: #{Process.pid}")
         init_environment
-        provide_runner(self)
+        provide
       rescue Exception
         DTR.error($!.message)
         DTR.error($!.backtrace.join("\n"))
@@ -69,7 +68,12 @@ module DTR
         Agent::TestCase.new(test, result, &progress_block).run
         DTR.debug "#{name}: done #{test}"
       ensure
+        provide
+      end
+
+      def provide
         provide_runner(self)
+        DTR.info "=> Runner #{name} provided"
       end
 
       def to_s
