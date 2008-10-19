@@ -20,7 +20,7 @@ module DTR
     module Rinda
 
       def start_service
-        DTR.info "-- Start drb service..."
+        DTR.info {"-- Start drb service..."}
         #todo need figure why agents couldn't be killed directly when start drb service by DRb.start_service
         if ENV['DTR_ENV'] == 'test'
           DRb.start_service("druby://#{Socket.gethostname}:0")

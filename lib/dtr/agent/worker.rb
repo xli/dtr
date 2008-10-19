@@ -28,13 +28,13 @@ module DTR
       end
 
       def launch
-        DTR.info "=> Agent worker started at: #{Dir.pwd}, pid: #{Process.pid}"
+        DTR.info {"=> Agent worker started at: #{Dir.pwd}, pid: #{Process.pid}"}
         setup
         begin
           run
         ensure
           teardown
-          DTR.info "Agent worker is dieing"
+          DTR.info {"Agent worker is dieing"}
         end
       end
 
@@ -48,7 +48,7 @@ module DTR
         if @herald
           DTR.kill_process @herald
           @herald = nil
-          DTR.info "=> Herald is killed."
+          DTR.info {"=> Herald is killed."}
         end
       end
 
@@ -70,13 +70,13 @@ module DTR
           }
         end
         Process.waitall
-        DTR.info "=> All agent worker sub processes exited."
+        DTR.info {"=> All agent worker sub processes exited."}
       end
 
       def kill_all_runners
         unless @runner_pids.blank?
           @runner_pids.each{ |pid| DTR.kill_process pid }
-          DTR.info "=> All runners(#{@runner_pids.join(", ")}) were killed." 
+          DTR.info {"=> All runners(#{@runner_pids.join(", ")}) were killed." }
           @runner_pids = []
         end
       end

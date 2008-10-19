@@ -33,7 +33,7 @@ module DTR
       # too long. It waits by ENV['RUN_TEST_TIMEOUT'] || 60 seconds
       def graceful_shutdown
         while reap_dead_workers("shutdown") > 0
-          DTR.info "Waiting for #{workers.list.length} threads to finish, could take #{timeout} seconds."
+          DTR.info {"Waiting for #{workers.list.length} threads to finish, could take #{timeout} seconds."}
           sleep timeout / 60
         end
       end
@@ -52,14 +52,14 @@ module DTR
       # after the reap is done. It only runs if there are workers to reap.
       def reap_dead_workers(reason='unknown')
         if workers.list.length > 0
-          DTR.info "Reaping #{workers.list.length} threads because of '#{reason}'"
+          DTR.info {"Reaping #{workers.list.length} threads because of '#{reason}'"}
           error_msg = "#{Time.now}: WorkerClub timed out this thread: #{reason}"
           mark = Time.now
           workers.list.each do |worker|
             worker[:started_on] = Time.now if not worker[:started_on]
 
             if mark - worker[:started_on] > timeout
-              DTR.info "Thread #{worker.inspect} is too old, killing."
+              DTR.info {"Thread #{worker.inspect} is too old, killing."}
               worker.raise(TimeoutError.new(error_msg))
             end
           end

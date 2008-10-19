@@ -32,7 +32,7 @@ module DTR
       rescue DRb::DRbConnError => e
         msg = "Rescued DRb::DRbConnError(#{e.message}), while running test: #{test}. The master process may be stopped."
         DTR.do_println(msg)
-        DTR.info msg
+        DTR.info {msg}
       rescue Exception => e
         unexpected_error(e)
       end

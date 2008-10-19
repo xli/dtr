@@ -22,13 +22,13 @@ module DTR
         raise 'No runner? What can I do for you?' if runner_names.blank?
         @runner_names = runner_names
         @agent_env_setup_cmd = agent_env_setup_cmd
-        DTR.info ""
-        DTR.info "--------------------beautiful line--------------------------"
-        DTR.info "=> Agent environment setup command: #{@agent_env_setup_cmd}"
-        DTR.info "=> Runner names: #{@runner_names.join(', ')}"
-        DTR.info "=> Broadcast list: #{DTR.configuration.broadcast_list.inspect}"
-        DTR.info "=> Listening port: #{DTR.configuration.agent_listen_port}"
-        DTR.info "=> Group: #{DTR.configuration.group}"
+        DTR.info {""}
+        DTR.info {"--------------------beautiful line--------------------------"}
+        DTR.info {"=> Agent environment setup command: #{@agent_env_setup_cmd}"}
+        DTR.info {"=> Runner names: #{@runner_names.join(', ')}"}
+        DTR.info {"=> Broadcast list: #{DTR.configuration.broadcast_list.inspect}"}
+        DTR.info {"=> Listening port: #{DTR.configuration.agent_listen_port}"}
+        DTR.info {"=> Group: #{DTR.configuration.group}"}
       end
 
       def hypnotize

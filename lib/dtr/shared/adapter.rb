@@ -38,7 +38,7 @@ module DTR
           msg == Adapter::SLEEP_MESSAGE
         end
       rescue Timeout::Error => e
-        DTR.info "Timeout while listening command"
+        DTR.info {"Timeout while listening command"}
         true
       end
 
@@ -60,7 +60,7 @@ module DTR
 
         hostname = client_address[2]
         host_ip = client_address[3]
-        DTR.info "Received: #{cmd} for group #{group} from #{hostname}(#{host_ip}):#{port}"
+        DTR.info {"Received: #{cmd} for group #{group} from #{hostname}(#{host_ip}):#{port}"}
         [cmd, "#{host_ip}:#{port}", group]
       end
     end

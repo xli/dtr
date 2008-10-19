@@ -43,37 +43,37 @@ module DTR
       end
 
       def init_environment
-        DTR.info "#{name}: Initialize working environment..."
+        DTR.info {"#{name}: Initialize working environment..."}
         @env[:libs].select{ |lib| !$LOAD_PATH.include?(lib) && File.exists?(lib) }.each do |lib|
           $LOAD_PATH << lib
-          DTR.debug "#{name}: appended lib: #{lib}"
+          DTR.debug {"#{name}: appended lib: #{lib}"}
         end
-        DTR.info "#{name}: libs loaded"
-        DTR.debug "#{name}: $LOAD_PATH: #{$LOAD_PATH.inspect}"
+        DTR.info {"#{name}: libs loaded"}
+        DTR.debug {"#{name}: $LOAD_PATH: #{$LOAD_PATH.inspect}"}
 
         @env[:files].each do |f|
           begin
             load f unless f =~ /^-/
-            DTR.debug "#{name}: loaded #{f}"
+            DTR.debug {"#{name}: loaded #{f}"}
           rescue LoadError => e
-            DTR.error "#{name}: No such file to load -- #{f}"
-            DTR.debug "Environment: #{@env}"
+            DTR.error {"#{name}: No such file to load -- #{f}"}
+            DTR.debug {"Environment: #{@env}"}
           end
         end
-        DTR.info "#{name}: test files loaded"
+        DTR.info {"#{name}: test files loaded"}
       end
 
       def run(test, result, &progress_block)
-        DTR.debug "#{name}: running #{test}..."
+        DTR.debug {"#{name}: running #{test}..."}
         Agent::TestCase.new(test, result, &progress_block).run
-        DTR.debug "#{name}: done #{test}"
+        DTR.debug {"#{name}: done #{test}"}
       ensure
         provide
       end
 
       def provide
         provide_runner(self)
-        DTR.info "=> Runner #{name} provided"
+        DTR.info {"=> Runner #{name} provided"}
       end
 
       def to_s

@@ -34,7 +34,7 @@ module DTR
       end
 
       def start_off
-        DTR.info "=> Herald starts off..."
+        DTR.info {"=> Herald starts off..."}
         provide_agent_info(@agent_env_setup_cmd, @runners)
 
         @env_store[@working_env_key] = fetch_working_env
@@ -49,7 +49,7 @@ module DTR
 
       def fetch_working_env
         working_env = lookup_working_env
-        DTR.info "=> Got working environment created at #{working_env[:created_at]} by #{working_env[:host]}"
+        DTR.info {"=> Got working environment created at #{working_env[:created_at]} by #{working_env[:host]}"}
 
         raise WorkingEnvError.new("No test files need to load?(working env: #{working_env})") if working_env[:files].blank?
         raise WorkingEnvError.new('Setup working environment failed, no runner started.') unless working_env.setup_env(@agent_env_setup_cmd)
