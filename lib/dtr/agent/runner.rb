@@ -37,6 +37,7 @@ module DTR
         DTR.info("=> Starting runner #{name} at #{Dir.pwd}, pid: #{Process.pid}")
         init_environment
         provide
+        DTR.info {"=> Runner #{name} provided"}
       rescue Exception
         DTR.error($!.message)
         DTR.error($!.backtrace.join("\n"))
@@ -69,11 +70,11 @@ module DTR
         DTR.debug {"#{name}: done #{test}"}
       ensure
         provide
+        DTR.debug {"=> Runner #{name} provided"}
       end
 
       def provide
         provide_runner(self)
-        DTR.info {"=> Runner #{name} provided"}
       end
 
       def to_s
