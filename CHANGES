@@ -1,5 +1,12 @@
 = DTR Changelog
 
+== release 1.0.0
+* support synchronizing codebase
+* lookup agents by broadcast
+* group agents for different project or environment usage
+* no need launch dtr rinda server anymore
+* agents log would be output into master process log
+
 == release 0.0.4
 * added timeout for running test more stable
   the default timeout is 60 sec, can be changed by environment variable 'RUN_TEST_TIMEOUT'

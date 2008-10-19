@@ -5,15 +5,14 @@ Send suggestions for this list to iam@li-xiao.com
 === To Do
   update help doc
   give sync_codebase/codebase a better name
-  should trigger started notification on runner in agent runner, for some tools are using this hook(e.g. inbrowser_test)
-  
-  ???? agent brain should wakeup when worker is dead
   problem: when agent can't find test files, drb can't undump test object, the error would be: undefined method `run' for #<DRb::DRbUnknown:0x318800>
      * tell Master this error that agent can't know what's item sent from Master
-  
-  fix problem: start agent -> run tests -> stop agent before test finished -> restart agent -> can't
-  
   need test:
     monitor
+
+=== TBD for next release
+  should trigger started notification on runner in agent runner, for some tools are using this hook(e.g. inbrowser_test)
+  agent brain should wakeup when worker is dead, so that it could be picked up by another master process
+  prepare one database, and copy the database for runners, so that run tests in multi-processes could be easy setup.
   
 (moved DONE list to CHANGES file)
