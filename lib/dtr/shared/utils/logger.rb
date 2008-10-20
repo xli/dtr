@@ -30,7 +30,7 @@ module DTR
       dir = 'log'
       FileUtils.mkdir_p(dir)
       log_file = File.join(dir,  file || 'dtr.log')
-      do_println "DTR logfile at #{log_file}"
+      do_println "DTR logfile at #{Dir.pwd}/#{log_file}"
       logger = Logger.new(log_file, 1, 5*1024*1024)
       logger.datetime_format = DATETIME_FORMAT
       logger.level = (ENV['DTR_LOG_LEVEL'] || Logger::INFO).to_i
