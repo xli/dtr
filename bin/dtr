@@ -57,6 +57,10 @@ opts = OptionParser.new do |opts|
     DTR_AGENT_OPTIONS[:agent_env_setup_cmd] = command.untaint
   end
 
+  opts.on("-d", "--working_directory DIRECTORY", "Specify a directory as agent launching & working directory.") do |dir|
+    DTR_AGENT_OPTIONS[:launching_dir] = dir
+  end
+  
   opts.on_tail("-v", "--version", "Show version") do
     puts "dtr, version " + DTRVERSION
   end
@@ -80,5 +84,7 @@ if $monitor
   DTR.monitor
 end
 if DTR_AGENT_OPTIONS[:runners] && !DTR_AGENT_OPTIONS[:runners].empty?
-  DTR.start_agent
+  Dir.chdir(DTR_AGENT_OPTIONS[:launching_dir] || '.') do
+    DTR.start_agent
+  end
 end
