@@ -45,6 +45,8 @@ module DTR
 
       def init_environment
         DTR.info {"#{name}: Initialize working environment..."}
+        ENV['DTR_RUNNER_NAME'] = name
+
         @env[:libs].select{ |lib| !$LOAD_PATH.include?(lib) && File.exists?(lib) }.each do |lib|
           $LOAD_PATH << lib
           DTR.debug {"#{name}: appended lib: #{lib}"}
