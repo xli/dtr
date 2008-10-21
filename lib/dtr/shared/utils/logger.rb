@@ -18,6 +18,9 @@ require 'fileutils'
 module DTR
   module LoggerExt
     DATETIME_FORMAT = "%m-%d %H:%M:%S"
+
+    LOGGER_LEVEL = {:info => Logger::INFO, :error => Logger::ERROR, :debug => Logger::DEBUG}
+
     def logger(file=nil)
       @logger ||= create_default_logger(file)
     end
@@ -60,17 +63,11 @@ module DTR
     end
 
     def output(level, msg=nil, &block)
-      logger.send(level) do
-        message = block_given? ? block.call : msg.to_s
-        # puts "log: #{message}"
+      return if LOGGER_LEVEL[level] < logger.level
 
-        #output message when it's an error for agent error log should be displayed in console
-        if level == :error
-          $stderr.puts ''
-          $stderr.puts "[#{Time.now.strftime(DATETIME_FORMAT)}] ERROR: #{message}"
-        end
-        message
-      end
+      msg = block.call if block_given?
+      # puts "log: #{msg}"
+      logger.send(level, msg)
     end
   end
 

@@ -8,24 +8,28 @@ class LoggerTest < Test::Unit::TestCase
     @msg = nil
   end
 
+  def teardown
+    DTR.logger = DTR.create_default_logger(nil)
+  end
+
   def test_should_not_send_message_when_message_logger_level_is_not_enough
-    logger = DTR::SyncLogger::MessageDecoratedLogger.new(self)
+    DTR.logger = DTR::SyncLogger::MessageDecoratedLogger.new(self)
     @msg = nil
-    logger.debug('debug msg')
+    DTR.debug('debug msg')
     assert_nil @msg
   end
 
   def test_send_message
-    logger = DTR::SyncLogger::MessageDecoratedLogger.new(self)
-    logger.info('info msg')
+    DTR.logger = DTR::SyncLogger::MessageDecoratedLogger.new(self)
+    DTR.info('info msg')
     assert_equal "From #{Socket.gethostname}: info msg", @msg
-    logger.info('error msg')
+    DTR.info('error msg')
     assert_equal "From #{Socket.gethostname}: error msg", @msg
   end
 
   def test_send_message_by_block_should_be_sent_as_string_msg
-    logger = DTR::SyncLogger::MessageDecoratedLogger.new(self)
-    logger.info { 'info msg' }
+    DTR.logger = DTR::SyncLogger::MessageDecoratedLogger.new(self)
+    DTR.info { 'info msg' }
     assert_equal "From #{Socket.gethostname}: info msg", @msg
   end
 

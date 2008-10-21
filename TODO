@@ -3,7 +3,7 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
-  the error output in test doesn't include 'from hostname'
+  output error msg in master process console
   update help doc
   need test:
     monitor

@@ -36,8 +36,6 @@ module DTR
     end
 
     class MessageDecoratedLogger
-      LOGGER_LEVEL = {:info => Logger::INFO, :error => Logger::ERROR, :debug => Logger::DEBUG}
-
       include MessageDecorator
 
       def initialize(logger)
@@ -56,15 +54,14 @@ module DTR
         with_decorating_message(:error, message, &block)
       end
 
-      private
-      def with_decorating_message(level, msg, &block)
-        return if LOGGER_LEVEL[level] < logger_level
-        msg = block.call if block_given?
-        @logger.send(level, decorate_message(msg))
+      def level
+        @logger_level ||= @logger.level
       end
 
-      def logger_level
-        @logger_level ||= @logger.level
+      private
+      def with_decorating_message(level, msg, &block)
+        raise 'Should not use block to send log remotely' if block_given?
+        @logger.send(level, decorate_message(msg))
       end
     end
   end
