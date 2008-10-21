@@ -21,6 +21,18 @@ module DTR
 
     LOGGER_LEVEL = {:info => Logger::INFO, :error => Logger::ERROR, :debug => Logger::DEBUG}
 
+    module OutputErrorIntoConsole
+      def self.included(base)
+        base.alias_method_chain :error, :output_into_console
+      end
+
+      def error_with_output_into_console(message = nil, &block)
+        $stderr.puts "\n" + format_message(format_severity(Logger::ERROR), Time.now, nil, message || block.call)
+        error_without_output_into_console(message, &block)
+      end
+    end
+    Logger.send(:include, OutputErrorIntoConsole)
+
     def logger(file=nil)
       @logger ||= create_default_logger(file)
     end
