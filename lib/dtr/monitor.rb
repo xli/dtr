@@ -18,52 +18,78 @@ module DTR
   
   # Monitor provides a way to monitor agent/master process working status.
   class Monitor
-    include Adapter::Master
-    include Adapter::Follower
-    include Service::Agent
 
-    def start
-      masters_monitor
-      agents_monitor
-      Process.waitall
-    rescue Interrupt
-    end
+    class AgentsMonitor
+      include Adapter::Master
 
-    def masters_monitor
-      DTR.fork_process do
-        begin
-          loop do
-            msg, from_host, group = listen
-            unless ["127.0.0.1:#{DTR.configuration.rinda_server_port}"].include?(from_host)
-              puts "Master process message from #{from_host}: #{msg} for group #{group}"
-            end
-          end
-        rescue Errno::EADDRINUSE
-          puts "There is DTR agent started on this machine."
-          puts "Shutdown it for monitoring working DTR Master info."
-        rescue Interrupt
-        ensure
-          relax
+      def start
+        DTR.fork_process do
+          monitor
         end
       end
-    end
-
-    def agents_monitor
-      DTR.fork_process do
+      def monitor
         DTR.configuration.with_rinda_server do
-          monitor_thread = Thread.new do
-            new_agent_monitor.each { |t| puts t.last.last }
-          end
-          puts "Monitor process started at #{Time.now}"
-      
           with_wakeup_agents do
             begin
-              monitor_thread.join
+              sleep
             rescue Interrupt
             end
           end
         end
       end
+    end
+
+    class MasterMonitor
+      include Adapter::Follower
+      include Service::Agent
+
+      def start
+        DTR.fork_process do
+          begin
+            loop do
+              monitor
+            end
+          rescue Errno::EADDRINUSE
+            puts "There is DTR agent started on this machine."
+            puts "Shutdown it for monitoring working DTR Master info."
+          rescue Interrupt
+          ensure
+            relax
+          end
+        end
+      end
+
+      def monitor
+        msg, from_host, group = listen
+        unless ["127.0.0.1:#{DTR.configuration.rinda_server_port}"].include?(from_host)
+          puts "Master process message from #{from_host}: #{msg} for group #{group}"
+          ip, port = from_host.split(':')
+          with_configuration(ip, port) do
+            start_service
+            puts "Agents working for #{from_host}: "
+            puts all_agents_info.collect{|i| "  #{i.strip}"}.join("\n")
+          end
+        end
+      end
+
+      def with_configuration(ip, port)
+        my_port = DTR.configuration.rinda_server_port
+        my_broadcast_list = DTR.configuration.broadcast_list
+        DTR.configuration.rinda_server_port = port.to_i
+        DTR.configuration.broadcast_list = [ip]
+        yield
+      ensure
+        DTR.configuration.broadcast_list = my_broadcast_list
+        DTR.configuration.rinda_server_port = my_port
+      end
+    end
+
+    def start
+      MasterMonitor.new.start
+      AgentsMonitor.new.start
+      puts "Monitor process started at #{Time.now}"
+      Process.waitall
+    rescue Interrupt
     end
   end
 end

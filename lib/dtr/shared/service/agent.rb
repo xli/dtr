@@ -28,6 +28,10 @@ module DTR
 }
         lookup_ring.write [:agent, agent]
       end
+
+      def all_agents_info
+        lookup_ring.read_all([:agent, nil]).collect{|t|t[1]}
+      end
     end
   end
 end

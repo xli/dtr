@@ -68,6 +68,10 @@ directory 'testdata'
   task t => ['testdata']
 end
 
+task :monitor do
+  DTR.monitor
+end
+
 # CVS Tasks ----------------------------------------------------------
 
 # Create a task to build the RDOC documentation tree.
