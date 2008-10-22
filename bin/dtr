@@ -27,7 +27,7 @@ opts = OptionParser.new do |opts|
   opts.banner = "DTR usage: #{$0} [options]"
   opts.separator ""
   opts.separator "Synopsis:"
-  opts.separator "dtr -a broadcast_ip -g group_name -r runner1_name,runner2_name"
+  opts.separator "dtr -g group_name -r runner1_name,runner2_name"
   opts.separator "dtr -a broadcast_ip -m"
   opts.separator ""
   opts.separator "Options:"
@@ -48,7 +48,7 @@ opts = OptionParser.new do |opts|
     DTR_AGENT_OPTIONS[:runners] = names.collect{|name| name.untaint}
   end
   
-  opts.on("-a", "--broadcast_address ADDRESS", "Specify broadcast address for looking up dtr service, e.g. 192.168.255.255. Default is 'localhost'.") do |address|
+  opts.on("-a", "--broadcast_address ADDRESS", "Specify broadcast address for looking up dtr agent service, e.g. 192.168.255.255. Default is 'localhost'. DTR master and monitor would need this.") do |address|
     if (!address.nil?) && (!address.empty?)
       DTR.broadcast_list = [address]
     end
