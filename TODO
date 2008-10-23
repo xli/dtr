@@ -9,5 +9,6 @@ Send suggestions for this list to iam@li-xiao.com
   agent should wakeup when worker is dead, so that it could be picked up by another master process
   auto prepare database for each runner, so that run tests in multi-processes could be easy setup.
   provide a way to monitor agent runner efficiency
+  use system instead of fork to launch sub process in agent, which makes dtr support windows and jruby
   
 (moved DONE list to CHANGES file)
