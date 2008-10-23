@@ -43,6 +43,12 @@ The DTR::TestTask will create a DTR::PackageTask for you directly, and you can s
 
 Note: Exclude('log/*') only excludes all files inside 'log' directory except 'log' directory itself.
 
+== Rails plugin
+
+For Rails project, you just need copy dtr project directory into your project plugins directory. There are dtr tasks defined for you to run tests within dtr grid, which prefer you have 'config/database.yml.dtr' for setting up database. The test task is 'dtr:test'. 
+
+Your project directory name would be the default group name of dtr agents. You can specify an environment variable named 'DTR_GROUP' to change the group name. By default, dtr tasks would lookup the broadcast ip by 'ifconfig' command. If it doesn't work for you, you can specify an environment variable named 'BROADCAST_IP' to overwrite it.
+
 == Download
 
 The latest version of DTR can be found at

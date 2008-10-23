@@ -3,12 +3,11 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
-  update help doc
 
 === TBD for next release
   should trigger started notification on test runner in agent Herald, for some tools are using this hook(e.g. inbrowser_test) to setup test environment.
   agent should wakeup when worker is dead, so that it could be picked up by another master process
-  prepare one database, and copy the database for runners, so that run tests in multi-processes could be easy setup.
+  auto prepare database for each runner, so that run tests in multi-processes could be easy setup.
   provide a way to monitor agent runner efficiency
   
 (moved DONE list to CHANGES file)
