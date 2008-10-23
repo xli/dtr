@@ -39,12 +39,12 @@ module DTR
 
         @env_store[@working_env_key] = fetch_working_env
       rescue WorkingEnvError
-        @env_store[@working_env_key] = $!.message
         DTR.error $!.message
+        exit(-1)
       rescue
-        @env_store[@working_env_key] = $!.message
         DTR.error $!.message
         DTR.error $!.backtrace.join("\n")
+        exit(-1)
       end
 
       def fetch_working_env

@@ -16,7 +16,7 @@ module DTR
 
   module Agent
     # Worker works during one dtr test task running.
-    # Worker manages Herald & Runner processes life cycle
+    # Worker manages Herald & Runner processes life cycle.
     class Worker
       def initialize(runner_names, agent_env_setup_cmd)
         @runner_names = runner_names.is_a?(Array) ? runner_names : [runner_names.to_s]
@@ -44,7 +44,11 @@ module DTR
       end
 
       def teardown
-        kill_all_runners
+        unless @runner_pids.blank?
+          @runner_pids.each{ |pid| DTR.kill_process pid }
+          DTR.info {"=> All runners(#{@runner_pids.join(", ")}) were killed." }
+          @runner_pids = []
+        end
         if @herald
           DTR.kill_process @herald
           @herald = nil
@@ -53,10 +57,19 @@ module DTR
       end
 
       def run
+        herald
+        runners
+        DTR.info {"=> All agent worker sub processes exited."}
+      end
+
+      def herald
         @herald = DTR.fork_process { Herald.new @working_env_key, @agent_env_setup_cmd, @runner_names }
         Process.waitpid @herald
+        exit(-1) unless $?.exitstatus == 0
+      end
+
+      def runners
         working_env = @env_store[@working_env_key]
-        return unless working_env.is_a?(WorkingEnv)
 
         @runner_names.each do |name|
           @runner_pids << DTR.fork_process {
@@ -70,15 +83,6 @@ module DTR
           }
         end
         Process.waitall
-        DTR.info {"=> All agent worker sub processes exited."}
-      end
-
-      def kill_all_runners
-        unless @runner_pids.blank?
-          @runner_pids.each{ |pid| DTR.kill_process pid }
-          DTR.info {"=> All runners(#{@runner_pids.join(", ")}) were killed." }
-          @runner_pids = []
-        end
       end
     end
   end
