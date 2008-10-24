@@ -41,4 +41,11 @@ class ConfigurationTest < Test::Unit::TestCase
     DTR.configuration.load
     assert_equal 'new group', DTR.configuration.group
   end
+
+  def test_agent_env_setup_cmd
+    DTR.configuration.agent_env_setup_cmd = 'rake db:test:prepare'
+    assert_equal 'rake db:test:prepare', DTR.configuration.agent_env_setup_cmd
+    DTR.configuration.save
+    assert_equal 'rake db:test:prepare', DTR::EnvStore.new[:agent_env_setup_cmd]
+  end
 end

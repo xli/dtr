@@ -41,7 +41,7 @@ module DTR
     include Singleton
     include Service::Rinda
 
-    attr_accessor :broadcast_list, :rinda_server_port, :agent_listen_port, :master_heartbeat_interval, :follower_listen_heartbeat_timeout
+    attr_accessor :broadcast_list, :rinda_server_port, :agent_listen_port, :master_heartbeat_interval, :follower_listen_heartbeat_timeout, :agent_env_setup_cmd
     attr_reader :group
 
     def initialize
@@ -57,6 +57,7 @@ module DTR
       @agent_listen_port = store[:agent_listen_port] || 7788
       @master_heartbeat_interval = store[:master_heartbeat_interval] || 10
       @follower_listen_heartbeat_timeout =  store[:follower_listen_heartbeat_timeout] || 15
+      @agent_env_setup_cmd = store[:agent_env_setup_cmd]
       @group = store[:group]
     end
 
@@ -67,6 +68,7 @@ module DTR
       store[:master_heartbeat_interval] = @master_heartbeat_interval
       store[:follower_listen_heartbeat_timeout] = @follower_listen_heartbeat_timeout
       store[:group] = @group
+      store[:agent_env_setup_cmd] = @agent_env_setup_cmd
     end
 
     def group=(group)
