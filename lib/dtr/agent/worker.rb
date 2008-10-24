@@ -18,9 +18,8 @@ module DTR
     # Worker works during one dtr test task running.
     # Worker manages Herald & Runner processes life cycle.
     class Worker
-      def initialize(runner_names, agent_env_setup_cmd)
+      def initialize(runner_names)
         @runner_names = runner_names.is_a?(Array) ? runner_names : [runner_names.to_s]
-        @agent_env_setup_cmd = agent_env_setup_cmd
         @runner_pids = []
         @herald = nil
         @working_env_key = :working_env
@@ -63,7 +62,7 @@ module DTR
       end
 
       def herald
-        @herald = DTR.fork_process { Herald.new @working_env_key, @agent_env_setup_cmd, @runner_names }
+        @herald = DTR.fork_process { Herald.new @working_env_key, @runner_names }
         Process.waitpid @herald
         exit(-1) unless $?.exitstatus == 0
       end

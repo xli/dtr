@@ -15,7 +15,7 @@
 require 'dtr/facade'
 
 DTRVERSION="1.0.0"
-DTR_AGENT_OPTIONS = {:runners => [], :agent_env_setup_cmd => nil}
+DTR_AGENT_OPTIONS = {:runners => []}
 
 module DTR
   extend Facade

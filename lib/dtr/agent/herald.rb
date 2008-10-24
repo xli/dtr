@@ -22,9 +22,8 @@ module DTR
       include Service::WorkingEnv
       include Service::Agent
 
-      def initialize(working_env_key, agent_env_setup_cmd, runners)
+      def initialize(working_env_key, runners)
         @working_env_key = working_env_key
-        @agent_env_setup_cmd = agent_env_setup_cmd
         @runners = runners
         @env_store = EnvStore.new
         start_service
@@ -35,7 +34,7 @@ module DTR
 
       def start_off
         DTR.info {"=> Herald starts off..."}
-        provide_agent_info(@agent_env_setup_cmd, @runners)
+        provide_agent_info(DTR.configuration.agent_env_setup_cmd, @runners)
 
         @env_store[@working_env_key] = fetch_working_env
       rescue WorkingEnvError
@@ -52,7 +51,7 @@ module DTR
         DTR.info {"=> Got working environment created at #{working_env[:created_at]} by #{working_env[:host]}"}
 
         raise WorkingEnvError.new("No test files need to load?(working env: #{working_env})") if working_env[:files].blank?
-        raise WorkingEnvError.new('Setup working environment failed, no runner started.') unless working_env.setup_env(@agent_env_setup_cmd)
+        raise WorkingEnvError.new('Setup working environment failed, no runner started.') unless working_env.setup_env(DTR.configuration.agent_env_setup_cmd)
         working_env
       end
     end

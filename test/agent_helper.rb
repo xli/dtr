@@ -17,7 +17,7 @@ module DTR
       Process.fork do
         Dir.chdir(agent_dir) do
           DTR.configuration.group = GROUP
-          DTR.launch_agent(runner_names, nil)
+          DTR.launch_agent(runner_names)
         end
       end
     end

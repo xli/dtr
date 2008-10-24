@@ -55,7 +55,7 @@ opts = OptionParser.new do |opts|
   end
 
   opts.on("-i", "--setup COMMAND", "Set command for initializing test runner test environment, e.g. 'rake db:test:prepare'. Default is do nothing. You also can specify DTR_AGENT_ENV_SETUP_CMD in your master process environment to let all agents setup same environment.") do |command|
-    DTR_AGENT_OPTIONS[:agent_env_setup_cmd] = command.untaint
+    DTR.agent_env_setup_cmd = command.untaint
   end
 
   opts.on("-d", "--working_directory DIRECTORY", "Specify a directory as agent launching & working directory.") do |dir|

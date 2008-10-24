@@ -28,6 +28,11 @@ class FacadeTest < Test::Unit::TestCase
     assert_equal '7890', DTR::EnvStore.new[:agent_listen_port]
   end
 
+  def test_save_agent_env_setup_cmd
+    self.agent_env_setup_cmd = 'rake db:test:prepare'
+    assert_equal 'rake db:test:prepare', DTR::EnvStore.new[:agent_env_setup_cmd]
+  end
+
   def fork_and_kill_process
     pid = fork_process do
       loop do

@@ -26,9 +26,9 @@ require 'dtr/agent/runner'
 
 module DTR
   module Agent
-    def start(runner_names=["Distributed Test Runner"], agent_env_setup_cmd=nil)
+    def start(runner_names)
       DTR.logger('dtr_agent.log')
-      Brain.new(runner_names, agent_env_setup_cmd).hypnotize
+      Brain.new(runner_names).hypnotize
     end
     
     module_function :start
