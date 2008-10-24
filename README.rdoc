@@ -72,6 +72,10 @@ Run the following if you haven't already:
 Install the gem:
 
   sudo gem install xli-dtr
+  
+== Documentation
+
+  http://dtr.rubyforge.org/
 
 == Running the DTR Test Suite
 
