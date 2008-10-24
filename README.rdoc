@@ -171,11 +171,22 @@ DTR agent command is invoked from the command line using:
   -p, --port PORT                  Port number of DTR agent listening. Default is 7788.
   -g, --group GROUP_NAME           If you have several DTR grids working for different project or environment, you should group your agents in different names for different usages. Default is none.
   -r runner1_name,runner2_name     Start DTR test runner agent with unique runner names.
-  -a, --broadcast_address ADDRESS  Specify broadcast address for looking up dtr service, e.g. 192.168.255.255. Default is 'localhost'. DTR master and monitor would need this.
+  -a, --broadcast_address ADDRESS  Specify broadcast address for looking up dtr agent service, e.g. 192.168.255.255. Default is 'localhost'. DTR master and monitor would need this.
   -i, --setup COMMAND              Set command for initializing test runner test environment, e.g. 'rake db:test:prepare'. Default is do nothing. You also can specify DTR_AGENT_ENV_SETUP_CMD in your master process environment to let all agents setup same environment.
+  -d DIRECTORY                     Specify a directory as agent launching & working directory.
+      --working_directory
   -m, --monitor                    Monitor the status of the dtr agents and master processes. Used for testing your dtr grid environment. CAUTION! monitoring agents causes all idle agents hang on by the monitor process.
   -v, --version                    Show version
   -h, --help                       Show this help doc
+
+  Notes: 
+    * DTR would always add 'localhost' into broadcast list.
+    * Agent start by specifying runners by -r option, every runner would be started in different process for running test. e.g. dtr -r runner1,runner2
+    * DTR master environment options:
+      * DTR_MASTER_ENV: this variable would be copied into agent process for sharing info between master and agents. Normally used in agent setup environment command.
+      * DTR_AGENT_ENV_SETUP_CMD: this variable would be applied as agent setup environment command when agent have no setup environment command specified by --setup option.
+      * DTR_LOG_LEVEL: master process logger level, e.g. ENV['DTR_LOG_LEVEL'] = Logger::DEBUG. Agent process logs would be output in master process log file, so setting this option also changes agent logger level.
+      * DTR_RUNNER_NAME: this environment variable would be provided in runner process for test environment to get the runner name to setup, e.g. setting up database configuration.
 
 Type "dtr --help" for an up-to-date option summary.
 
