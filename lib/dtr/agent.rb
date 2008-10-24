@@ -26,9 +26,9 @@ require 'dtr/agent/runner'
 
 module DTR
   module Agent
-    def start(runner_names)
+    def start
       DTR.logger('dtr_agent.log')
-      Brain.new(runner_names).hypnotize
+      Brain.new.hypnotize
     end
     
     module_function :start

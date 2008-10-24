@@ -15,12 +15,8 @@
 module DTR
   module Facade
     def start_agent
-      launch_agent(DTR_AGENT_OPTIONS[:runners])
-    end
-
-    def launch_agent(names)
       require 'dtr/agent'
-      DTR::Agent.start(names)
+      DTR::Agent.start
     end
 
     def lib_path
@@ -49,6 +45,17 @@ module DTR
       require 'dtr/shared'
       DTR.configuration.agent_env_setup_cmd = cmd
       DTR.configuration.save
+    end
+
+    def agent_runners=(runners)
+      require 'dtr/shared'
+      DTR.configuration.agent_runners = runners
+      DTR.configuration.save
+    end
+
+    def agent_runners
+      require 'dtr/shared'
+      DTR.configuration.agent_runners
     end
 
     def monitor

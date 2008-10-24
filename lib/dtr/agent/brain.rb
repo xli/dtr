@@ -18,13 +18,12 @@ module DTR
     class Brain
       include Adapter::Follower
       
-      def initialize(runner_names)
-        raise 'No runner? What can I do for you?' if runner_names.blank?
-        @runner_names = runner_names
+      def initialize
+        raise 'No runner? What can I do for you?' if DTR.configuration.agent_runners.blank?
         DTR.info {""}
         DTR.info {"--------------------beautiful line--------------------------"}
         DTR.info {"=> Agent environment setup command: #{DTR.configuration.agent_env_setup_cmd}"}
-        DTR.info {"=> Runner names: #{@runner_names.join(', ')}"}
+        DTR.info {"=> Runner names: #{DTR.configuration.agent_runners.join(', ')}"}
         DTR.info {"=> Broadcast list: #{DTR.configuration.broadcast_list.inspect}"}
         DTR.info {"=> Listening port: #{DTR.configuration.agent_listen_port}"}
         DTR.info {"=> Group: #{DTR.configuration.group}"}
@@ -34,7 +33,7 @@ module DTR
         loop do
           if wakeup?
             DTR.info {"Agent brain wakes up"}
-            work(DTR.fork_process { Worker.new(@runner_names).launch })
+            work(DTR.fork_process { Worker.new.launch })
             DTR.info {"Agent brain is going to sleep"}
           end
         end

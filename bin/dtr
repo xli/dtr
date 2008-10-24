@@ -45,7 +45,7 @@ opts = OptionParser.new do |opts|
   end
   
   opts.on("-r runner1_name,runner2_name", Array, "Start DTR test runner agent with unique runner names.") do |names|
-    DTR_AGENT_OPTIONS[:runners] = names.collect{|name| name.untaint}
+    DTR.agent_runners = names.collect{|name| name.untaint}
   end
   
   opts.on("-a", "--broadcast_address ADDRESS", "Specify broadcast address for looking up dtr agent service, e.g. 192.168.255.255. Default is 'localhost'. DTR master and monitor would need this.") do |address|
@@ -84,7 +84,7 @@ end
 if $monitor
   DTR.monitor
 end
-if DTR_AGENT_OPTIONS[:runners] && !DTR_AGENT_OPTIONS[:runners].empty?
+if DTR.agent_runners && !DTR.agent_runners.empty?
   Dir.chdir(DTR_AGENT_OPTIONS[:launching_dir] || '.') do
     DTR.start_agent
   end

@@ -22,9 +22,8 @@ module DTR
       include Service::WorkingEnv
       include Service::Agent
 
-      def initialize(working_env_key, runners)
+      def initialize(working_env_key)
         @working_env_key = working_env_key
-        @runners = runners
         @env_store = EnvStore.new
         start_service
         start_off
@@ -34,7 +33,7 @@ module DTR
 
       def start_off
         DTR.info {"=> Herald starts off..."}
-        provide_agent_info(DTR.configuration.agent_env_setup_cmd, @runners)
+        provide_agent_info(DTR.configuration.agent_env_setup_cmd, DTR.configuration.agent_runners)
 
         @env_store[@working_env_key] = fetch_working_env
       rescue WorkingEnvError
