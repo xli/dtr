@@ -55,4 +55,17 @@ class ConfigurationTest < Test::Unit::TestCase
     DTR.configuration.save
     assert_equal ['r1', 'r2'], DTR::EnvStore.new[:agent_runners]
   end
+
+  def test_working_env_should_be_saved_directly
+    env = DTR::WorkingEnv.new
+    DTR.configuration.working_env = env
+    assert_equal env, DTR.configuration.working_env
+    assert_equal env, DTR::EnvStore.new[:working_env]
+  end
+
+  def test_working_env_should_always_load_from_pstore
+    env = DTR::WorkingEnv.new
+    DTR::EnvStore.new[:working_env] = env
+    assert_equal env, DTR.configuration.working_env
+  end
 end

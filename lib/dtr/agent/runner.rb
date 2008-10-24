@@ -23,11 +23,10 @@ module DTR
         DRb.thread.join if DRb.thread
       end
 
-      attr_reader :name, :identifier
+      attr_reader :name
 
       def initialize(name, env)
         @name = name
-        @identifier = env[:identifier]
         @env = env
       end
       

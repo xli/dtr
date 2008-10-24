@@ -73,6 +73,14 @@ module DTR
       store[:agent_runners] = @agent_runners
     end
 
+    def working_env
+      EnvStore.new[:working_env]
+    end
+
+    def working_env=(env)
+      EnvStore.new[:working_env] = env
+    end
+
     def group=(group)
       @group = group.blank? ? nil : group.gsub(' ', '_')
     end

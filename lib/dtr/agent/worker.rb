@@ -21,7 +21,6 @@ module DTR
       def initialize
         @runner_pids = []
         @herald = nil
-        @working_env_key = :working_env
         @env_store = EnvStore.new
       end
 
@@ -38,7 +37,7 @@ module DTR
 
       private
       def setup
-        @env_store[@working_env_key] = nil
+        DTR.configuration.working_env = nil
       end
 
       def teardown
@@ -61,20 +60,19 @@ module DTR
       end
 
       def herald
-        @herald = DTR.fork_process { Herald.new @working_env_key }
+        @herald = DTR.fork_process { Herald.new }
         Process.waitpid @herald
         exit(-1) unless $?.exitstatus == 0
       end
 
       def runners
-        working_env = @env_store[@working_env_key]
-
         DTR.configuration.agent_runners.each do |name|
           @runner_pids << DTR.fork_process {
             at_exit {
               # exit anyway, for DRb may hang on the process to be a deadwalk
               exit!
             }
+            working_env = DTR.configuration.working_env
             working_env.within do
               Runner.start name, working_env
             end

@@ -18,6 +18,7 @@ module DTR
         Dir.chdir(agent_dir) do
           DTR.configuration.group = GROUP
           DTR.configuration.agent_runners = runner_names
+          DTR.configuration.save
           DTR.start_agent
         end
       end

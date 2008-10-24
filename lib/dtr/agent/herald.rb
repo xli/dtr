@@ -22,9 +22,7 @@ module DTR
       include Service::WorkingEnv
       include Service::Agent
 
-      def initialize(working_env_key)
-        @working_env_key = working_env_key
-        @env_store = EnvStore.new
+      def initialize
         start_service
         start_off
       ensure
@@ -35,7 +33,7 @@ module DTR
         DTR.info {"=> Herald starts off..."}
         provide_agent_info(DTR.configuration.agent_env_setup_cmd, DTR.configuration.agent_runners)
 
-        @env_store[@working_env_key] = fetch_working_env
+        DTR.configuration.working_env = fetch_working_env
       rescue WorkingEnvError
         DTR.error $!.message
         exit(-1)
