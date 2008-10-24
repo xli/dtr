@@ -48,7 +48,6 @@ module DTR
         DTR.info {"=> Got working environment created at #{working_env[:created_at]} by #{working_env[:host]}"}
 
         raise WorkingEnvError.new("No test files need to load?(working env: #{working_env})") if working_env[:files].blank?
-        raise WorkingEnvError.new('Setup working environment failed, no runner started.') unless working_env.setup_env(DTR.configuration.agent_env_setup_cmd)
         working_env
       end
     end

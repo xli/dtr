@@ -14,21 +14,21 @@
 
 module DTR
   module SyncCodebase
-    module WorkingEnvExt
+    module RunnerWorkspaceExt
       include SyncService
 
       def self.included(base)
-        base.alias_method_chain :setup_env, :sync_codebase
+        base.alias_method_chain :setup, :sync_codebase
         base.alias_method_chain :working_dir, :sync_codebase
       end
 
-      def setup_env_with_sync_codebase(setup_env_cmd)
+      def setup_with_sync_codebase(&block)
         unless same_working_dir_with_master_process?
           Dir.chdir(working_dir_without_sync_codebase) do
             sync_codebase
           end
         end
-        setup_env_without_sync_codebase(setup_env_cmd)
+        setup_without_sync_codebase(&block)
       end
 
       def working_dir_with_sync_codebase
@@ -37,7 +37,7 @@ module DTR
 
       private
       def same_working_dir_with_master_process?
-        self[:host] == Socket.gethostname && self[:pwd] == Dir.pwd
+        @working_env[:host] == Socket.gethostname && @working_env[:pwd] == Dir.pwd
       end
     end
   end

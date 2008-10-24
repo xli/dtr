@@ -3,6 +3,7 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
+  clean rake task output in test
   auto prepare database for each runner, so that run tests in multi-processes could be easy setup.
     every runner should have its own codebase
     setup agent env command should be executed by runner

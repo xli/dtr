@@ -18,51 +18,27 @@ module DTR
       include DRbUndumped
       include Service::Runner
 
-      def self.start(name, env)
-        self.new(name, env).start
-        DRb.thread.join if DRb.thread
-      end
-
       attr_reader :name
 
-      def initialize(name, env)
+      def initialize(name)
         @name = name
-        @env = env
       end
       
       def start
         #start service first, so that all logs can be sync with master process
         start_service
-        DTR.info("=> Starting runner #{name} at #{Dir.pwd}, pid: #{Process.pid}")
-        init_environment
-        provide
-        DTR.info {"=> Runner #{name} provided"}
-      rescue Exception
+
+        RunnerWorkspace.new(name).setup do
+          DTR.info("=> Launched runner #{name} at #{Dir.pwd}, pid: #{Process.pid}")
+          provide
+          DTR.info {"=> Runner #{name} provided"}
+          DRb.thread.join if DRb.thread
+        end
+      rescue
         DTR.error($!.message)
         DTR.error($!.backtrace.join("\n"))
-      end
-
-      def init_environment
-        DTR.info {"#{name}: Initialize working environment..."}
-        ENV['DTR_RUNNER_NAME'] = name
-
-        @env[:libs].select{ |lib| !$LOAD_PATH.include?(lib) && File.exists?(lib) }.each do |lib|
-          $LOAD_PATH << lib
-          DTR.debug {"#{name}: appended lib: #{lib}"}
-        end
-        DTR.info {"#{name}: libs loaded"}
-        DTR.debug {"#{name}: $LOAD_PATH: #{$LOAD_PATH.inspect}"}
-
-        @env[:files].each do |f|
-          begin
-            load f unless f =~ /^-/
-            DTR.debug {"#{name}: loaded #{f}"}
-          rescue LoadError => e
-            DTR.error {"#{name}: No such file to load -- #{f}"}
-            DTR.debug {"Environment: #{@env}"}
-          end
-        end
-        DTR.info {"#{name}: test files loaded"}
+      ensure
+        stop_service
       end
 
       def run(test, result, &progress_block)

@@ -72,10 +72,7 @@ module DTR
               # exit anyway, for DRb may hang on the process to be a deadwalk
               exit!
             }
-            working_env = DTR.configuration.working_env
-            working_env.within do
-              Runner.start name, working_env
-            end
+            Runner.new(name).start
           }
         end
         Process.waitall
