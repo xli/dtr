@@ -311,7 +311,7 @@ class GeneralTest < Test::Unit::TestCase
     end
   end
 
-  def test_run_test_timeout
+  def xtest_run_test_timeout
     assert_fork_process_exits_ok do
       require 'sleep_3_secs_test_case'
       $argv_dup = ['sleep_3_secs_test_case.rb']

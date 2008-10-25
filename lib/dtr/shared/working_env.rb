@@ -34,5 +34,13 @@ module DTR
     def ==(obj)
       obj && obj[:identifier] == self[:identifier]
     end
+    
+    def method_missing(m, *args, &block)
+      if args.blank?
+        self[m]
+      else
+        super
+      end
+    end
   end
 end

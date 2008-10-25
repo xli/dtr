@@ -17,9 +17,10 @@ module DTR
     module SyncService
       include Package
       include Service::File
-      def sync_codebase
-        DTR.info("Start sync codebase, clean #{File.join(Dir.pwd, package_name)}")
-        FileUtils.rm_rf(File.join(Dir.pwd, package_name))
+
+      def sync_codebase(&block)
+        DTR.info("Start sync codebase, clean #{File.expand_path(Dir.pwd)}")
+        Dir.glob('*').each { |f| FileUtils.rm_rf(f) }
 
         DTR.info("Lookup codebase package file")
         package = lookup_file
@@ -27,7 +28,9 @@ module DTR
         File.open(package_copy_file, 'w') do |f|
           package.copy_into(f)
         end
-        do_work(unpackage_cmd)
+
+        block.call
+
         DTR.info("sync codebase finished, clean #{package_copy_file}")
         FileUtils.rm_f(package_copy_file)
       end

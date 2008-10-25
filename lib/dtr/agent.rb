@@ -13,7 +13,7 @@
 # limitations under the License.
 
 require 'dtr/shared'
-require 'dtr/agent/runner_workspace'
+require 'dtr/agent/working_env_ext'
 require 'dtr/agent/sync_codebase'
 
 require 'dtr/agent/sync_logger'
@@ -33,6 +33,7 @@ module DTR
     
     module_function :start
 
-    RunnerWorkspace.send(:include, SyncCodebase::RunnerWorkspaceExt)
+    WorkingEnv.send(:include, WorkingEnvExt)
+    WorkingEnv.send(:include, SyncCodebase::WorkingEnvExt)
   end
 end

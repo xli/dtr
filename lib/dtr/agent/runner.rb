@@ -28,8 +28,8 @@ module DTR
         #start service first, so that all logs can be sync with master process
         start_service
 
-        RunnerWorkspace.new(name).setup do
-          DTR.info("=> Launched runner #{name} at #{Dir.pwd}, pid: #{Process.pid}")
+        ENV['DTR_RUNNER_NAME'] = name
+        DTR.configuration.working_env.load_environment do
           provide
           DTR.info {"=> Runner #{name} provided"}
           DRb.thread.join if DRb.thread

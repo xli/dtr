@@ -19,12 +19,7 @@ module DTR
           DTR.configuration.group = GROUP
           DTR.configuration.agent_runners = runner_names
           DTR.configuration.save
-          begin
-            DTR.start_agent
-          rescue Errno::EADDRINUSE
-            sleep(2)
-            DTR.start_agent
-          end
+          DTR.start_agent
         end
       end
     end
