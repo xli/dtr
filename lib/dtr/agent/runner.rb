@@ -32,13 +32,12 @@ module DTR
         DTR.configuration.working_env.load_environment do
           provide
           DTR.info {"=> Runner #{name} provided"}
-          DRb.thread.join if DRb.thread
+          #sleep instead of DRb.thread.join for DRb thread may can't be interrupted and hang on the process
+          sleep
         end
       rescue
         DTR.error($!.message)
         DTR.error($!.backtrace.join("\n"))
-      ensure
-        stop_service
       end
 
       def run(test, result, &progress_block)
