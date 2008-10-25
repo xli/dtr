@@ -36,7 +36,7 @@ module DTR
           sleep
         end
       rescue
-        DTR.error($!.message)
+        DTR.error("#{name}: #{$!.message}")
         DTR.error($!.backtrace.join("\n"))
       end
 

@@ -30,7 +30,7 @@ module DTR
           ENV['DTR_MASTER_ENV'] = dtr_master_env
 
           unless Cmd.execute(DTR.configuration.agent_env_setup_cmd || self.agent_env_setup_cmd)
-            raise "Setup #{ENV['DTR_RUNNER_NAME']} working environment failed."
+            raise "Stopped for setup working environment failed."
           end
 
           load_libs
