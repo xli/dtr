@@ -24,7 +24,7 @@ class SyncCodebaseTest < Test::Unit::TestCase
       Dir.mkdir("test_sync_codebase")
       Dir.chdir("test_sync_codebase") do
         sync_codebase do
-          do_work(unpackage_cmd(package_name))
+          do_work(unpackage_cmd)
         end
       end
     end

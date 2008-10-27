@@ -3,10 +3,10 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
-  should we don't copy codebase when agent is run in same dir with master process?
-  auto prepare database for each runner, so that run tests in multi-processes could be easy setup.
-    every runner should have its own codebase
-    setup agent env command should be executed by runner
+  rails ext test can pass without database.yml.dtr specified
+  shouldn't we copy codebase when agent is run in same dir with master process?
+  auto prepare database for each runner, so that run tests in multi-processes could be easy setup. 
+    for sqlite, we don't need anything specified anything for it, because running in different directory already made test running in different database, so does in-memory mode.
     runner loads 'config/database.yml.dtr' to create, db:migrate and db:test:prepare database
       provide default database.yml.dtr:
         development:

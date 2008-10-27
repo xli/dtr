@@ -1,6 +1,5 @@
 $: << File.dirname(__FILE__) + "/../lib"
 
-require 'dtr'
 require 'dtr/raketasks'
 
 def all_broadcast_addrs

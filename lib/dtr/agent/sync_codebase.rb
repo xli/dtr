@@ -20,9 +20,12 @@ module DTR
       def setup(runners)
         Dir.chdir(base_dir) do
           sync_codebase do
+            FileUtils.rm_rf(package_name)
+            do_work(unpackage_cmd)
             runners.each do |runner_name|
               dir = File.expand_path escape_dir(runner_name)
-              do_work(unpackage_cmd(dir))
+              FileUtils.rm_rf(dir)
+              FileUtils.cp_r(package_name, dir)
             end
           end
         end

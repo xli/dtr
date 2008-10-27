@@ -35,8 +35,8 @@ module DTR
         "copy_#{package_file}"
       end
 
-      def unpackage_cmd(exdir)
-        "unzip -joq #{package_copy_file} -d #{exdir}"
+      def unpackage_cmd
+        "unzip #{package_copy_file}"
       end
 
       def package_cmd
