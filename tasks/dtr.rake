@@ -3,8 +3,6 @@ $: << File.dirname(__FILE__) + "/../lib"
 require 'dtr'
 require 'dtr/raketasks'
 
-ENV['DTR_AGENT_ENV_SETUP_CMD'] = 'cp ./config/database.yml.dtr ./config/database.yml;rake db:migrate; rake db:test:prepare'
-
 def all_broadcast_addrs
   ifconfig = %x[ifconfig -a]
   ifconfig.scan(/broadcast\s(\d+\.\d+\.\d+\.\d+)/).flatten.uniq

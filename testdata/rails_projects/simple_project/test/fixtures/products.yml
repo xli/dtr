@@ -1,0 +1,9 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: Rails
+  price: 10
+
+two:
+  name: Mingle
+  price: 15
