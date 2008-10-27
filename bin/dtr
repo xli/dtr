@@ -59,7 +59,7 @@ opts = OptionParser.new do |opts|
   end
 
   opts.on("-d", "--working_directory DIRECTORY", "Specify a directory as agent launching & working directory.") do |dir|
-    DTR_AGENT_OPTIONS[:launching_dir] = dir
+    $dtr_launching_dir = dir
   end
   
   opts.on_tail("-v", "--version", "Show version") do
@@ -85,7 +85,7 @@ if $monitor
   DTR.monitor
 end
 if DTR.agent_runners && !DTR.agent_runners.empty?
-  Dir.chdir(DTR_AGENT_OPTIONS[:launching_dir] || '.') do
+  Dir.chdir($dtr_launching_dir || '.') do
     DTR.start_agent
   end
 end
