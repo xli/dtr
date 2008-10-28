@@ -31,22 +31,22 @@ module DTR
         ENV['DTR_RUNNER_NAME'] = name
         DTR.configuration.working_env.load_environment do
           provide
-          DTR.info {"=> Runner #{name} provided"}
+          DTR.info {"=> Runner provided"}
           #sleep instead of DRb.thread.join for DRb thread may can't be interrupted and hang on the process
           sleep
         end
       rescue
-        DTR.error("#{name}: #{$!.message}")
+        DTR.error($!.message)
         DTR.error($!.backtrace.join("\n"))
       end
 
       def run(test, result, &progress_block)
-        DTR.debug {"#{name}: running #{test}..."}
+        DTR.debug {"running #{test}..."}
         Agent::TestCase.new(test, result, &progress_block).run
-        DTR.debug {"#{name}: done #{test}"}
+        DTR.debug {"done #{test}"}
       ensure
         provide
-        DTR.debug {"=> Runner #{name} provided"}
+        DTR.debug {"=> Runner provided"}
       end
 
       def provide
