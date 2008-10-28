@@ -26,12 +26,12 @@ module DTR
       def with_dtr_master_with_sync_codebase(&block)
         with_dtr_master_without_sync_codebase do
           DTR.do_println("Packaging codebase")
-          raise 'Packaging for dtr task failed, see log for details!' unless Cmd.execute('rake dtr_repackage --trace')
+          raise 'Packaging for dtr task failed, see log for details!' unless Cmd.execute('rake --trace dtr_repackage')
           begin
             provide_file CopiablePackage.new
             block.call
           ensure
-            Cmd.execute('rake dtr_clobber_package --trace')
+            Cmd.execute('rake --trace dtr_clobber_package')
           end
         end
       end

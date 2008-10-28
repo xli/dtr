@@ -31,7 +31,7 @@ module DTR
           end
 
           env = "DTR_RUNNER_NAME=#{ENV['DTR_RUNNER_NAME']}"
-          unless Cmd.execute("rake db:migrate:reset db:test:prepare #{env} --trace")
+          unless Cmd.execute("rake --trace db:migrate:reset db:test:prepare #{env}")
             raise 'Initialize database failed!'
           end
         end
