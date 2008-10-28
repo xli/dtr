@@ -31,7 +31,6 @@ class RailsExtTest < Test::Unit::TestCase
     assert_fork_process_exits_ok do
       Dir.chdir(testdata) do
         output = %x[rake dtr:test DTR_GROUP='#{DTR::AgentHelper::GROUP}' BROADCAST_IP=localhost]
-        puts output
         expected = <<-OUTPUT
 5 tests, 7 assertions, 0 failures, 0 errors
 OUTPUT

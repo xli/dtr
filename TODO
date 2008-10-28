@@ -3,26 +3,9 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
-  rails ext test can pass without database.yml.dtr specified
-  shouldn't we copy codebase when agent is run in same dir with master process?
   auto prepare database for each runner, so that run tests in multi-processes could be easy setup. 
-    for sqlite, we don't need anything specified anything for it, because running in different directory already made test running in different database, so does in-memory mode.
-    runner loads 'config/database.yml.dtr' to create, db:migrate and db:test:prepare database
-      provide default database.yml.dtr:
-        development:
-          database: <%= "dtr_development_#{ENV['RUNNER_NAME']}" %>
-          adapter: mysql
-          username: root
-          password: 
-          host: localhost
-
-        test:
-          database: <%= "dtr_test_#{ENV['RUNNER_NAME']}" %>
-          adapter: mysql
-          username: root
-          password: 
-          host: localhost
-        
+    * test for database.yml.dtr specified
+    * test for no database.yml.dtr and database.yml
 
 === TBD for next release
   should trigger started notification on test runner in agent Herald, for some tools are using this hook(e.g. inbrowser_test) to setup test environment.
