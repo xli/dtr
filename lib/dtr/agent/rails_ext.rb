@@ -40,15 +40,17 @@ module DTR
 
       module WorkingEnvExt
         include DatabaseInitializer
+
         def self.included(base)
-          base.alias_method_chain :load_environment, :preparing_database
+          base.alias_method_chain :setup_environment, :preparing_database
         end
 
-        def load_environment_with_preparing_database(&block)
-          load_environment_without_preparing_database do
-            initialize_database if defined?(ActiveRecord::Base)
-            block.call
+        def setup_environment_with_preparing_database
+          if setup_environment_command.blank?
+            DTR.debug("No setup environment command found, try database initialization")
+            initialize_database
           end
+          setup_environment_without_preparing_database
         end
       end
     end

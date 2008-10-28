@@ -29,9 +29,7 @@ module DTR
 
           ENV['DTR_MASTER_ENV'] = dtr_master_env
 
-          unless Cmd.execute(DTR.configuration.agent_env_setup_cmd || self.agent_env_setup_cmd)
-            raise "Stopped for setup working environment failed."
-          end
+          setup_environment
 
           load_libs
           load_files
@@ -41,6 +39,16 @@ module DTR
       end
 
       private
+
+      def setup_environment_command
+        DTR.configuration.agent_env_setup_cmd || self.agent_env_setup_cmd
+      end
+
+      def setup_environment
+        unless Cmd.execute(setup_environment_command)
+          raise "Stopped for setup working environment failed."
+        end
+      end
 
       def escape_dir(str)
         str.to_s.gsub(/[^a-zA-Z0-9]/, '_')
