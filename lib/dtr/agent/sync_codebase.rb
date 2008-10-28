@@ -30,11 +30,6 @@ module DTR
           end
         end
       end
-
-      private
-      # def same_working_dir_with_master_process?
-      #   @working_env[:host] == Socket.gethostname && @working_env[:pwd] == Dir.pwd
-      # end
     end
   end
 end
