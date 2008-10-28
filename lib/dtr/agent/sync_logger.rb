@@ -61,6 +61,7 @@ module DTR
       private
       def with_decorating_message(level, msg, &block)
         raise 'Should not use block to send log remotely' if block_given?
+        msg = "#{ENV['DTR_RUNNER_NAME']}: #{msg}"if ENV['DTR_RUNNER_NAME']
         @logger.send(level, decorate_message(msg))
       end
     end

@@ -25,7 +25,7 @@ module DTR
       def load_environment(&block)
         working_dir = FileUtils.mkdir_p(File.join(base_dir, escape_dir(ENV['DTR_RUNNER_NAME'])))
         Dir.chdir(working_dir) do
-          log(:info, "Loading environment at #{Dir.pwd}, pid: #{Process.pid}")
+          DTR.info "Loading environment at #{Dir.pwd}, pid: #{Process.pid}"
 
           ENV['DTR_MASTER_ENV'] = dtr_master_env
 
@@ -49,27 +49,23 @@ module DTR
       def load_libs
         libs.select{ |lib| !$LOAD_PATH.include?(lib) && File.exists?(lib) }.each do |lib|
           $LOAD_PATH << lib
-          log(:debug, "appended lib: #{lib}")
+          DTR.debug {"appended lib: #{lib}"}
         end
-        log(:info, "libs loaded")
-        log(:debug, "$LOAD_PATH: #{$LOAD_PATH.inspect}")
+        DTR.info {"libs loaded"}
+        DTR.debug {"$LOAD_PATH: #{$LOAD_PATH.inspect}"}
       end
 
       def load_files
         files.each do |f|
           begin
             load f unless f =~ /^-/
-            log(:debug, "loaded #{f}")
+            DTR.debug {"loaded #{f}"}
           rescue LoadError => e
-            log(:error, "No such file to load -- #{f}")
-            log(:debug, "Environment: #{self}")
+            DTR.error {"No such file to load -- #{f}"}
+            DTR.debug {"Environment: #{self}"}
           end
         end
-        log(:info, "test files loaded")
-      end
-
-      def log(level, msg)
-        DTR.send(level) { "#{ENV['DTR_RUNNER_NAME']}: #{msg}" }
+        DTR.info {"test files loaded"}
       end
     end
   end
