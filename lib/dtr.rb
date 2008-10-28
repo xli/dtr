@@ -14,7 +14,7 @@
 
 require 'dtr/facade'
 
-DTRVERSION="1.0.0"
+DTRVERSION="1.1.0"
 
 module DTR
   extend Facade

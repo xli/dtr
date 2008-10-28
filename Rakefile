@@ -101,7 +101,7 @@ else
   gem_content = <<-GEM
 Gem::Specification.new do |spec|
   spec.name = 'dtr'
-  spec.version = "1.0.0"
+  spec.version = "1.1.0"
   spec.summary = "DTR is a distributed test runner to run tests on distributed computers for decreasing build time."
 
   #### Dependencies and requirements.
