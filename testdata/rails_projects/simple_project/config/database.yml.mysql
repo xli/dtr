@@ -1,0 +1,11 @@
+development:
+  database: development_<%= ENV['DTR_RUNNER_NAME'] %>
+  adapter: mysql
+  username: root
+  password: 
+
+test:
+  database: test_<%= ENV['DTR_RUNNER_NAME'] %>
+  adapter: mysql
+  username: root
+  password: 

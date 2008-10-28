@@ -30,7 +30,8 @@ module DTR
             FileUtils.cp('./config/database.yml.dtr', './config/database.yml')
           end
 
-          unless Cmd.execute('rake db:migrate:reset db:test:prepare --trace')
+          env = "DTR_RUNNER_NAME=#{ENV['DTR_RUNNER_NAME']}"
+          unless Cmd.execute("rake db:migrate:reset db:test:prepare #{env} --trace")
             raise 'Initialize database failed!'
           end
         end
