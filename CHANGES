@@ -1,7 +1,7 @@
 = DTR Changelog
 
 == release 1.1.0
-* Run 'rake db:migrate:reset db:test:prepare' for runner to setup database environment before runner runs any test, when there is 'config/database.yml.dtr' or 'config/database.yml' exists. If './config/database.yml.dtr' specified, it would be copy as ./config/database.yml for setup database. For Sqlite, there is no need to create a './config/database.yml.dtr' for dtr test task. The following is an example for mysql:
+* Run 'rake db:migrate:reset db:test:prepare' for runner to setup database environment before runner runs any test, when there is no agent setup environment command setted and there is 'config/database.yml.dtr' or 'config/database.yml' exists. If './config/database.yml.dtr' specified, it would be copy as ./config/database.yml for setup database. For Sqlite, there is no need to create a './config/database.yml.dtr' for dtr test task. The following is an example for mysql:
     development:
       database: development_<%= ENV['DTR_RUNNER_NAME'] %>
       adapter: mysql

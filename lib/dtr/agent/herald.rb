@@ -49,7 +49,7 @@ module DTR
 
         raise WorkingEnvError.new("No test files need to load?(working env: #{working_env})") if working_env[:files].blank?
 
-        working_env.setup(DTR.configuration.agent_runners)
+        working_env.synchronize_for(DTR.configuration.agent_runners)
         working_env
       end
     end

@@ -17,7 +17,7 @@ module DTR
     module WorkingEnvExt
       include SyncService
 
-      def setup(runners)
+      def synchronize_for(runners)
         Dir.chdir(base_dir) do
           sync_codebase do
             FileUtils.rm_rf(package_name)

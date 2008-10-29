@@ -31,7 +31,7 @@ module DTR
           end
 
           env = "DTR_RUNNER_NAME=#{ENV['DTR_RUNNER_NAME']}"
-          # Counldn't add --trace here, for some machine failed db:test:prepare by Test::Unit detected --trace is a invalid option
+          # Counldn't add --trace here, for Test::Unit detected --trace is a invalid option, don't know why
           unless Cmd.execute("rake db:migrate:reset db:test:prepare #{env}")
             raise 'Initialize database failed!'
           end
@@ -46,8 +46,8 @@ module DTR
         end
 
         def setup_environment_with_preparing_database
-          if setup_environment_command.blank?
-            DTR.debug("No setup environment command found, try database initialization")
+          if setup_environment_command.blank? && File.directory?('config')
+            DTR.debug("No setup environment command found but found 'config' directory, try database initialization")
             initialize_database
           end
           setup_environment_without_preparing_database
