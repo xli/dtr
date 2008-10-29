@@ -16,7 +16,7 @@ module DTR
   module Agent
     module RailsExt
       module DatabaseInitializer
-        def initialize_database
+        def preparing_database_command
           dtr_database_config_exists = File.exist?('config/database.yml.dtr')
           default_database_config_exists = File.exist?('config/database.yml')
 
@@ -30,11 +30,8 @@ module DTR
             FileUtils.cp('config/database.yml.dtr', 'config/database.yml')
           end
 
-          env = "DTR_RUNNER_NAME=#{ENV['DTR_RUNNER_NAME']}"
           # Counldn't add --trace here, for Test::Unit detected --trace is a invalid option, don't know why
-          unless Cmd.execute("rake db:migrate:reset db:test:prepare #{env}")
-            raise 'Initialize database failed!'
-          end
+          "rake db:migrate:reset db:test:prepare DTR_RUNNER_NAME=#{ENV['DTR_RUNNER_NAME']}"
         end
       end
 
@@ -47,8 +44,8 @@ module DTR
 
         def setup_environment_with_preparing_database
           if setup_environment_command.blank? && File.directory?('config')
-            DTR.debug("No setup environment command found but found 'config' directory, try database initialization")
-            initialize_database
+            DTR.debug("No setup environment command found but found 'config' directory, try default preparing database command")
+            self[:agent_env_setup_cmd] = preparing_database_command
           end
           setup_environment_without_preparing_database
         end
