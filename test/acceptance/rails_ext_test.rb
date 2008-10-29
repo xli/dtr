@@ -23,6 +23,21 @@ class RailsExtTest < Test::Unit::TestCase
     end
   end
 
+  def test_should_not_trigger_auto_preparing_database_when_setup_agent_env_command_specified
+    new_simple_project do |testdata|
+      assert_fork_process_exits_ok do
+        Dir.chdir(testdata) do
+          output = %x[rake dtr:test DTR_GROUP='#{DTR::AgentHelper::GROUP}' BROADCAST_IP=localhost DTR_AGENT_ENV_SETUP_CMD=ls]
+          expected = <<-OUTPUT
+5 tests, 0 assertions, 0 failures, 10 errors
+OUTPUT
+          assert_equal 1, $?.exitstatus
+          assert output.include?(expected), "#{output} should include #{expected}"
+        end
+      end
+    end
+  end
+
   def test_run_dtr_test_task_with_mysql_database
     new_simple_project do |testdata|
       FileUtils.cp_r(testdata + "/config/database.yml.mysql", testdata + "/config/database.yml")

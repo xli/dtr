@@ -4,8 +4,6 @@ Send suggestions for this list to iam@li-xiao.com
 
 === To Do
   auto prepare database for each runner, so that run tests in multi-processes could be easy setup. 
-    * test for no database.yml.dtr and database.yml
-    * test for only initialize database automatically when setup environment command is blank
     * test for setup database.yml before load files
 
 === TBD for next release
