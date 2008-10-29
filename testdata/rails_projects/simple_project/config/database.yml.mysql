@@ -1,3 +1,4 @@
+<%File.new(RAILS_ROOT + '/created_by_database_yml_mysql', 'w+')%>
 development:
   database: development_<%= ENV['DTR_RUNNER_NAME'] %>
   adapter: mysql

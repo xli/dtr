@@ -17,17 +17,17 @@ module DTR
     module RailsExt
       module DatabaseInitializer
         def initialize_database
-          dtr_database_config_exists = File.exist?('./config/database.yml.dtr')
-          default_database_config_exists = File.exist?('./config/database.yml')
+          dtr_database_config_exists = File.exist?('config/database.yml.dtr')
+          default_database_config_exists = File.exist?('config/database.yml')
 
           if !dtr_database_config_exists && !default_database_config_exists
-            DTR.info("No ./config/database.yml.dtr and ./config/database.yml exists, bypass database initialization.")
+            DTR.info("No config/database.yml.dtr and config/database.yml exists, bypass database initialization.")
             return
           end
 
           if dtr_database_config_exists
-            DTR.info("Found ./config/database.yml.dtr, use it as database configuration")
-            FileUtils.cp('./config/database.yml.dtr', './config/database.yml')
+            DTR.info("Found config/database.yml.dtr, use it as database configuration")
+            FileUtils.cp('config/database.yml.dtr', 'config/database.yml')
           end
 
           env = "DTR_RUNNER_NAME=#{ENV['DTR_RUNNER_NAME']}"

@@ -5,8 +5,16 @@ module DTR
     def start_agents(size = 3)
       @agents_dir = File.join(Dir.pwd, 'agents')
       @agents = []
-      @agents << start_agent_at(File.join(@agents_dir, 'agent1'), size)
+      @agents << start_agent_at(agent1_dir, size)
       # @agents << start_agent_at(File.join(@agents_dir, 'agent2'), 1)
+    end
+
+    def agent1_dir
+      File.join(@agents_dir, 'agent1')
+    end
+
+    def agent1_runner1_dir
+      File.join(agent1_dir, Socket.gethostname.gsub(/[^\d\w]/, '_'), 'tance_rails_ext_test', 'runner1')
     end
 
     def start_agent_at(agent_dir, size, clean_dir=true)

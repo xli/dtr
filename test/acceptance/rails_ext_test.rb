@@ -23,10 +23,23 @@ class RailsExtTest < Test::Unit::TestCase
     end
   end
 
-  def test_run_dtr_test_task_with_database_yml_dtr_specified_and_configured_mysql_database
+  def test_run_dtr_test_task_with_mysql_database
     new_simple_project do |testdata|
       FileUtils.cp_r(testdata + "/config/database.yml.mysql", testdata + "/config/database.yml")
       assert_run_dtr_test_task_success_with(testdata)
+      Dir.chdir(agent1_runner1_dir) do
+        assert File.exist?('created_by_database_yml_mysql')
+      end
+    end
+  end
+
+  def test_run_dtr_test_task_with_database_yml_dtr_specified
+    new_simple_project do |testdata|
+      FileUtils.cp_r(testdata + "/config/database.yml.mysql", testdata + "/config/database.yml.dtr")
+      assert_run_dtr_test_task_success_with(testdata)
+      Dir.chdir(agent1_runner1_dir) do
+        assert File.exist?('created_by_database_yml_mysql')
+      end
     end
   end
 
