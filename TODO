@@ -3,7 +3,6 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
-  provide a way to monitor agent runner efficiency
   use system instead of fork to launch sub process in agent, which makes dtr support windows and jruby
 
 === TBD for next release

@@ -14,9 +14,7 @@
 
 module DTR
   module TestUnit
-    class ThreadSafeTestResult
-      include DRbUndumped
-
+    class SynchronizedTestResult
       def initialize(rs)
         @mutex = Mutex.new
         @rs = rs
@@ -32,6 +30,61 @@ module DTR
         @mutex.synchronize do
           @rs.send(method, *args, &block)
         end
+      end
+    end
+
+    class ThreadSafeTestResult < SynchronizedTestResult
+
+      class Pair
+        include DRbUndumped
+
+        def initialize(rs1, rs2)
+          @rs1 = rs1
+          @rs2 = rs2
+        end
+
+        def to_s
+          @rs1.to_s
+        end
+
+        def method_missing(method, *args, &block)
+          @rs1.send(method, *args, &block)
+          @rs2.send(method, *args, &block)
+        end
+      end
+
+      class RunnerTestResults
+
+        def initialize
+          @results = {}
+        end
+
+        def fetch(runner)
+          @results[runner_id(runner)] ||= SynchronizedTestResult.new(Test::Unit::TestResult.new)
+        end
+
+        def to_s
+          @results.sort_by{|runner_id, result| -result.run_count}.collect do |runner_id, result|
+            "#{runner_id} => #{result}"
+          end.join("\n")
+        end
+
+        def runner_id(runner)
+          runner.instance_variable_get('@uri').gsub(/^druby:\/\//, '')
+        end
+      end
+
+      def initialize(*args)
+        super
+        @results = RunnerTestResults.new
+      end
+
+      def instance(runner)
+        Pair.new(self, @results.fetch(runner))
+      end
+
+      def to_s
+        "#{@results}\n\n#{super}"
       end
     end
   end

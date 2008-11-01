@@ -32,7 +32,7 @@ module DTR
       end
 
       def run_test_on(runner)
-        runner.run(@test, @result, &@progress_block)
+        runner.run(@test, @result.instance(runner), &@progress_block)
       rescue DRb::DRbConnError => e
         DTR.info {"#{cause.class.name}(#{cause.message}), rerun test: #{@test.name}"}
         DTR.debug { cause.backtrace.join("\n") }

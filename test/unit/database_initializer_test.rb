@@ -28,7 +28,7 @@ class DatabaseInitializerTest < Test::Unit::TestCase
     File.open('config/database.yml', 'w+') do |io|
       io.syswrite("database.yml")
     end
-    assert_equal "rake db:migrate:reset db:test:prepare DTR_RUNNER_NAME=runner_name",  preparing_database_command
+    assert_equal "rake db:create:all db:migrate db:test:prepare DTR_RUNNER_NAME=runner_name",  preparing_database_command
   ensure
     ENV['DTR_RUNNER_NAME'] = nil
     FileUtils.rm_rf('config')

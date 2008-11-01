@@ -16,14 +16,14 @@ module DTR
   class CmdInterrupt < StandardError; end
 
   class Cmd
-    def self.execute(cmd)
+    def self.execute(cmd, options = {:log_error => true})
       return true if cmd.nil? || cmd.empty?
       DTR.info {"Executing: #{cmd.inspect}"}
       output = %x[#{cmd} 2>&1]
       # don't put the following message into a block which maybe passed to remote process
       status = $?.exitstatus
       DTR.info {"Execution is done, status: #{status}"}
-      DTR.error "#{cmd.inspect} output:\n#{output}" if status != 0
+      DTR.error "#{cmd.inspect} output:\n#{output}" if status != 0 && options[:log_error]
       $?.exitstatus == 0
     end
   end
