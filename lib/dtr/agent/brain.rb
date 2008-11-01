@@ -23,8 +23,7 @@ module DTR
         DTR.info {""}
         DTR.info {"--------------------beautiful line--------------------------"}
         DTR.info {"=> Agent environment setup command: #{DTR.configuration.agent_env_setup_cmd}"}
-        DTR.info {"=> Runner names: #{DTR.configuration.agent_runners.join(', ')}"}
-        DTR.info {"=> Broadcast list: #{DTR.configuration.broadcast_list.inspect}"}
+        DTR.info {"=> Runners: #{DTR.configuration.agent_runners.join(', ')}"}
         DTR.info {"=> Listening port: #{DTR.configuration.agent_listen_port}"}
         DTR.info {"=> Group: #{DTR.configuration.group}"}
       end
