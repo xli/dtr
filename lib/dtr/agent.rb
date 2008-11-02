@@ -16,6 +16,7 @@ require 'dtr/shared'
 require 'dtr/agent/working_env_ext'
 require 'dtr/agent/sync_codebase'
 require 'dtr/agent/rails_ext'
+require 'dtr/agent/working_status'
 
 require 'dtr/agent/sync_logger'
 require 'dtr/agent/brain'
@@ -37,5 +38,6 @@ module DTR
     WorkingEnv.send(:include, WorkingEnvExt)
     WorkingEnv.send(:include, SyncCodebase::WorkingEnvExt)
     WorkingEnv.send(:include, RailsExt::WorkingEnvExt)
+    Configuration.send(:include, WorkingStatus)
   end
 end

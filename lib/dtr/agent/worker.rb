@@ -15,67 +15,26 @@
 module DTR
 
   module Agent
-    # Worker works during one dtr test task running.
-    # Worker manages Herald & Runner processes life cycle.
+    # Worker watchs runner processes.
     class Worker
       def initialize
-        @runner_pids = []
-        @herald = nil
-        @env_store = EnvStore.new
+        @runners_group = ThreadGroup.new
       end
 
-      def launch
-        DTR.info {"=> Agent worker started at: #{Dir.pwd}, pid: #{Process.pid}"}
-        setup
-        begin
-          run
-        ensure
-          teardown
-          DTR.info {"Agent worker is dieing"}
-        end
-      end
-
-      private
-      def setup
-        DTR.configuration.working_env = nil
-      end
-
-      def teardown
-        unless @runner_pids.blank?
-          @runner_pids.each{ |pid| DTR.kill_process pid }
-          DTR.info {"=> All runners(#{@runner_pids.join(", ")}) were killed." }
-          @runner_pids = []
-        end
-        if @herald
-          DTR.kill_process @herald
-          @herald = nil
-          DTR.info {"=> Herald is killed."}
-        end
-      end
-
-      def run
-        herald
-        runners
-        DTR.info {"=> All agent worker sub processes exited."}
-      end
-
-      def herald
-        @herald = DTR.fork_process { Herald.new }
-        Process.waitpid @herald
-        exit(-1) unless $?.exitstatus == 0
-      end
-
-      def runners
+      def watch_runners
         DTR.configuration.agent_runners.each do |name|
-          @runner_pids << DTR.fork_process {
-            at_exit {
-              # exit anyway, for DRb may hang on the process to be a deadwalk
-              exit!
-            }
-            Runner.new(name).start
-          }
+          runner_thread = Thread.start { DTR.run_script("DTR::Agent::Runner.new(#{name.inspect}).start") }
+          runner_thread[:runner_name] = name
+          @runners_group.add runner_thread
         end
-        Process.waitall
+
+        yield
+
+        while @runners_group.list.length > 0
+          alive_runners = @runners_group.list.collect {|r| r[:runner_name]}
+          DTR.info { "Waiting for #{alive_runners.join(', ').downcase} shutdown" }
+          sleep 1
+        end
       end
     end
   end

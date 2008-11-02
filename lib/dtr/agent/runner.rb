@@ -32,12 +32,16 @@ module DTR
         DTR.configuration.working_env.load_environment do
           provide
           DTR.info {"=> Runner provided"}
-          #sleep instead of DRb.thread.join for DRb thread may can't be interrupted and hang on the process
-          sleep
+          while DTR.configuration.runners_should_be_working?
+            sleep(1)
+          end
         end
       rescue
         DTR.error($!.message)
         DTR.error($!.backtrace.join("\n"))
+      ensure
+        #make sure exit process for drb may cause this process hang on
+        exit!(0)
       end
 
       def run(test, result, &progress_block)

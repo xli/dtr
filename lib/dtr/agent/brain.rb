@@ -26,13 +26,20 @@ module DTR
         DTR.info {"=> Runners: #{DTR.configuration.agent_runners.join(', ')}"}
         DTR.info {"=> Listening port: #{DTR.configuration.agent_listen_port}"}
         DTR.info {"=> Group: #{DTR.configuration.group}"}
+        DTR.info {"=> Dir.pwd: #{Dir.pwd}"}
       end
 
       def hypnotize
         loop do
           if wakeup?
             DTR.info {"Agent brain wakes up"}
-            work(DTR.fork_process { Worker.new.launch })
+
+            if DTR.run_script("DTR::Agent::Herald.new")
+              fang_gou
+            else
+              DTR.info {"=> No runner started."}
+            end
+
             DTR.info {"Agent brain is going to sleep"}
           end
         end
@@ -41,13 +48,14 @@ module DTR
         relax
       end
 
-      def work(worker)
-        until sleep?
-          #keep worker working :D
+      def fang_gou
+        DTR.configuration.runners_should_be_working
+        Worker.new.watch_runners do
+          until sleep?
+            DTR.configuration.runners_should_be_working
+          end
+          DTR.configuration.agent_is_going_to_sleep
         end
-      ensure
-        DTR.info {"Killing worker"}
-        DTR.kill_process worker
       end
     end
   end
