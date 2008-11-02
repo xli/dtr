@@ -25,7 +25,6 @@ module DTR
       options[:size].times {|i| runner_names << "runner#{i}"}
       Process.fork do
         Dir.chdir(agent_dir) do
-          DTR.root = Dir.pwd
           DTR.configuration.refresh
           DTR.configuration.master_heartbeat_interval = options[:master_heartbeat_interval] || 2
           DTR.configuration.follower_listen_heartbeat_timeout = options[:follower_listen_heartbeat_timeout] || 3

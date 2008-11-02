@@ -56,7 +56,6 @@ module Test
         require 'a_file_system_test_case'
         require 'scenario_test_case'
         require 'setup_agent_env_test_case'
-        DTR.root = Dir.pwd
         DTR.configuration.refresh
         DTR.inject
       end
