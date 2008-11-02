@@ -19,6 +19,4 @@ DTRVERSION="1.1.0"
 
 module DTR
   extend Facade
-
-  DTR.root = Dir.pwd
 end

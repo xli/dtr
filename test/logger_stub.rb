@@ -1,8 +1,8 @@
 class LoggerStub
   def initialize
-    @store = DTR::EnvStore.new
-    clear
+    @store = DTR::EnvStore.new('.logger_stub')
   end
+
   def debug(message=nil, &block)
     output(:debug, message, &block)
   end
@@ -29,6 +29,6 @@ class LoggerStub
   end
 
   def clear
-    @store[:logs] = []
+    @store.destroy
   end
 end

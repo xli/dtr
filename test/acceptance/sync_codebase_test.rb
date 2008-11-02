@@ -10,7 +10,6 @@ class SyncCodebaseTest < Test::Unit::TestCase
 
     master = Process.fork do
       Dir.chdir(testdata_dir) do
-        DTR.root = Dir.pwd
         DTR.configuration.with_rinda_server do
           DTR::Cmd.execute('rake dtr_repackage')
           provide_file DTR::SyncCodebase::CopiablePackage.new
@@ -23,7 +22,6 @@ class SyncCodebaseTest < Test::Unit::TestCase
     client = Process.fork do
       Dir.mkdir("test_sync_codebase")
       Dir.chdir("test_sync_codebase") do
-        DTR.root = Dir.pwd
         start_service
         sync_codebase do
           do_work(unpackage_cmd)

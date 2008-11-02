@@ -18,13 +18,16 @@ module DTR
   class EnvStore
     FILE_NAME = '.dtr_env_pstore' unless defined?(FILE_NAME)
 
-    def initialize
-      @file = File.expand_path(File.join(DTR.root || Dir.pwd, FILE_NAME))
-      @pstore = PStore.new(@file)
+    def self.default_file
+      File.join(DTR.root || Dir.pwd, FILE_NAME)
+    end
+
+    def initialize(file=EnvStore.default_file)
+      @pstore = PStore.new(File.expand_path(file))
     end
 
     def destroy
-      File.delete(@file) if File.exist?(@file)
+      File.delete(@pstore.path) if File.exist?(@pstore.path)
     end
 
     def [](key)
@@ -41,18 +44,8 @@ module DTR
     
     def <<(key_value)
       key, value = key_value
-      @pstore.transaction do
-        @pstore[key] = (@pstore[key] || []) << value
-      end
-    end
-    
-    def shift(key)
-      @pstore.transaction do
-        if array = @pstore[key]
-          array.shift
-          @pstore[key] = array
-        end
-      end
+      array_value = (self[key] || []) << value
+      self[key] = array_value
     end
   end
 

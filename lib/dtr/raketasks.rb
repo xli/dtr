@@ -23,8 +23,6 @@ require 'dtr/shared/ruby_ext'
 require 'dtr/shared/utils'
 require 'dtr/shared/sync_codebase/package'
 
-DTR.root = Dir.pwd
-
 module DTR
   # Create tasks that run a set of tests with DTR injected.
   # The TestTask will create the following targets:

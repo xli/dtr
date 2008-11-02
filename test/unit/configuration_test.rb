@@ -1,12 +1,9 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class ConfigurationTest < Test::Unit::TestCase
-  def setup
-    DTR.root = Dir.pwd
-  end
+
   def teardown
     DTR.configuration.refresh
-    DTR.root = nil
   end
 
   def test_should_save_rinda_server_port
