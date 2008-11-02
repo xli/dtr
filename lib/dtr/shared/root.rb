@@ -12,14 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'fileutils'
-require 'dtr/shared/root'
-require 'dtr/shared/ruby_ext'
-require 'dtr/shared/utils'
-require 'dtr/shared/message_decorator'
-require 'dtr/shared/working_env'
-require 'dtr/shared/service'
-require 'dtr/shared/configuration'
-require 'dtr/shared/sync_logger'
-require 'dtr/shared/adapter'
-require 'dtr/shared/sync_codebase'
+module DTR
+  module Root
+    attr_accessor :root
+  end
+  extend Root
+end
