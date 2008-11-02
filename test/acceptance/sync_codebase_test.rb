@@ -40,30 +40,4 @@ class SyncCodebaseTest < Test::Unit::TestCase
       DTR::Cmd.execute('rake dtr_clobber_package')
     end
   end
-
-  #todo: do we need this?
-  def xtest_should_not_sync_codebase_and_setup_working_dir_when_agent_is_in_same_dir_with_master_process
-    @master_dir = File.expand_path(File.dirname(__FILE__) + '/../../testdata/verify_dir_pwd')
-    @agent = start_agent_at @master_dir, 2, false
-    begin
-      assert_fork_process_exits_ok do
-        Dir.chdir(@master_dir) do
-          require 'verify_dir_pwd_test_case'
-        end
-        $argv_dup = ['verify_dir_pwd_test_case.rb']
-        suite = Test::Unit::TestSuite.new('test_should_not_sync_codebase_and_setup_working_dir')
-        suite << VerifyDirPwdTestCase.suite
-
-        Dir.chdir(@master_dir) do
-          result = runit(suite)
-          assert result.passed?
-          assert_equal 1, result.run_count
-        end
-      end
-    ensure
-      DTR.kill_process @agent
-      Process.waitall
-    end
-  end
-
 end
