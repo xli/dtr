@@ -29,8 +29,8 @@ require 'dtr/agent/runner'
 
 module DTR
   module Agent
-    def start
-      Brain.new.hypnotize
+    def start(action=:hypnotize)
+      Brain.new.send(action)
     end
     
     module_function :start

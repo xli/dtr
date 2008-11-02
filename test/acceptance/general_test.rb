@@ -254,7 +254,7 @@ class GeneralTest < Test::Unit::TestCase
     assert_equal 0, $?.exitstatus
   ensure
     @test_processes.each do |pid|
-      DTR.kill_process pid
+      kill_process pid
     end
   end
 

@@ -86,23 +86,17 @@ module DTR
 
       desc "Run tests with DTR injected"
       task @name do
-        @agent = start_agent
+        start_agent
         run_code = ''
-        begin
-          RakeFileUtils.verbose(@verbose) do
-            run_code = rake_loader
-            @ruby_opts.unshift( "-I#{lib_path}" )
-            @ruby_opts.unshift( "-w" ) if @warning
-            
-            ruby @ruby_opts.join(" ") +
-              " \"#{run_code}\" " +
-              file_list.unshift('dtr/test_unit_injection.rb').collect { |fn| "\"#{fn}\"" }.join(' ') +
-              " #{option_list}"
-          end
-        ensure
-          if defined?(@agent)
-            DTR.kill_process @agent
-          end
+        RakeFileUtils.verbose(@verbose) do
+          run_code = rake_loader
+          @ruby_opts.unshift( "-I#{lib_path}" )
+          @ruby_opts.unshift( "-w" ) if @warning
+          
+          ruby @ruby_opts.join(" ") +
+            " \"#{run_code}\" " +
+            file_list.unshift('dtr/test_unit_injection.rb').collect { |fn| "\"#{fn}\"" }.join(' ') +
+            " #{option_list}"
         end
       end
       self
@@ -114,9 +108,9 @@ module DTR
       runner_names = []
       self.processes.to_i.times {|i| runner_names << "runner#{i}"}
       
-      DTR.fork_process do
-        DTR.agent_runners = runner_names if DTR.agent_runners.blank?
-        DTR.start_agent
+      DTR.agent_runners = runner_names if DTR.agent_runners.blank?
+      Thread.start do
+        DTR.run_script('DTR::Agent.start(:hypnotize_once)')
       end
     end
   end

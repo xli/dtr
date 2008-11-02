@@ -40,7 +40,7 @@ module DTR
     def stop_agents
       if @agents
         @agents.each do |agent|
-          DTR.kill_process agent
+          kill_process agent
         end
         Process.waitall
         sleep 1

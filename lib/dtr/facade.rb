@@ -62,15 +62,5 @@ module DTR
     def run_script(cmd)
       system "#{DTR_CMD} -e #{cmd.inspect}"
     end
-
-    # For safe fork & kill sub process, should use Process.kill and Process.fork
-    # At least have problem on ruby 1.8.6 114 with Kernel#kill & fork
-    def kill_process(pid)
-      Process.kill 'TERM', pid rescue nil
-    end
-
-    def fork_process(&block)
-      Process.fork(&block)
-    end
   end
 end

@@ -23,7 +23,7 @@ module DTR
       include Adapter::Master
 
       def start
-        DTR.fork_process do
+        Process.fork do
           monitor
         end
       end
@@ -44,7 +44,7 @@ module DTR
       include Service::Agent
 
       def start
-        DTR.fork_process do
+        Process.fork do
           begin
             loop do
               monitor

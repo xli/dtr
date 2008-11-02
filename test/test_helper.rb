@@ -16,6 +16,12 @@ ENV['DTR_ENV'] = 'test'
 module Test
   module Unit
     class TestCase
+      # For safe fork & kill sub process, should use Process.kill and Process.fork
+      # At least have problem on ruby 1.8.6 114 with Kernel#kill & fork
+      def kill_process(pid)
+        Process.kill 'TERM', pid rescue nil
+      end
+
       def assert_false(o)
         assert !o
       end
@@ -30,7 +36,7 @@ module Test
         Process.waitpid pid
         assert_equal 0, $?.exitstatus
       ensure
-        DTR.kill_process pid
+        kill_process pid
       end
 
       def with_agent_helper_group(&block)

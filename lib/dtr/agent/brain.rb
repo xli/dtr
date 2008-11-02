@@ -32,19 +32,36 @@ module DTR
       end
 
       def hypnotize
-        loop do
-          if wakeup?
-            DTR.info {"Agent brain wakes up"}
-
-            if DTR.run_script("DTR::Agent::Herald.new")
-              fang_gou
-            else
-              DTR.info {"=> No runner started."}
-            end
-
-            DTR.info {"Agent brain is going to sleep"}
+        with_relaxation do
+          loop do
+            do_once
           end
         end
+      end
+
+      def hypnotize_once
+        with_relaxation do
+          do_once
+        end
+      end
+
+      private
+      def do_once
+        if wakeup?
+          DTR.info {"Agent brain wakes up"}
+
+          if DTR.run_script("DTR::Agent::Herald.new")
+            fang_gou
+          else
+            DTR.info {"=> No runner started."}
+          end
+
+          DTR.info {"Agent brain is going to sleep"}
+        end
+      end
+
+      def with_relaxation
+        yield
       rescue Interrupt, SystemExit, SignalException
       ensure
         relax
