@@ -2,10 +2,11 @@ require 'fileutils'
 module DTR
   module AgentHelper
     GROUP = 'dtr acceptance tests'
-    def start_agents(size = 3)
+    def start_agents(options={})
+      options = {:size => 1, :clean_dir => true}.merge(options)
       @agents_dir = File.join(Dir.pwd, 'agents')
       @agents = []
-      @agents << start_agent_at(agent1_dir, size)
+      @agents << start_agent_at(agent1_dir, options)
       # @agents << start_agent_at(File.join(@agents_dir, 'agent2'), 1)
     end
 
@@ -17,13 +18,17 @@ module DTR
       File.join(agent1_dir, Socket.gethostname.gsub(/[^\d\w]/, '_'), 'tance_rails_ext_test', 'runner1')
     end
 
-    def start_agent_at(agent_dir, size, clean_dir=true)
-      FileUtils.rm_rf(agent_dir) if clean_dir
+    def start_agent_at(agent_dir, options={})
+      FileUtils.rm_rf(agent_dir) if options[:clean_dir]
       FileUtils.mkdir_p(agent_dir)
       runner_names = []
-      size.times {|i| runner_names << "runner#{i}"}
+      options[:size].times {|i| runner_names << "runner#{i}"}
       Process.fork do
         Dir.chdir(agent_dir) do
+          DTR.root = Dir.pwd
+          DTR.configuration.refresh
+          DTR.configuration.master_heartbeat_interval = options[:master_heartbeat_interval] || 2
+          DTR.configuration.follower_listen_heartbeat_timeout = options[:follower_listen_heartbeat_timeout] || 3
           DTR.configuration.group = GROUP
           DTR.configuration.agent_runners = runner_names
           DTR.configuration.save

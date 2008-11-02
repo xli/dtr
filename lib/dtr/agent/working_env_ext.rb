@@ -25,7 +25,7 @@ module DTR
       def load_environment(&block)
         working_dir = FileUtils.mkdir_p(File.join(base_dir, escape_dir(ENV['DTR_RUNNER_NAME'])))
         Dir.chdir(working_dir) do
-          DTR.info "Loading environment at #{Dir.pwd}, pid: #{Process.pid}"
+          DTR.info "Loading environment at #{Dir.pwd}"
 
           ENV['DTR_MASTER_ENV'] = dtr_master_env
 

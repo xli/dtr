@@ -158,8 +158,8 @@ class GeneralTest < Test::Unit::TestCase
   end
 
   def test_run_test_specified_by_load_path
+    lib_path = File.expand_path(File.dirname(__FILE__) + '/../../testdata/lib')
     assert_fork_process_exits_ok do
-      lib_path = File.expand_path(File.dirname(__FILE__) + '/../../testdata/lib')
       $LOAD_PATH.unshift lib_path
       require 'lib_test_case'
       $argv_dup = ['lib_test_case.rb']

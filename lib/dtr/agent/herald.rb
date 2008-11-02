@@ -15,7 +15,7 @@
 module DTR
 
   module Agent
-    class Herald
+    class Herald < ProcessRoot
       class WorkingEnvError < StandardError
       end
 
@@ -23,6 +23,7 @@ module DTR
       include Service::Agent
 
       def initialize
+        super
         start_service
         start_off
       ensure
@@ -30,7 +31,7 @@ module DTR
       end
 
       def start_off
-        DTR.info {"=> Herald starts off..."}
+        DTR.info {"=> Herald starts off at #{DTR.root}"}
         provide_agent_info(DTR.configuration.agent_env_setup_cmd, DTR.configuration.agent_runners)
 
         DTR.configuration.working_env = fetch_working_env

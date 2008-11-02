@@ -26,6 +26,9 @@ module DTR
           ip, port = host.split(':')
           DTR.configuration.rinda_server_port = port.to_i
           DTR.configuration.broadcast_list = [ip]
+          DTR.configuration.save
+          DTR.info {"=> Rinda server port: #{DTR.configuration.rinda_server_port}"}
+          DTR.info {"=> Broadcast list: #{DTR.configuration.broadcast_list.inspect}"}
           @wakeup_for_host = host
           true
         end

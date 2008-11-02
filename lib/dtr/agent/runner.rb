@@ -14,13 +14,14 @@
 
 module DTR
   module Agent
-    class Runner
+    class Runner < ProcessRoot
       include DRbUndumped
       include Service::Runner
 
       attr_reader :name
 
       def initialize(name)
+        super
         @name = name
       end
       
@@ -29,6 +30,7 @@ module DTR
         start_service
 
         ENV['DTR_RUNNER_NAME'] = name
+        DTR.info "Start #{self} at #{DTR.root}, pid: #{Process.pid}"
         DTR.configuration.working_env.load_environment do
           provide
           DTR.info {"=> Runner provided"}

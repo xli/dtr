@@ -18,40 +18,39 @@ module DTR
   class EnvStore
     FILE_NAME = '.dtr_env_pstore' unless defined?(FILE_NAME)
 
-    def self.destroy
-      File.delete(FILE_NAME) if File.exist?(FILE_NAME)
+    def initialize
+      @file = File.expand_path(File.join(DTR.root, FILE_NAME))
+      @pstore = PStore.new(@file)
+    end
+
+    def destroy
+      File.delete(@file) if File.exist?(@file)
     end
 
     def [](key)
-      return nil unless File.exist?(FILE_NAME)
-      
-      repository = PStore.new(FILE_NAME)
-      repository.transaction(true) do
-        repository[key]
+      @pstore.transaction(true) do
+        @pstore[key]
       end
     end
 
     def []=(key, value)
-      repository = PStore.new(FILE_NAME)
-      repository.transaction do
-        repository[key] = value
+      @pstore.transaction do
+        @pstore[key] = value
       end
     end
     
     def <<(key_value)
       key, value = key_value
-      repository = PStore.new(FILE_NAME)
-      repository.transaction do
-        repository[key] = (repository[key] || []) << value
+      @pstore.transaction do
+        @pstore[key] = (@pstore[key] || []) << value
       end
     end
     
     def shift(key)
-      repository = PStore.new(FILE_NAME)
-      repository.transaction do
-        if array = repository[key]
+      @pstore.transaction do
+        if array = @pstore[key]
           array.shift
-          repository[key] = array
+          @pstore[key] = array
         end
       end
     end

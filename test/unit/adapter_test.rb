@@ -10,12 +10,14 @@ class AdapterTest < Test::Unit::TestCase
     @host_ip = nil
     @timeout = false
     @messages = []
+    DTR.root = Dir.pwd
     DTR.logger('test.log')
     DTR.configuration.follower_listen_heartbeat_timeout = 1
   end
 
   def teardown
-    clear_configuration
+    DTR.configuration.refresh
+    DTR.root = nil
   end
 
   def test_should_be_sleep_if_never_wakeup

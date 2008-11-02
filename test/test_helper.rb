@@ -7,8 +7,6 @@ require 'rubygems'
 require 'growling_test'
 require 'dtr'
 require 'dtr/test_unit'
-DTR.configuration.master_heartbeat_interval = 2
-DTR.configuration.follower_listen_heartbeat_timeout = 3
 
 require File.dirname(__FILE__) + '/agent_helper'
 require File.dirname(__FILE__) + '/logger_stub'
@@ -52,15 +50,13 @@ module Test
         require 'a_file_system_test_case'
         require 'scenario_test_case'
         require 'setup_agent_env_test_case'
+        DTR.root = Dir.pwd
+        DTR.configuration.refresh
         DTR.inject
       end
 
       def runit(suite)
         Test::Unit::UI::Console::TestRunner.run(suite, Test::Unit::UI::SILENT)
-      end
-      def clear_configuration
-        DTR::EnvStore.destroy
-        DTR.configuration.load
       end
     end
   end

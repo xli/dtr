@@ -5,15 +5,10 @@ include DTR::AgentHelper
 class RailsExtTest < Test::Unit::TestCase
   
   def setup
-    DTR.configuration.master_heartbeat_interval = 10
-    DTR.configuration.follower_listen_heartbeat_timeout = 15
-    start_agents
+    start_agents(:master_heartbeat_interval => 10, :follower_listen_heartbeat_timeout => 15)
   end
 
   def teardown
-    DTR.configuration.master_heartbeat_interval = 2
-    DTR.configuration.follower_listen_heartbeat_timeout = 3
-
     stop_agents
   end
 

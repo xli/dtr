@@ -45,40 +45,46 @@ module DTR
     attr_reader :group
 
     def initialize
+      @store = EnvStore.new
+      load
+    end
+
+    def refresh
+      @store.destroy if @store
+      @store = EnvStore.new
       load
     end
 
     def load
-      store = EnvStore.new
       # always have 'localhost' in broadcast_list, for our master process would start rinda server locally,
       # and dtr should work well on local machine when the machine leaves dtr grid network environment.
-      @broadcast_list = ['localhost'].concat(store[:broadcast_list] || []).uniq
-      @rinda_server_port = 3344
-      @agent_listen_port = store[:agent_listen_port] || 7788
-      @master_heartbeat_interval = store[:master_heartbeat_interval] || 10
-      @follower_listen_heartbeat_timeout =  store[:follower_listen_heartbeat_timeout] || 15
-      @group = store[:group]
-      @agent_env_setup_cmd = store[:agent_env_setup_cmd]
-      @agent_runners = store[:agent_runners]
+      @broadcast_list = ['localhost'].concat(@store[:broadcast_list] || []).uniq
+      @rinda_server_port = @store[:rinda_server_port] || 3344
+      @agent_listen_port = @store[:agent_listen_port] || 7788
+      @master_heartbeat_interval = @store[:master_heartbeat_interval] || 10
+      @follower_listen_heartbeat_timeout =  @store[:follower_listen_heartbeat_timeout] || 15
+      @group = @store[:group]
+      @agent_env_setup_cmd = @store[:agent_env_setup_cmd]
+      @agent_runners = @store[:agent_runners]
     end
 
     def save
-      store = EnvStore.new
-      store[:broadcast_list] = @broadcast_list
-      store[:agent_listen_port] = @agent_listen_port
-      store[:master_heartbeat_interval] = @master_heartbeat_interval
-      store[:follower_listen_heartbeat_timeout] = @follower_listen_heartbeat_timeout
-      store[:group] = @group
-      store[:agent_env_setup_cmd] = @agent_env_setup_cmd
-      store[:agent_runners] = @agent_runners
+      @store[:broadcast_list] = @broadcast_list
+      @store[:rinda_server_port] = @rinda_server_port
+      @store[:agent_listen_port] = @agent_listen_port
+      @store[:master_heartbeat_interval] = @master_heartbeat_interval
+      @store[:follower_listen_heartbeat_timeout] = @follower_listen_heartbeat_timeout
+      @store[:group] = @group
+      @store[:agent_env_setup_cmd] = @agent_env_setup_cmd
+      @store[:agent_runners] = @agent_runners
     end
 
     def working_env
-      EnvStore.new[:working_env]
+      @store[:working_env]
     end
 
     def working_env=(env)
-      EnvStore.new[:working_env] = env
+      @store[:working_env] = env
     end
 
     def group=(group)

@@ -12,30 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'dtr/shared'
-
 module DTR
-  module Master
-    def with_dtr_master(&block)
-      if defined?(ActiveRecord::Base)
-        ActiveRecord::Base.clear_active_connections! rescue nil
-      end
-
-      DTR.info {""}
-      DTR.info {"--------------------beautiful line--------------------------"}
-      DTR.info {"Master process started at #{Time.now}"}
-
-      DTR.root = Dir.pwd
-      DTR.configuration.with_rinda_server do
-        provide_working_env WorkingEnv.new
-        with_wakeup_agents(&block)
+  module Agent
+    class ProcessRoot
+      def initialize(*args)
+        DTR.root = Dir.pwd
       end
     end
-
-    include Adapter::Master
-    include Service::WorkingEnv
-    include SyncCodebase::MasterExt
   end
-
-  Configuration.send(:include, SyncLogger::Provider)
 end

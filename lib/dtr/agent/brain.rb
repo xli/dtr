@@ -15,10 +15,12 @@
 module DTR
   module Agent
 
-    class Brain
+    class Brain < ProcessRoot
       include Adapter::Follower
       
       def initialize
+        super
+        DTR.logger('dtr_agent.log')
         raise 'No runner? What can I do for you?' if DTR.configuration.agent_runners.blank?
         DTR.info {""}
         DTR.info {"--------------------beautiful line--------------------------"}

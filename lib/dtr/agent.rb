@@ -19,6 +19,7 @@ require 'dtr/agent/rails_ext'
 require 'dtr/agent/working_status'
 
 require 'dtr/agent/sync_logger'
+require 'dtr/agent/process_root'
 require 'dtr/agent/brain'
 require 'dtr/agent/worker'
 require 'dtr/agent/test_unit'
@@ -29,7 +30,6 @@ require 'dtr/agent/runner'
 module DTR
   module Agent
     def start
-      DTR.logger('dtr_agent.log')
       Brain.new.hypnotize
     end
     

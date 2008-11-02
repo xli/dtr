@@ -4,8 +4,13 @@ require 'dtr/facade'
 class FacadeTest < Test::Unit::TestCase
   include DTR::Facade
 
+  def setup
+    DTR.root = Dir.pwd
+  end
+
   def teardown
-    clear_configuration
+    DTR.configuration.refresh
+    DTR.root = nil
   end
 
   def test_lib_path

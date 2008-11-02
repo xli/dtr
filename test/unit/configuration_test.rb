@@ -1,14 +1,22 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class ConfigurationTest < Test::Unit::TestCase
+  def setup
+    DTR.root = Dir.pwd
+  end
   def teardown
-    clear_configuration
+    DTR.configuration.refresh
+    DTR.root = nil
   end
 
-  def test_should_not_save_rinda_server_port
+  def test_should_save_rinda_server_port
     DTR.configuration.rinda_server_port = '3456'
     assert_equal '3456', DTR.configuration.rinda_server_port
-    assert_nil DTR::EnvStore.new[:rinda_server_port]
+    DTR.configuration.save
+    assert_equal '3456', DTR::EnvStore.new[:rinda_server_port]
+    
+    DTR.configuration.load
+    assert_equal '3456', DTR.configuration.rinda_server_port
   end
 
   def test_group_defualt_is_dangerous_group
