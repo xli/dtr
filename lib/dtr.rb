@@ -12,10 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'dtr/shared'
 require 'dtr/facade'
 
 DTRVERSION="1.1.0"
 
 module DTR
   extend Facade
+
+  DTR.root = Dir.pwd
 end

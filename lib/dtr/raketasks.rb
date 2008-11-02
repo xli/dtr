@@ -18,9 +18,12 @@ require 'rake/testtask'
 require 'rake/tasklib'
 
 require 'dtr'
+require 'dtr/shared/root'
 require 'dtr/shared/ruby_ext'
 require 'dtr/shared/utils'
 require 'dtr/shared/sync_codebase/package'
+
+DTR.root = Dir.pwd
 
 module DTR
   # Create tasks that run a set of tests with DTR injected.

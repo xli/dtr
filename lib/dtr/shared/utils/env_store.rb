@@ -19,7 +19,7 @@ module DTR
     FILE_NAME = '.dtr_env_pstore' unless defined?(FILE_NAME)
 
     def initialize
-      @file = File.expand_path(File.join(DTR.root, FILE_NAME))
+      @file = File.expand_path(File.join(DTR.root || Dir.pwd, FILE_NAME))
       @pstore = PStore.new(@file)
     end
 

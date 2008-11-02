@@ -3,7 +3,7 @@ module DTR
   module AgentHelper
     GROUP = 'dtr acceptance tests'
     def start_agents(options={})
-      options = {:size => 1, :clean_dir => true}.merge(options)
+      options = {:size => 3, :clean_dir => true}.merge(options)
       @agents_dir = File.join(Dir.pwd, 'agents')
       @agents = []
       @agents << start_agent_at(agent1_dir, options)

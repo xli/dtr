@@ -24,37 +24,31 @@ module DTR
     end
 
     def broadcast_list=(list)
-      require 'dtr/shared'
       DTR.configuration.broadcast_list = list
       DTR.configuration.save
     end
 
     def agent_listen_port=(port)
-      require 'dtr/shared'
       DTR.configuration.agent_listen_port = port
       DTR.configuration.save
     end
 
     def group=(group)
-      require 'dtr/shared'
       DTR.configuration.group = group
       DTR.configuration.save
     end
 
     def agent_env_setup_cmd=(cmd)
-      require 'dtr/shared'
       DTR.configuration.agent_env_setup_cmd = cmd
       DTR.configuration.save
     end
 
     def agent_runners=(runners)
-      require 'dtr/shared'
       DTR.configuration.agent_runners = runners
       DTR.configuration.save
     end
 
     def agent_runners
-      require 'dtr/shared'
       DTR.configuration.agent_runners
     end
 

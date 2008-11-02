@@ -23,7 +23,7 @@ class SyncLoggerTest < Test::Unit::TestCase
       runit(suite)
 
       logs = @logger.logs.flatten.join("\n")
-      assert(/From #{Socket.gethostname}: => Herald starts off\.\.\./ =~ logs)
+      assert(/From #{Socket.gethostname}: => Herald starts off/ =~ logs)
       assert(/From #{Socket.gethostname}: runner0: test files loaded/ =~ logs)
       #when use Delegator to implement UndumpedLogger, there are lots of 'nil' in the log
       assert(/nil/ !~ logs)

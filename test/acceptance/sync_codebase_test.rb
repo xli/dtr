@@ -9,8 +9,9 @@ class SyncCodebaseTest < Test::Unit::TestCase
     testdata_dir = File.expand_path(File.dirname(__FILE__) + '/../../testdata')
 
     master = Process.fork do
-      DTR.configuration.with_rinda_server do
-        Dir.chdir(testdata_dir) do
+      Dir.chdir(testdata_dir) do
+        DTR.root = Dir.pwd
+        DTR.configuration.with_rinda_server do
           DTR::Cmd.execute('rake dtr_repackage')
           provide_file DTR::SyncCodebase::CopiablePackage.new
           DRb.thread.join
@@ -20,9 +21,10 @@ class SyncCodebaseTest < Test::Unit::TestCase
     #sleep for waiting rinda server start
     sleep(1)
     client = Process.fork do
-      start_service
       Dir.mkdir("test_sync_codebase")
       Dir.chdir("test_sync_codebase") do
+        DTR.root = Dir.pwd
+        start_service
         sync_codebase do
           do_work(unpackage_cmd)
         end
