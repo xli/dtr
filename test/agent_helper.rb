@@ -1,13 +1,12 @@
 require 'fileutils'
 module DTR
   module AgentHelper
-    GROUP = 'dtr acceptance tests'
+    include Adapter::Master
+    GROUP = 'dtr_acceptance_tests'
     def start_agents(options={})
       options = {:size => 3, :clean_dir => true}.merge(options)
       @agents_dir = File.join(Dir.pwd, 'agents')
-      @agents = []
-      @agents << start_agent_at(agent1_dir, options)
-      # @agents << start_agent_at(File.join(@agents_dir, 'agent2'), 1)
+      start_agent_at(agent1_dir, options)
     end
 
     def agent1_dir
@@ -31,19 +30,17 @@ module DTR
           DTR.configuration.group = GROUP
           DTR.configuration.agent_runners = runner_names
           DTR.configuration.save
-          DTR.start_agent
         end
+      end
+      Thread.start do
+        DTR.run_script("Dir.chdir(#{agent_dir.inspect}) { DTR::Agent.start(:hypnotize) }")
       end
     end
 
     def stop_agents
-      if @agents
-        @agents.each do |agent|
-          kill_process agent
-        end
-        Process.waitall
-        sleep 1
-      end
+      group_agents_should_die(GROUP)
+      Process.waitall
+      sleep 1
     ensure
       FileUtils.rm_rf(@agents_dir) rescue nil
     end

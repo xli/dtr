@@ -63,8 +63,10 @@ module DTR
       def with_relaxation
         yield
       rescue Interrupt, SystemExit, SignalException
+        DTR.info {$!.message}
       ensure
         relax
+        DTR.info {"Agent brain is dieing."}
       end
 
       def fang_gou

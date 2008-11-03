@@ -12,6 +12,7 @@ require File.dirname(__FILE__) + '/agent_helper'
 require File.dirname(__FILE__) + '/logger_stub'
 
 ENV['DTR_ENV'] = 'test'
+# ENV['JRUBY_DTR'] = 'true'
 
 module Test
   module Unit
