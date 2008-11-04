@@ -226,7 +226,7 @@ class GeneralTest < Test::Unit::TestCase
           suite << ATestCase.suite
           suite << ATestCase2.suite
           suite << AFileSystemTestCase.suite
-          with_agent_helper_group do
+          with_agent_configuration do
             result = runit(suite)
             assert result.passed?
             assert_equal 3, result.run_count

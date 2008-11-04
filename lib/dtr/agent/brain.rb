@@ -28,6 +28,7 @@ module DTR
         DTR.info {"=> Listening port: #{DTR.configuration.agent_listen_port}"}
         DTR.info {"=> Group: #{DTR.configuration.group}"}
         DTR.info {"=> Dir.pwd: #{Dir.pwd}"}
+        DTR.info {"=> Follower listen heartbeat timeout: #{DTR.configuration.follower_listen_heartbeat_timeout}"}
       end
 
       def hypnotize

@@ -24,6 +24,7 @@ module DTR
       DTR.info {""}
       DTR.info {"--------------------beautiful line--------------------------"}
       DTR.info {"Master process started at #{Time.now}"}
+      DTR.info {"Master heartbeat interval: #{DTR.configuration.master_heartbeat_interval}"}
 
       DTR.root = Dir.pwd
       DTR.configuration.with_rinda_server do

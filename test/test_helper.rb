@@ -30,7 +30,7 @@ module Test
         pid = Process.fork do
           Dir.chdir(File.expand_path(File.dirname(__FILE__) + "/../testdata/")) do
             setup_test_env
-            with_agent_helper_group(&block)
+            with_agent_configuration(&block)
           end
           exit 0
         end
@@ -40,8 +40,9 @@ module Test
         kill_process pid
       end
 
-      def with_agent_helper_group(&block)
+      def with_agent_configuration(&block)
         DTR.configuration.group = DTR::AgentHelper::GROUP
+        DTR.configuration.master_heartbeat_interval = 2
         begin
           block.call
         ensure

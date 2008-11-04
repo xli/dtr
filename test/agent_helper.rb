@@ -25,7 +25,6 @@ module DTR
       Process.fork do
         Dir.chdir(agent_dir) do
           DTR.configuration.refresh
-          DTR.configuration.master_heartbeat_interval = options[:master_heartbeat_interval] || 2
           DTR.configuration.follower_listen_heartbeat_timeout = options[:follower_listen_heartbeat_timeout] || 3
           DTR.configuration.group = GROUP
           DTR.configuration.agent_runners = runner_names
