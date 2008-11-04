@@ -30,10 +30,8 @@ module DTR
           DTR.configuration.group = GROUP
           DTR.configuration.agent_runners = runner_names
           DTR.configuration.save
+          DTR.run_script("DTR::Agent.start(:hypnotize)")
         end
-      end
-      Thread.start do
-        DTR.run_script("Dir.chdir(#{agent_dir.inspect}) { DTR::Agent.start(:hypnotize) }")
       end
     end
 
