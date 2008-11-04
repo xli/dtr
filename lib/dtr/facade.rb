@@ -60,7 +60,7 @@ module DTR
 
     DTR_CMD = File.expand_path(File.dirname(__FILE__) + '/../../bin/dtr')
     def run_script(cmd)
-      dtr = (RUBY_PLATFORM =~ /java/ || ENV['JRUBY_DTR']) ? "jruby -S #{DTR_CMD.inspect}" : DTR_CMD.inspect
+      dtr = (RUBY_PLATFORM =~ /java/ || ENV['JRUBY_DTR']) ? "jruby -S #{DTR_CMD.inspect}" : "ruby #{DTR_CMD.inspect}"
       system "#{dtr} -e #{cmd.inspect}"
     end
   end

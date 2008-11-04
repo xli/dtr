@@ -27,6 +27,8 @@ require 'dtr/agent/herald'
 require 'dtr/agent/test_case'
 require 'dtr/agent/runner'
 
+DTR.logger('dtr_agent.log')
+
 module DTR
   module Agent
     def start(action=:hypnotize)
