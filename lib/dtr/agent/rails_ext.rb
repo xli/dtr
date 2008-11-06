@@ -30,9 +30,9 @@ module DTR
             FileUtils.cp('config/database.yml.dtr', 'config/database.yml')
           end
           DTR.info("Clean databases")
-          Cmd.execute("rake db:drop DTR_RUNNER_NAME=#{ENV['DTR_RUNNER_NAME']}", :log_error => false)
+          Cmd.execute("rake --trace db:drop DTR_RUNNER_NAME=#{ENV['DTR_RUNNER_NAME']}", :log_error => false)
 
-          # Counldn't add --trace here, for Test::Unit detected --trace is a invalid option, don't know why
+          # Counldn't add --trace here, for Test::Unit detected --trace as a invalid option, don't know why
           "rake db:create db:migrate db:test:prepare DTR_RUNNER_NAME=#{ENV['DTR_RUNNER_NAME']}"
         end
       end
