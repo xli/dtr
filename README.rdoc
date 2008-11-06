@@ -18,11 +18,12 @@ DTR has the following features:
 
 DTR works in two parts: Runner Agent and DTR Master.
 
-* Runner Agent is a DRb service hosting on distributed machines to run tests. For using 'fork' to create runner process, Runner Agent can't run on Windows directly. Requisites for running agent: Unix/Linux based OS System for forking sub-process; 'unzip' command for extracting codebase package.
+* Runner Agent is a DRb service hosting on distributed machines to run tests. 
+  Requisites for running agent: 'unzip' command for extracting codebase package.
 
 * DTR Master is the process finding runner service to run tests and collect test results. It works by loading 'dtr/test_unit_injection.rb' with all test files or defining a DTR::TestTask in your rake file. Requisites for running master: 'zip' command for creating codebase package.
 
-DTR (version >= 1.0.0) supports synchronizing codebase by a DTR::PackageTask defined in your rake tasks. The DTR::PackageTask is a similar task with Rake::PackageTask, the following is a simple example:
+DTR (version >= 1.0.0) supports synchronizing codebase by a DTR::PackageTask defined in your rake tasks without any namespace. The DTR::PackageTask is a similar task with Rake::PackageTask, the following is a simple example:
 
   require 'dtr/raketasks'
   DTR::PackageTask.new do |p|
@@ -45,7 +46,11 @@ Note: Exclude('log/*') only excludes all files inside 'log' directory except 'lo
 
 == Rails plugin
 
-For Rails project, you just need copy dtr project directory into your project plugins directory. There are dtr tasks defined for you to run tests within dtr grid, which prefer you have 'config/database.yml.dtr' for setting up database. The test task is 'dtr:test'. 
+For Rails project, you can install dtr for your project by the following script:
+
+  ./script/plugin install git://github.com/xli/dtr.git
+
+There are dtr tasks defined for you to run tests within dtr grid. The test task is named 'dtr:test'. 
 
 Your project directory name would be the default group name of dtr agents. You can specify an environment variable named 'DTR_GROUP' to change the group name. By default, dtr tasks would lookup the broadcast ip by 'ifconfig' command. If it doesn't work for you, you can specify an environment variable named 'BROADCAST_IP' to overwrite it.
 
@@ -88,28 +93,30 @@ If you wish to run the unit and functional tests that come with DTR:
 
 == Simple Example
 
-Start DTR agent with providing 1 runner in group 'mysql-firefox' as follows:
+Start DTR agent with providing 1 runner in group 'my_project_name' as follows:
 
-  dtr -r runner1 -g mysql-firefox
+  dtr -r runner1 -g my_project_name
 
 Type "dtr --help" for an up-to-date option summary.
-Invoking <tt>dtr</tt> without any options causes dtr to show help too.
+DTR stored your configuration automatically, and configurations would be picked up
+automatically next time you start dtr.
 
-Most of time your project test suite need setup environment before run tests, you
-can set setup command by option '--setup', for example:
+DTR supports Rails test environment setup, so you don't need to configure it unless
+your test environment setup is different with Rails project default command. You can
+setup environment as you need by option '--setup', for example:
 
   dtr -r runner1,runner2 --setup "rake db:test:prepare"
 
-You also can specify DTR_AGENT_ENV_SETUP_CMD in your master process environment to let all agents
-that are not started with '--setup' option specified to setup all agents environment.
+If you installed dtr as your Rails project plugin, you don't need the following steps.
+Otherwise, you need define a DTR::TestTask in your rake file:
 
-At last, you need define a DTR::TestTask:
+  require 'dtr/raketasks'
 
-  require 'dtr'
-
-  ENV['DTR_AGENT_ENV_SETUP_CMD'] = 'rake db:test:prepare'
+  # Uncomment the following code to specify DTR_AGENT_ENV_SETUP_CMD here to get all agents
+  # that are not started with '--setup' option specified to setup test environment.
+  # ENV['DTR_AGENT_ENV_SETUP_CMD'] = 'rake db:test:prepare'
   DTR.broadcast_list = ['broadcast_ip']
-  DTR.group = 'mysql-firefox'
+  DTR.group = 'my_project_name'
 
   DTR::TestTask.new do |t|
     t.test_files = FileList['test/**/*_test.rb']
@@ -130,12 +137,13 @@ More details about DTR::TestTask and DTR::PackageTask, see the API doc:
   ri DTR::PackageTask
 
 Notes: 
-  * DTR broadcast_list and group configuration would be cached in the directory. Name of configuration file is '.dtr_env_pstore'.
-  * For packaging codebase, DTR::PackageTask creates tasks: dtr_package, dtr_clobber_package and dtr_repackage; DTR Master just simply run a command 'rake dtr_repackage' to create the package and run 'rake dtr_clobber_package' to clean package. So make sure there are those tasks under root namespace in your rake tasks.
+
+* DTR broadcast_list and group configuration would be cached in the directory. Name of configuration file is '.dtr_env_pstore'.
+* For packaging codebase, DTR::PackageTask creates tasks: dtr_package, dtr_clobber_package and dtr_repackage; DTR Master just simply run a command 'rake dtr_repackage' to create the package and run 'rake dtr_clobber_package' to clean package. So make sure there are those tasks under root namespace in your rake tasks.
 
 == Run tests in multi-processes on one machine
 
-For running Runner in multi-processes.
+For running agent runners in multi-processes with Master process on same machine and quit with Master process.
 The following is the test task example in the rake file:
 
   require 'dtr/raketasks'
@@ -177,20 +185,19 @@ DTR agent command is invoked from the command line using:
   -r runner1_name,runner2_name     Start DTR test runner agent with unique runner names.
   -a, --broadcast_address ADDRESS  Specify broadcast address for looking up dtr agent service, e.g. 192.168.255.255. Default is 'localhost'. DTR master and monitor would need this.
   -i, --setup COMMAND              Set command for initializing test runner test environment, e.g. 'rake db:test:prepare'. Default is do nothing. You also can specify DTR_AGENT_ENV_SETUP_CMD in your master process environment to let all agents setup same environment.
-  -d DIRECTORY                     Specify a directory as agent launching & working directory.
-      --working_directory
   -m, --monitor                    Monitor the status of the dtr agents and master processes. Used for testing your dtr grid environment. CAUTION! monitoring agents causes all idle agents hang on by the monitor process.
   -v, --version                    Show version
   -h, --help                       Show this help doc
 
-  Notes: 
-    * DTR would always add 'localhost' into broadcast list.
-    * Agent start by specifying runners by -r option, every runner would be started in different process for running test. e.g. dtr -r runner1,runner2
-    * DTR master environment options:
-      * DTR_MASTER_ENV: this variable would be copied into agent process for sharing info between master and agents. Normally used in agent setup environment command.
-      * DTR_AGENT_ENV_SETUP_CMD: this variable would be applied as agent setup environment command when agent have no setup environment command specified by --setup option.
-      * DTR_LOG_LEVEL: master process logger level, e.g. ENV['DTR_LOG_LEVEL'] = Logger::DEBUG. Agent process logs would be output in master process log file, so setting this option also changes agent logger level.
-      * DTR_RUNNER_NAME: this environment variable would be provided in runner process for test environment to get the runner name to setup, e.g. setting up database configuration.
+Notes: 
+
+* DTR would always add 'localhost' into broadcast list.
+* Agent start by specifying runners by -r option, every runner would be started in different process for running test. e.g. dtr -r runner1,runner2
+* DTR master environment options:
+  * DTR_MASTER_ENV: this variable would be copied into agent process for sharing info between master and agents. Normally used in agent setup environment command.
+  * DTR_AGENT_ENV_SETUP_CMD: this variable would be applied as agent setup environment command when agent have no setup environment command specified by --setup option.
+  * DTR_LOG_LEVEL: master process logger level, e.g. ENV['DTR_LOG_LEVEL'] = Logger::DEBUG. Agent process logs would be output in master process log file, so setting this option also changes agent logger level.
+  * DTR_RUNNER_NAME: this environment variable would be provided in runner process for test environment to get the runner name to setup, e.g. setting up database configuration.
 
 Type "dtr --help" for an up-to-date option summary.
 

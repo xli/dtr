@@ -1,14 +1,16 @@
 = DTR Changelog
 
 == release 1.1.0
-* Run 'rake db:migrate:reset db:test:prepare' for runner to setup database environment before runner runs any test, when there is no agent setup environment command setted and there is 'config/database.yml.dtr' or 'config/database.yml' exists. If './config/database.yml.dtr' specified, it would be copy as ./config/database.yml for setup database. For Sqlite, there is no need to create a './config/database.yml.dtr' for dtr test task. The following is an example for mysql:
+* Provided new setup test environment strategy for supporting running tests in multi-processes on one machine.
+  * DTR used to run setup agent environment command before runners started in same directory with runners.
+  * New version split runners into different directory to run test. And run setup agent command after runner started.
+  * Run 'rake db:drop db:create db:test:prepare' for runner to setup database environment before runner runs any test, when there is no agent setup environment command setted and there is 'config/database.yml.dtr' or 'config/database.yml' exists. If './config/database.yml.dtr' specified, it would be copy as ./config/database.yml for setup database. For Sqlite, there is no need to create a './config/database.yml.dtr' for dtr test task. The following is an example for mysql:
     development:
       database: development_<%= ENV['DTR_RUNNER_NAME'] %>
       adapter: mysql
       username: root
       password: 
       host: localhost
-
     test:
       database: test_<%= ENV['DTR_RUNNER_NAME'] %>
       adapter: mysql
@@ -16,6 +18,8 @@
       password: 
       host: localhost
 * Moved all DTR options into configuration file '.dtr_env_pstore', including runners, agent environment setup command and working_env.
+* Removed dependence of Process.fork, so that agent works OS independent.
+* Output agent runners stats info after all test finished.
 
 == release 1.0.0
 * support synchronizing codebase

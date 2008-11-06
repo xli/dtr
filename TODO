@@ -3,7 +3,6 @@
 Send suggestions for this list to iam@li-xiao.com
 
 === To Do
-  auto upgrade agent.
 
 === TBD for next release
   should trigger started notification on test runner in agent Herald, for some tools are using this hook(e.g. inbrowser_test) to setup test environment.
