@@ -31,8 +31,8 @@ module DTR
 
           setup_environment
 
-          load_libs
-          load_files
+          append_libs_to_load_path
+          require_files
 
           block.call
         end
@@ -54,20 +54,21 @@ module DTR
         str.to_s.gsub(/[^a-zA-Z0-9]/, '_')
       end
 
-      def load_libs
+      def append_libs_to_load_path
         libs.select{ |lib| !$LOAD_PATH.include?(lib) && File.exists?(lib) }.each do |lib|
           $LOAD_PATH << lib
           DTR.debug {"appended lib: #{lib}"}
         end
-        DTR.info {"libs loaded"}
+        DTR.info {"libs appended"}
         DTR.debug {"$LOAD_PATH: #{$LOAD_PATH.inspect}"}
       end
 
-      def load_files
+      def require_files
         files.each do |f|
           begin
-            load f unless f =~ /^-/
-            DTR.debug {"loaded #{f}"}
+            #use require instead of load to avoid load file twice.
+            require f unless f =~ /^-/
+            DTR.debug {"required #{f}"}
           rescue LoadError => e
             DTR.error {"No such file to load -- #{f}"}
             DTR.debug {"Environment: #{self}"}
