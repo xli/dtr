@@ -50,7 +50,7 @@ For Rails project, you can install dtr for your project by the following script:
 
   ./script/plugin install git://github.com/xli/dtr.git
 
-There are dtr tasks defined for you to run tests within dtr grid. The test task is named 'dtr:test'. 
+There are dtr tasks defined for you to run tests within dtr grid. The test task is named 'dtr:test'. The default dtr package task is very simple, for large project you may need to custom it to decreasing time of synchronizing codebase.
 
 Your project directory name would be the default group name of dtr agents. You can specify an environment variable named 'DTR_GROUP' to change the group name. By default, dtr tasks would lookup the broadcast ip by 'ifconfig' command. If it doesn't work for you, you can specify an environment variable named 'BROADCAST_IP' to overwrite it.
 
@@ -197,7 +197,7 @@ Notes:
   * DTR_MASTER_ENV: this variable would be copied into agent process for sharing info between master and agents. Normally used in agent setup environment command.
   * DTR_AGENT_ENV_SETUP_CMD: this variable would be applied as agent setup environment command when agent have no setup environment command specified by --setup option.
   * DTR_LOG_LEVEL: master process logger level, e.g. ENV['DTR_LOG_LEVEL'] = Logger::DEBUG. Agent process logs would be output in master process log file, so setting this option also changes agent logger level.
-  * DTR_RUNNER_NAME: this environment variable would be provided in runner process for test environment to get the runner name to setup, e.g. setting up database configuration.
+  * DTR_RUNNER_NAME: this environment variable would be provided in runner process for test environment to get the runner name, e.g. setting up database configuration.
 
 Type "dtr --help" for an up-to-date option summary.
 
