@@ -201,6 +201,7 @@ Notes:
 
 Type "dtr --help" for an up-to-date option summary.
 
+
 = Other stuff
 
 Author: Li Xiao <iam@li-xiao.com>
@@ -210,7 +211,6 @@ Requires: Ruby 1.8.6 or later
 License: Copyright 2007-2008 by Li Xiao.
          Released under an Apache License 2.  See the LICENSE file
          included in the distribution.
-
 
 == Warranty
 
